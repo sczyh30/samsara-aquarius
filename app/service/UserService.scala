@@ -8,6 +8,7 @@ import slick.driver.JdbcProfile
 import slick.lifted.TableQuery
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Samsara Aquarius
@@ -24,7 +25,7 @@ object UserService {
 
   def add(user: User): Future[String] = {
     dbConfig.db.run(users += user) map { res =>
-      "User successfully added~"
+      "user_add_success"
     } recover {
       case ex: Exception => ex.getCause.getMessage
     }
