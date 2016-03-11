@@ -10,7 +10,7 @@ import slick.driver.MySQLDriver.api._
   *
   * @author sczyh30
   */
-case class UserRow(uid: Int, username: String, password: String,
+case class User(uid: Int, username: String, password: String,
                 joinDate: java.sql.Date, avatar: Option[String] = Some("default"),
                 tips: Option[String] = Some("None~"), website: String)
 
@@ -18,9 +18,9 @@ case class UserRow(uid: Int, username: String, password: String,
   * User Table
   * @param tag Rag
   */
-class User(tag: Tag) extends Table[UserRow](tag, "user") {
+class UserTable(tag: Tag) extends Table[User](tag, "user") {
 
-  def * = (uid, username, password, joinDate, avatar, tips, website) <> (UserRow.tupled, UserRow.unapply)
+  override def * = (uid, username, password, joinDate, avatar, tips, website) <> (User.tupled, User.unapply)
 
   /** Database column uid SqlType(INT), AutoInc, PrimaryKey */
   val uid: Rep[Int] = column[Int]("uid", O.AutoInc, O.PrimaryKey)
