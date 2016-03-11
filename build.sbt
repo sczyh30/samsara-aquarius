@@ -1,6 +1,6 @@
 name := """samsara-aquarius"""
 
-version := "0.1.18"
+version := "0.1.24"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 

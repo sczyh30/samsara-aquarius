@@ -2,13 +2,12 @@
 *.class
 
 # sbt specific
+logs
 .cache
 .history
 .lib/
-dist/*
 target/
 *.log
-
 
 # Typesafe
 activator*
