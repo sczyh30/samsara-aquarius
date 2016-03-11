@@ -14,8 +14,6 @@ class AdminMapper @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit 
   import entity.Admin
 
   import slick.driver.JdbcProfile
-  import slick.lifted.{Rep, Tag}
-  import slick.driver.MySQLDriver.api._
 
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 

@@ -18,32 +18,6 @@ trait Tables {
   import slick.lifted.{TableQuery, Rep, Tag}
 
   /**
-    * Comment Table
-    *
-    * @param tag Tag
-    */
-  class CommentTable(tag: Tag) extends Table[Comment](tag, "comment") {
-
-    override def * = (cid, uid, dataId, text, time) <> (entity.Comment.tupled, entity.Comment.unapply)
-
-    /** Database column cid SqlType(INT), AutoInc, PrimaryKey */
-    val cid: Rep[Int] = column[Int]("cid", O.AutoInc, O.PrimaryKey)
-    /** Database column uid SqlType(INT) */
-    val uid: Rep[Int] = column[Int]("uid")
-    /** Database column data_id SqlType(INT) */
-    val dataId: Rep[Int] = column[Int]("data_id")
-    /** Database column text SqlType(VARCHAR), Length(150,true) */
-    val text: Rep[String] = column[String]("text", O.Length(150,varying=true))
-    /** Database column time SqlType(DATETIME) */
-    val time: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("time")
-
-    /** Foreign key referencing InfoData (database name fk_cm_dataid) */
-    lazy val infoDataFk = foreignKey("fk_cm_dataid", dataId, InfoData)(r => r.id, onUpdate = ForeignKeyAction.Cascade, onDelete=ForeignKeyAction.NoAction)
-    /** Foreign key referencing User (database name fk_cm_uid) */
-    lazy val userFk = foreignKey("fk_cm_uid", uid, User)(r => r.uid, onUpdate = ForeignKeyAction.Cascade, onDelete=ForeignKeyAction.NoAction)
-  }
-
-  /**
     * User Table
     *
     * @param tag Rag
@@ -69,6 +43,32 @@ trait Tables {
 
     /** Uniqueness Index over (username) */
     val index1 = index("username_UNIQUE", username, unique=true)
+  }
+
+  /**
+    * Comment Table
+    *
+    * @param tag Tag
+    */
+  class CommentTable(tag: Tag) extends Table[Comment](tag, "comment") {
+
+    override def * = (cid, uid, dataId, text, time) <> (entity.Comment.tupled, entity.Comment.unapply)
+
+    /** Database column cid SqlType(INT), AutoInc, PrimaryKey */
+    val cid: Rep[Int] = column[Int]("cid", O.AutoInc, O.PrimaryKey)
+    /** Database column uid SqlType(INT) */
+    val uid: Rep[Int] = column[Int]("uid")
+    /** Database column data_id SqlType(INT) */
+    val dataId: Rep[Int] = column[Int]("data_id")
+    /** Database column text SqlType(VARCHAR), Length(150,true) */
+    val text: Rep[String] = column[String]("text", O.Length(150,varying=true))
+    /** Database column time SqlType(DATETIME) */
+    val time: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("time")
+
+    /** Foreign key referencing InfoData (database name fk_cm_dataid) */
+    lazy val infoDataFk = foreignKey("fk_cm_dataid", dataId, InfoData)(r => r.id, onUpdate = ForeignKeyAction.Cascade, onDelete=ForeignKeyAction.NoAction)
+    /** Foreign key referencing User (database name fk_cm_uid) */
+    lazy val userFk = foreignKey("fk_cm_uid", uid, User)(r => r.uid, onUpdate = ForeignKeyAction.Cascade, onDelete=ForeignKeyAction.NoAction)
   }
 
   /**

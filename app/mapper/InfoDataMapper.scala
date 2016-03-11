@@ -1,7 +1,7 @@
 package mapper
 
 /**
-  * Created by sczyh30 on 16-3-11.
+  * Info Data Table Mapper
   */
 class InfoDataMapper {
 

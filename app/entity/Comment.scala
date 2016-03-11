@@ -11,5 +11,5 @@ package entity
   * @param dataId data id of the relevant comment
   * @param text comment text
   */
-case class Comment(cid: Int, uid: Int, dataId: Int, text: String)
+case class Comment(cid: Int, uid: Int, dataId: Int, text: String, time: java.sql.Timestamp)
 
