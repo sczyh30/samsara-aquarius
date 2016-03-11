@@ -1,0 +1,40 @@
+@import entity.Admin
+@(form: Form[entity.form.InfoFormData])(implicit request: RequestHeader)
+
+@admin.main("添加新的文章 | Samsara Aquarius Admin",
+    Admin(6, "admin6", null, Some(1), "a@b.com")) {
+
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("css/register.css")">
+    <div class="good_font">
+        <div class="text-center">
+            <img src="@routes.Assets.versioned("images/61c6258130a63b29b78806e97b1deb6c-biglogo.ico")" alt="LOGO">
+            <h2>添加文章</h2>
+        </div>
+        <form role="form" id="add-info-form" action='@routes.AdminController.addInfoProcess()' method="post">
+            <div class="form-group">
+                <label for="title">标题</label>
+                <input type="text" class="form-control" id="title" name="title"
+                placeholder="请输入文章标题">
+            </div>
+            <div class="form-group">
+                <label for="url">网址</label>
+                <input type="text" class="form-control" id="url" name="url"
+                placeholder="请输入文章对应网址">
+            </div>
+            <div class="form-group">
+                <label for="cid">分类</label>
+                <input type="number" class="form-control" id="cid" name="cid"
+                placeholder="请输入文章分类">
+            </div>
+            <div class="form-group">
+                <label for="updateDate">更新时间</label>
+                <input type="date" class="form-control" id="updateDate" name="updateDate"
+                placeholder="请输入更新时间">
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">添加文章</button>
+                <button type="reset" class="btn btn-danger">清空</button>
+            </div>
+        </form>
+    </div>
+}

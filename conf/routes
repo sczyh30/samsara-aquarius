@@ -10,5 +10,9 @@ GET     /                           controllers.Application.index
 GET     /register.now               controllers.RegisterController.index
 POST    /register                   controllers.RegisterController.register
 
+# Admin Route
+GET     /adm1n6q9/add-info          controllers.AdminController.addInfoPage
+POST    /adm1n6q9/add-info          controllers.AdminController.addInfoProcess
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
