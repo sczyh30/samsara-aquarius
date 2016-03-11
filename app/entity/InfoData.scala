@@ -1,9 +1,5 @@
 package entity
 
-import slick.lifted.{Rep, Tag}
-
-import slick.driver.MySQLDriver.api._
-
 /**
   * Samsara Aquarius
   * Info Data row case class
