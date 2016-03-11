@@ -22,9 +22,9 @@ class AdminController extends Controller {
     Ok(views.html.admin.addInfo(InfoForm.form))
   }
 
-  def processOKPage() = Action {
+  /*def processOKPage() = Action {
     Ok(views.html.admin.processOK)
-  }
+  }*/
 
   def addInfoProcess() = Action.async { implicit request =>
     InfoForm.form.bindFromRequest.fold(
