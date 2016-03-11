@@ -39,7 +39,7 @@ trait Tables {
     /** Database column tips SqlType(VARCHAR) */
     val tips: Rep[Option[String]] = column[Option[String]]("tips", O.Length(100, varying=true), O.Default(Some("None~")))
     /** Database column website SqlType(VARCHAR) */
-    val website: Rep[String] = column[String]("website", O.Length(65, varying=true))
+    val website: Rep[Option[String]] = column[Option[String]]("website", O.Length(65,varying=true), O.Default(Some("")))
     /** Database column email SqlType(VARCHAR) */
     val email: Rep[String] = column[String]("email", O.Length(60, varying=true))
 

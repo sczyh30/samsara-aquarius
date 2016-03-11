@@ -1,15 +1,31 @@
-<!DOCTYPE html>
-
-<html lang="en">
-    <head>
-        <title>Samsara Aquarius - 注册</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("css/register.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
-    </head>
-    <body>
-        <div class="good_font">
-            注册
+@(rgForm: Form[entity.form.RegisterFormData])(implicit request: RequestHeader)
+@main("用户注册 | Samsara Aquarius", null) {
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("css/register.css")">
+    <div class="good_font">
+        <div class="text-center">
+            <img src="https://www.playframework.com/assets/images/61c6258130a63b29b78806e97b1deb6c-favicon.ico" alt="Register">
+            <h2>用户注册</h2>
         </div>
-    </body>
-</html>
+        <form role="form" id="register-form" action='@routes.RegisterController.register()' method="post">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" class="form-control" id="username"
+                placeholder="请输入用户名">
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" class="form-control" id="username"
+                placeholder="请输入密码">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email"
+                placeholder="请输入电子邮箱">
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">注册</button>
+                <button type="reset" class="btn btn-danger">清空</button>
+            </div>
+        </form>
+    </div>
+}

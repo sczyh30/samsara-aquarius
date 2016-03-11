@@ -1,5 +1,6 @@
 package controllers
 
+import mapper.UserMapper
 import play.api._
 import play.api.mvc._
 
