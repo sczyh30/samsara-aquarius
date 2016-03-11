@@ -2,8 +2,12 @@ package mapper
 
 import javax.inject.Inject
 
+import entity.User
+import mapper.Tables.UserTable
+import play.api.Play
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
+import slick.lifted.TableQuery
 
 import scala.concurrent.{Future, ExecutionContext}
 
@@ -12,14 +16,22 @@ import scala.concurrent.{Future, ExecutionContext}
   *
   * @author sczyh30
   */
-class UserMapper @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+object UserMapper {
 
-  import Tables.User
+  val users = TableQuery[UserTable]
 
-  private val dbConfig = dbConfigProvider.get[JdbcProfile]
+  private val dbConfig = DatabaseConfigProvider.get[JdbcProfile]((Play.current))
 
   import dbConfig._
   import driver.api._
+
+  /*def add(user: User): Future[String] = {
+    dbConfig.db.run(users += user) map { res =>
+      "User successfully added~"
+    } recover {
+      case ex: Exception => ex.getCause.getMessage
+    }
+  }*/
 
   /*def create(uid: Int, username: String, password: String,
              joinDate: java.sql.Date, avatar: Option[String] = Some("default"),

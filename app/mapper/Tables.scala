@@ -24,7 +24,7 @@ trait Tables {
     */
   class UserTable(tag: Tag) extends Table[User](tag, "user") {
 
-    override def * = (uid, username, password, joinDate, avatar, tips, website) <> (entity.User.tupled, entity.User.unapply)
+    override def * = (uid, username, password, joinDate, avatar, tips, website, email) <> (entity.User.tupled, entity.User.unapply)
 
     /** Database column uid SqlType(INT), AutoInc, PrimaryKey */
     val uid: Rep[Int] = column[Int]("uid", O.AutoInc, O.PrimaryKey)
@@ -40,6 +40,8 @@ trait Tables {
     val tips: Rep[Option[String]] = column[Option[String]]("tips", O.Length(100, varying=true), O.Default(Some("None~")))
     /** Database column website SqlType(VARCHAR) */
     val website: Rep[String] = column[String]("website", O.Length(65, varying=true))
+    /** Database column email SqlType(VARCHAR) */
+    val email: Rep[String] = column[String]("email", O.Length(60, varying=true))
 
     /** Uniqueness Index over (username) */
     val index1 = index("username_UNIQUE", username, unique=true)
