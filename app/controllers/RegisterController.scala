@@ -22,10 +22,18 @@ import scala.concurrent.Future
   */
 class RegisterController extends Controller{
 
+  /**
+    * Register Index Page Route
+    * <code>GET /register.now </code>
+    */
   def index = Action { implicit request =>
     Ok(views.html.register(RegisterForm.form))
   }
 
+  /**
+    * Register Request Route
+    * <code>POST /register</code>
+    */
   def register() = Action.async { implicit request =>
     RegisterForm.form.bindFromRequest.fold(
       errorForm => {println(errorForm);Future.successful(Ok(views.html.register(errorForm)))},

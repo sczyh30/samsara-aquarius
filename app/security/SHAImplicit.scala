@@ -28,15 +28,16 @@ object SHAImplicit {
           val digest: MessageDigest = MessageDigest.getInstance(`type`)
           digest.update(str.get.getBytes)
           val messageDigest: Array[Byte] = digest.digest
-          messageDigest.bytes2hex
+          messageDigest.bytes2hex()
         }
         catch {
           case e: NoSuchAlgorithmException =>
             e.printStackTrace()
         }
+      } else {
+        throw new NullPointerException("Null string") //TODO:Should not throw NullPointerException!
       }
-
-      "fuck"
+      ""
     }
 
     /**

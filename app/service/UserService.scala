@@ -2,6 +2,7 @@ package service
 
 import entity.User
 import mapper.Tables.UserTable
+
 import play.api.Play
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
@@ -30,4 +31,7 @@ object UserService {
       case ex: Exception => ex.getCause.getMessage
     }
   }
+
+  def getUser(uid: Int): Future[Option[User]] =
+    dbConfig.db.run(users.filter(_.uid === uid).result.headOption)
 }
