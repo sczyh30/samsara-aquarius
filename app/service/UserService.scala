@@ -19,6 +19,7 @@ object UserService {
 
   val users = TableQuery[UserTable]
 
+  //TODO: need to be refactored since Play 2.5.0
   private val dbConfig = DatabaseConfigProvider.get[JdbcProfile](Play.current)
 
   import dbConfig._

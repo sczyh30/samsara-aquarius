@@ -2,6 +2,7 @@ package security
 
 import java.security.MessageDigest
 
+import scala.language.postfixOps
 import scala.util.Try
 
 /**
@@ -32,7 +33,7 @@ object SHAImplicit {
       val messageDigest: Array[Byte] = digest.digest
       messageDigest.bytes2hex()
     } recover {
-      case ex: Exception => ex.printStackTrace() ""
+      case ex: Exception => ex.printStackTrace(); ""
       case _ => ""
     } get
 
@@ -65,24 +66,6 @@ object SHAImplicit {
       */
     //TODO:TO BE ACCOMPLISHED
     def sha256(salt: String) = ???
-
-    /*@deprecated private def hash(str: Option[String], `type`: String): Try[String] = {
-      import utils.StringUtilImplicit.ByteToString
-      if (str.isDefined) {
-        try {
-          val digest: MessageDigest = MessageDigest.getInstance(`type`)
-          str.foreach(x => digest.update(x.getBytes))
-          //digest.update(str.get.getBytes)
-          val messageDigest: Array[Byte] = digest.digest
-          Try(messageDigest.bytes2hex())
-        }
-        catch {
-          case e: NoSuchAlgorithmException => e.printStackTrace()
-            ""
-        }
-      } else
-        throw new SecurityHashException("SHA Hash: Invalid string")
-    }*/
 
   }
 
