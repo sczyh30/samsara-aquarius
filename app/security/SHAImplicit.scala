@@ -8,7 +8,7 @@ import scala.util.Try
 /**
   * Samsara Aquarius Utils
   * SHA Encryption Util Object
-  * contains implicit SHA1,SHA256,SHA512 encrypt
+  * contains implicit SHA1, SHA256, SHA512 encrypt
   *
   * @author sczyh30
   */
