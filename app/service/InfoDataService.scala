@@ -1,11 +1,12 @@
 package service
 
+import javax.inject.Inject
+
 import entity.InfoData
 import mapper.Tables.InfoDataTable
-import play.api.Play
-import play.api.db.slick.DatabaseConfigProvider
+
+import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import slick.driver.JdbcProfile
-import slick.lifted.TableQuery
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -13,18 +14,16 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Samsara Aquarius
   * Info Data Service
+  * @author sczyh30
   */
-object InfoDataService {
+class InfoDataService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
+
+  import driver.api._
 
   val infoAll = TableQuery[InfoDataTable]
 
-  private val dbConfig = DatabaseConfigProvider.get[JdbcProfile](Play.current)
-
-  import dbConfig._
-  import driver.api._
-
   def addInfo(info: InfoData): Future[String] = {
-    dbConfig.db.run(infoAll += info) map { res =>
+    db.run(infoAll += info) map { res =>
       "info_data_add_success"
     } recover {
       case ex: Exception => ex.getCause.getMessage
@@ -32,15 +31,15 @@ object InfoDataService {
   }
 
   def getInfo(id: Int): Future[Option[InfoData]] = {
-    dbConfig.db.run(infoAll.filter(_.id === id).result.headOption)
+    db.run(infoAll.filter(_.id === id).result.headOption)
   }
 
   def getAll: Future[Seq[InfoData]] = {
-    dbConfig.db.run(infoAll.result)
+    db.run(infoAll.result)
   }
 
   def remove(id: Int): Future[Int] = {
-    dbConfig.db.run(infoAll.filter(_.id === id).delete)
+    db.run(infoAll.filter(_.id === id).delete)
   }
 
 }

@@ -10,7 +10,6 @@ import service.UserService
 
 import play.api.mvc._
 
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -20,7 +19,7 @@ import scala.concurrent.Future
   *
   * @author sczyh30
   */
-class RegisterController extends Controller{
+class RegisterController @Inject() (userService: UserService) extends Controller{
 
   /**
     * Register Index Page Route
@@ -40,10 +39,10 @@ class RegisterController extends Controller{
         Future.successful(Ok(views.html.register(errorForm)))
       },
       data => {
-        val newUser = User(uid = 0, username = data.username, password = data.password,
+        val newUser = User(uid = 0, username = data.username, password = data.password.sha256(),
           joinDate = new Date(System.currentTimeMillis()), email = data.email)
         println(newUser)
-        UserService.add(newUser) map { res =>
+        userService.add(newUser) map { res =>
           Redirect(routes.Application.index())
         }
       })

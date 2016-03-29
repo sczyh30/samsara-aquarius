@@ -1,12 +1,13 @@
 package service
 
+import javax.inject.Inject
+
 import entity.User
 import mapper.Tables.UserTable
 
 import play.api.Play
-import play.api.db.slick.DatabaseConfigProvider
+import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import slick.driver.JdbcProfile
-import slick.lifted.TableQuery
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -14,19 +15,22 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Samsara Aquarius
   * User Service
+  *
+  * @author sczyh30
   */
-object UserService {
+class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
 
-  val users = TableQuery[UserTable]
-
-  //TODO: need to be refactored since Play 2.5.0
-  private val dbConfig = DatabaseConfigProvider.get[JdbcProfile](Play.current)
-
-  import dbConfig._
   import driver.api._
 
+  private val users = TableQuery[UserTable]
+
+  /**
+    * Add a user to database
+    * @param user a user entity
+    * @return the async status
+    */
   def add(user: User): Future[String] = {
-    dbConfig.db.run(users += user) map { res =>
+    db.run(users += user) map { res =>
       "user_add_success"
     } recover {
       case ex: Exception => ex.getCause.getMessage

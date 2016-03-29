@@ -1,6 +1,7 @@
 package controllers
 
 import java.sql.Date
+import javax.inject.Inject
 
 import entity.InfoData
 import entity.form.InfoForm
@@ -16,7 +17,7 @@ import scala.concurrent.Future
   *
   * @author sczyh30
   */
-class AdminController extends Controller {
+class AdminController @Inject() (infoDataService: InfoDataService) extends Controller {
 
   def addInfoPage() = Action { implicit request =>
     Ok(views.html.admin.addInfo(InfoForm.form))
@@ -33,7 +34,7 @@ class AdminController extends Controller {
         val newInfo = InfoData(0, data.title, url = data.url,
           cid = data.cid, updateDate = data.updateDate)
         println(newInfo)
-        InfoDataService.addInfo(newInfo) map { res =>
+        infoDataService.addInfo(newInfo) map { res =>
           Redirect(routes.AdminController.addInfoPage())
         }
       })
