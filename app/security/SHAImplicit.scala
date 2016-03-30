@@ -21,7 +21,7 @@ object SHAImplicit {
     */
   implicit class SHAUtils(str: String) {
 
-    import utils.StringUtilImplicit.ByteToString
+    import utils.StringUtils.ByteToString
 
     private val SHA1 = "SHA-1"
     private val SHA256 = "SHA-256"
@@ -65,7 +65,7 @@ object SHAImplicit {
       * @return encrypted string
       */
     //TODO:TO BE ACCOMPLISHED
-    def sha256(salt: String) = ???
+    private def sha256(salt: String) = ???
 
   }
 

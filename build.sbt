@@ -1,6 +1,6 @@
 name := """samsara-aquarius"""
 
-version := "0.1.26"
+version := "0.1.28"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
@@ -15,8 +15,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" % "play-slick_2.11" % "2.0.0",
   "mysql" % "mysql-connector-java" % "5.1.38",
   "com.typesafe.slick" %% "slick-codegen" % "3.1.1"
-  //"com.typesafe.play" %% "play-slick-evolutions" % "1.1.1",
-  //"org.postgresql" % "postgresql" % "9.4.1207.jre7"
 
 )
 

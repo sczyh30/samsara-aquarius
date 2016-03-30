@@ -1,11 +1,10 @@
 package service
 
-import javax.inject.Inject
+import javax.inject.{Singleton, Inject}
 
 import entity.User
 import mapper.Tables.UserTable
 
-import play.api.Play
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import slick.driver.JdbcProfile
 
@@ -18,6 +17,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   *
   * @author sczyh30
   */
+@Singleton
 class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
 
   import driver.api._
@@ -26,6 +26,7 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 
   /**
     * Add a user to database
+ *
     * @param user a user entity
     * @return the async status
     */
