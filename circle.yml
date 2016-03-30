@@ -1,0 +1,20 @@
+machine:
+
+  timezone:
+    Asia/Shanghai
+
+  java:
+    version:
+      oraclejdk8
+
+  services:
+    - mysql
+    - redis
+
+dependencies:
+  pre:
+    - wget -q https://dl.bintray.com/sbt/debian/sbt-0.13.11.deb
+    - sudo dpkg -i sbt-0.13.11.deb
+  cache_directories:
+    - "~/.ivy2"
+    - "~/.sbt"
