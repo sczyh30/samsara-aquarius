@@ -1,12 +1,10 @@
 package controllers
 
-import java.sql.Date
 import javax.inject.{Singleton, Inject}
 
-import entity.User
 import entity.form.RegisterForm
-import security.SHAImplicit.SHAUtils
 import service.UserService
+import utils.FormConverter.registerConvert
 
 import play.api.mvc._
 
@@ -40,10 +38,7 @@ class RegisterController @Inject() (userService: UserService) extends Controller
         Future.successful(Ok(views.html.register(errorForm)))
       },
       data => {
-        val newUser = User(uid = 0, username = data.username, password = data.password.sha256(),
-          joinDate = new Date(System.currentTimeMillis()), email = data.email)
-        println(newUser)
-        userService.add(newUser) map { res =>
+        userService.add(data) map { res =>
           Redirect(routes.Application.index())
         }
       })

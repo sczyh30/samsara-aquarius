@@ -3,14 +3,18 @@ package service
 import javax.inject.{Singleton, Inject}
 
 import entity.User
+import entity.form.LoginFormData
 import mapper.Tables.UserTable
-import play.api.Logger
+import security.Encryptor.ImplicitEc
 
+import play.api.Logger
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import slick.driver.JdbcProfile
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success, Try}
+import scala.async.Async._
 
 /**
   * Samsara Aquarius
@@ -19,16 +23,35 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * @author sczyh30
   */
 @Singleton
-class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
-
-  private val logger = org.slf4j.LoggerFactory.getLogger(this.getClass)
+class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+  extends HasDatabaseConfigProvider[JdbcProfile] {
 
   import driver.api._
 
   private val Users = TableQuery[UserTable]
 
   private val queryByUid = Compiled(
-    (uid: Rep[Int]) => Users.filter(_.uid === uid))
+    (uid: Rep[Int]) =>
+      Users.filter(_.uid === uid))
+
+  private val queryByName = Compiled(
+    (username: Rep[String]) =>
+      Users.filter(_.username === username))
+
+  private val queryLogin = Compiled {
+    (username: Rep[String], password: Rep[String]) =>
+      Users.filter(_.username === username)
+        .map(_.password === password)
+  }
+
+  def login(form: LoginFormData): Future[Try[User]] = { // needn't judge if the user exists
+    db.run(queryLogin(form.username, form.password.encrypt()).result.head) flatMap {
+      r => if(r)
+        db.run(queryByName(form.username).result.head) map (u => Success(u))
+       else
+        Future(Failure(new Exception("Login Failure"))) //TODO: log the inner logic
+    }
+  }
 
   /**
     * Add a user to database
@@ -38,10 +61,11 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     */
   def add(user: User): Future[String] = {
     db.run(Users += user) map { res =>
+      Logger.debug("user_reg:" + user)
       "user_add_success"
     } recover {
       case ex: Exception =>
-        logger.info(ex.getCause.getMessage)
+        Logger.info(ex.getCause.getMessage)
         "user_add_fail"
     }
   }

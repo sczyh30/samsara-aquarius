@@ -5,6 +5,8 @@
 GET     /                           controllers.Application.index
 
 # Login
+GET     /login.now                  controllers.LoginController.index
+POST    /login                      controllers.LoginController.login
 
 # Reigster
 GET     /register.now               controllers.RegisterController.index

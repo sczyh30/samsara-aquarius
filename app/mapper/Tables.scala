@@ -30,22 +30,22 @@ trait Tables {
     /** Database column uid SqlType(INT), AutoInc, PrimaryKey */
     val uid: Rep[Int] = column[Int]("uid", O.AutoInc, O.PrimaryKey)
     /** Database column username SqlType(VARCHAR) */
-    val username: Rep[String] = column[String]("username", O.Length(20, varying=true))
+    val username: Rep[String] = column[String]("username", O.Length(20, varying = true))
     /** Database column password SqlType(VARCHAR) */
-    val password: Rep[String] = column[String]("password", O.Length(90, varying=true))
+    val password: Rep[String] = column[String]("password", O.Length(90, varying = true))
     /** Database column join_date SqlType(DATE) */
     val joinDate: Rep[java.sql.Date] = column[java.sql.Date]("join_date")
     /** Database column avatar SqlType(VARCHAR) */
-    val avatar: Rep[Option[String]] = column[Option[String]]("avatar", O.Length(65, varying=true), O.Default(Some("default")))
+    val avatar: Rep[Option[String]] = column[Option[String]]("avatar", O.Length(65, varying = true), O.Default(Some("default")))
     /** Database column tips SqlType(VARCHAR) */
-    val tips: Rep[Option[String]] = column[Option[String]]("tips", O.Length(100, varying=true), O.Default(Some("None~")))
+    val tips: Rep[Option[String]] = column[Option[String]]("tips", O.Length(100, varying = true), O.Default(Some("None~")))
     /** Database column website SqlType(VARCHAR) */
-    val website: Rep[Option[String]] = column[Option[String]]("website", O.Length(65,varying=true), O.Default(Some("")))
+    val website: Rep[Option[String]] = column[Option[String]]("website", O.Length(65, varying = true), O.Default(Some("")))
     /** Database column email SqlType(VARCHAR) */
-    val email: Rep[String] = column[String]("email", O.Length(60, varying=true))
+    val email: Rep[String] = column[String]("email", O.Length(60, varying = true))
 
     /** Uniqueness Index over (username) */
-    val index1 = index("username_UNIQUE", username, unique=true)
+    val index1 = index("username_UNIQUE", username, unique = true)
   }
 
   /**
@@ -113,6 +113,24 @@ trait Tables {
 
   }
 
+  /**
+    * Category Table
+    *
+    * @param tag Tag
+    */
+  class CategoryTable(tag: Tag) extends Table[Category](tag, "category") {
+
+    override def * = (cid, name) <> (entity.Category.tupled, entity.Category.unapply)
+
+    /** Database column cid SqlType(INT), PrimaryKey */
+    val cid: Rep[Int] = column[Int]("cid", O.AutoInc, O.PrimaryKey)
+    /** Database column name SqlType(VARCHAR) */
+    val name: Rep[String] = column[String]("name", O.Length(45, varying = true))
+
+    /** Unique Index over (name) (database name name_UNIQUE) */
+    val index1 = index("name_UNIQUE", name, unique = true)
+  }
+
   /** Collection-like TableQuery object for table User */
   lazy val User = new TableQuery(tag => new UserTable(tag))
 
@@ -124,6 +142,9 @@ trait Tables {
 
   /** Collection-like TableQuery object for table Adm1n */
   lazy val Admin = new TableQuery(tag => new AdminTable(tag))
+
+  /** Collection-like TableQuery object for table Category */
+  lazy val Category = new TableQuery(tag => new CategoryTable(tag))
 
   /** DDL for all tables */
   lazy val schema: profile.SchemaDescription = User.schema ++ InfoData.schema ++ Comment.schema ++ Admin.schema

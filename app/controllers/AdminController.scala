@@ -1,12 +1,13 @@
 package controllers
 
-import java.sql.Date
 import javax.inject.{Singleton, Inject}
 
-import entity.InfoData
 import entity.form.InfoForm
-import play.api.mvc._
 import service.InfoDataService
+import utils.FormConverter.infoConvert
+
+import play.api.mvc._
+
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -34,10 +35,7 @@ class AdminController @Inject() (infoDataService: InfoDataService) extends Contr
         Future.successful(Ok(views.html.admin.addInfo(errorForm)))
       },
       data => {
-        val newInfo = InfoData(0, data.title, url = data.url,
-          cid = data.cid, updateDate = data.updateDate)
-        println(newInfo)
-        infoDataService.addInfo(newInfo) map { res =>
+        infoDataService.addInfo(data) map { res =>
           Redirect(routes.AdminController.addInfoPage())
         }
       })
