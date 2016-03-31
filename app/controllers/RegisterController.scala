@@ -1,7 +1,7 @@
 package controllers
 
 import java.sql.Date
-import javax.inject.Inject
+import javax.inject.{Singleton, Inject}
 
 import entity.User
 import entity.form.RegisterForm
@@ -19,6 +19,7 @@ import scala.concurrent.Future
   *
   * @author sczyh30
   */
+@Singleton
 class RegisterController @Inject() (userService: UserService) extends Controller{
 
   /**

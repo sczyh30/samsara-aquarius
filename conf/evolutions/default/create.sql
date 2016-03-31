@@ -16,12 +16,8 @@ CREATE TABLE comment
   uid INT(11) NOT NULL,
   data_id INT(11) NOT NULL,
   text VARCHAR(150) NOT NULL,
-  time DATETIME NOT NULL,
-  CONSTRAINT fk_cm_dataid FOREIGN KEY (data_id) REFERENCES info_data (id),
-  CONSTRAINT fk_cm_uid FOREIGN KEY (uid) REFERENCES user (uid)
+  time DATETIME NOT NULL
 );
-CREATE INDEX fk_cm_dataid_idx ON comment (data_id);
-CREATE INDEX fk_cm_uid_idx ON comment (uid);
 
 CREATE TABLE info_data
 (
@@ -40,6 +36,7 @@ CREATE TABLE user
   join_date DATE NOT NULL,
   avatar VARCHAR(65) DEFAULT 'default',
   tips VARCHAR(100) DEFAULT 'None~',
-  website VARCHAR(65) NOT NULL
+  website VARCHAR(65) DEFAULT '',
+  email VARCHAR(60) NOT NULL
 );
 CREATE UNIQUE INDEX username_UNIQUE ON user (username);

@@ -1,6 +1,6 @@
 package service
 
-import javax.inject.Inject
+import javax.inject.{Singleton, Inject}
 
 import entity.InfoData
 import mapper.Tables.InfoDataTable
@@ -16,30 +16,35 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Info Data Service
   * @author sczyh30
   */
+@Singleton
 class InfoDataService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
 
   import driver.api._
 
-  val infoAll = TableQuery[InfoDataTable]
+  val InfoAll = TableQuery[InfoDataTable]
 
   def addInfo(info: InfoData): Future[String] = {
-    db.run(infoAll += info) map { res =>
+    db.run(InfoAll += info) map { res =>
       "info_data_add_success"
     } recover {
       case ex: Exception => ex.getCause.getMessage
     }
   }
 
-  def getInfo(id: Int): Future[Option[InfoData]] = {
-    db.run(infoAll.filter(_.id === id).result.headOption)
+  def fetch(id: Int): Future[Option[InfoData]] = {
+    db.run(InfoAll.filter(_.id === id).result.headOption)
   }
 
-  def getAll: Future[Seq[InfoData]] = {
-    db.run(infoAll.result)
+  def fetchAll: Future[Seq[InfoData]] = {
+    db.run(InfoAll.result)
+  }
+
+  def update(info: InfoData): Future[Int] = {
+    db.run(InfoAll.filter(_.id === info.id).update(info))
   }
 
   def remove(id: Int): Future[Int] = {
-    db.run(infoAll.filter(_.id === id).delete)
+    db.run(InfoAll.filter(_.id === id).delete)
   }
 
 }

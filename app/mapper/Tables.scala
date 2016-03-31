@@ -9,6 +9,7 @@ object Tables extends {
   * Tables Common Trait
   */
 trait Tables {
+
   val profile: slick.driver.JdbcProfile
 
   import entity._
@@ -66,11 +67,6 @@ trait Tables {
     val text: Rep[String] = column[String]("text", O.Length(150,varying=true))
     /** Database column time SqlType(DATETIME) */
     val time: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("time")
-
-    /** Foreign key referencing InfoData (database name fk_cm_dataid) */
-    lazy val infoDataFk = foreignKey("fk_cm_dataid", dataId, InfoData)(r => r.id, onUpdate = ForeignKeyAction.Cascade, onDelete=ForeignKeyAction.NoAction)
-    /** Foreign key referencing User (database name fk_cm_uid) */
-    lazy val userFk = foreignKey("fk_cm_uid", uid, User)(r => r.uid, onUpdate = ForeignKeyAction.Cascade, onDelete=ForeignKeyAction.NoAction)
   }
 
   /**
