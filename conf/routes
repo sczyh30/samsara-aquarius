@@ -12,6 +12,9 @@ POST    /login                      controllers.LoginController.login
 GET     /register.now               controllers.RegisterController.index
 POST    /register                   controllers.RegisterController.register
 
+# Comment
+#GET     /:id/comments               controllers.CommentController.list(id)
+
 # Admin Route
 GET     /adm1n6q9/add-info          controllers.AdminController.addInfoPage
 POST    /adm1n6q9/add-info          controllers.AdminController.addInfoProcess

@@ -50,7 +50,7 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     * @param form the login form data
     * @return the login result
     */
-  def login(form: LoginFormData): Future[Try[User]] = { // needn't judge if the user exists
+  def login(form: LoginFormData): Future[Try[User]] = {
     db.run(queryLogin(form.username, form.password.encrypt()).result.head) map (r => Success(r)) recover {
       case ex: Exception => Failure(ex)
     } flatMap {

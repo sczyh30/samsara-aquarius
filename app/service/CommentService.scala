@@ -48,11 +48,11 @@ class CommentService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   }
 
   def fetchByArticle(data_id: Int) = {
-    db.run(getByArticleCompiled(data_id).result.headOption)
+    db.run(getByArticleCompiled(data_id).result)
   }
 
   def fetchByUser(uid: Int) = {
-    db.run(getByUidCompiled(uid).result.headOption)
+    db.run(getByUidCompiled(uid).result)
   }
 
   def fetchCertain(data_id: Int, uid: Int) = {

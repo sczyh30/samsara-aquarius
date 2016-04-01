@@ -3,7 +3,7 @@ package controllers
 import javax.inject.{Singleton, Inject}
 
 import entity.form.InfoForm
-import service.InfoDataService
+import service.ArticleService
 import utils.FormConverter.infoConvert
 
 import play.api.mvc._
@@ -19,7 +19,7 @@ import scala.concurrent.Future
   * @author sczyh30
   */
 @Singleton
-class AdminController @Inject() (infoDataService: InfoDataService) extends Controller {
+class AdminController @Inject() (infoDataService: ArticleService) extends Controller {
 
   def addInfoPage() = Action { implicit request =>
     Ok(views.html.admin.addInfo(InfoForm.form))

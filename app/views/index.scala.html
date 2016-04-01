@@ -1,5 +1,5 @@
 @import entity.Article
-@(infoList: Seq[Article])
+@(data: Seq[(Article, String)])
 
 @main("Samsara Aquarius - 关注最实用，最前沿的技术", null) {
 
@@ -15,12 +15,12 @@
             </tr>
         </thead>
         <tbody>
-            @for(info <- infoList) {
+            @for((info, category) <- data) {
                 <tr>
                     <td><a href="@info.url">@info.title</a></td>
                     <td>Author</td>
                     <td>@info.updateDate</td>
-                    <td>@info.cid</td>
+                    <td>@category</td>
                     <td><a href="/@info.id/comments">88</a> </td>
                 </tr>
             }
