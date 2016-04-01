@@ -1,5 +1,6 @@
 package service
 
+import java.util.NoSuchElementException
 import javax.inject.{Singleton, Inject}
 
 import entity.User
@@ -9,6 +10,7 @@ import security.Encryptor.ImplicitEc
 
 import play.api.Logger
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
+import service.exception.ValidateWrong
 import slick.driver.JdbcProfile
 
 import scala.concurrent.Future
@@ -23,8 +25,7 @@ import scala.async.Async._
   * @author sczyh30
   */
 @Singleton
-class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
-  extends HasDatabaseConfigProvider[JdbcProfile] {
+class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
 
   import driver.api._
 
@@ -44,12 +45,21 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
         .map(_.password === password)
   }
 
+  /**
+    * Process the login
+    * @param form the login form data
+    * @return the login result
+    */
   def login(form: LoginFormData): Future[Try[User]] = { // needn't judge if the user exists
-    db.run(queryLogin(form.username, form.password.encrypt()).result.head) flatMap {
-      r => if(r)
-        db.run(queryByName(form.username).result.head) map (u => Success(u))
-       else
-        Future(Failure(new Exception("Login Failure"))) //TODO: log the inner logic
+    db.run(queryLogin(form.username, form.password.encrypt()).result.head) map (r => Success(r)) recover {
+      case ex: Exception => Failure(ex)
+    } flatMap {
+      case Success(res) =>
+        if(res)
+          db.run(queryByName(form.username).result.head) map (u => Success(u))
+        else
+          Future(Failure(new ValidateWrong("Login Validate Wrong")))
+      case e@Failure(ex) => Future(Failure(ex))
     }
   }
 

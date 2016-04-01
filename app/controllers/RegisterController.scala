@@ -18,7 +18,7 @@ import scala.concurrent.Future
   * @author sczyh30
   */
 @Singleton
-class RegisterController @Inject() (userService: UserService) extends Controller{
+class RegisterController @Inject() (userService: UserService) extends Controller {
 
   /**
     * Register Index Page Route

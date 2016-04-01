@@ -35,7 +35,7 @@ class LoginController @Inject() (service: UserService) extends Controller {
             println("Login OK:" + data)
             Redirect(routes.Application.index()) //TODO: add login state
           case Failure(ex) =>
-            println("Login Fail:" + data)
+            println("Login Fail:" + ex.getMessage)
             Redirect(routes.LoginController.index()) //TODO: add text
         }
       })
