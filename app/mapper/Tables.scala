@@ -70,13 +70,13 @@ trait Tables {
   }
 
   /**
-    * Info Data Table
+    * Article Table
     *
     * @param tag Tag
     */
-  class InfoDataTable(tag: Tag) extends Table[InfoData](tag, "info_data") {
+  class ArticleTable(tag: Tag) extends Table[Article](tag, "info_data") {
 
-    override def * = (id, title, url, cid, updateDate) <> (entity.InfoData.tupled, entity.InfoData.unapply)
+    override def * = (id, title, url, cid, updateDate) <> (entity.Article.tupled, entity.Article.unapply)
 
     /** Database column id SqlType(INT), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -135,7 +135,7 @@ trait Tables {
   lazy val User = new TableQuery(tag => new UserTable(tag))
 
   /** Collection-like TableQuery object for table InfoData */
-  lazy val InfoData = new TableQuery(tag => new InfoDataTable(tag))
+  lazy val InfoData = new TableQuery(tag => new ArticleTable(tag))
 
   /** Collection-like TableQuery object for table Comment */
   lazy val Comment = new TableQuery(tag => new CommentTable(tag))

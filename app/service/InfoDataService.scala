@@ -2,8 +2,8 @@ package service
 
 import javax.inject.{Singleton, Inject}
 
-import entity.InfoData
-import mapper.Tables.InfoDataTable
+import entity.Article
+import mapper.Tables.ArticleTable
 
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import slick.driver.JdbcProfile
@@ -14,6 +14,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Samsara Aquarius
   * Info Data Service
+  *
   * @author sczyh30
   */
 @Singleton
@@ -21,9 +22,9 @@ class InfoDataService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   import driver.api._
 
-  val InfoAll = TableQuery[InfoDataTable]
+  val InfoAll = TableQuery[ArticleTable]
 
-  def addInfo(info: InfoData): Future[String] = {
+  def addInfo(info: Article): Future[String] = {
     db.run(InfoAll += info) map { res =>
       "info_data_add_success"
     } recover {
@@ -31,15 +32,15 @@ class InfoDataService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
     }
   }
 
-  def fetch(id: Int): Future[Option[InfoData]] = {
+  def fetch(id: Int): Future[Option[Article]] = {
     db.run(InfoAll.filter(_.id === id).result.headOption)
   }
 
-  def fetchAll: Future[Seq[InfoData]] = {
+  def fetchAll: Future[Seq[Article]] = {
     db.run(InfoAll.result)
   }
 
-  def update(info: InfoData): Future[Int] = {
+  def update(info: Article): Future[Int] = {
     db.run(InfoAll.filter(_.id === info.id).update(info))
   }
 

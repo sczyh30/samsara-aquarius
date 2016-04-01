@@ -22,13 +22,13 @@ class CategoryService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   import driver.api._
 
-  val Category = TableQuery[CategoryTable]
+  val categories = TableQuery[CategoryTable]
 
   private val queryByCid = Compiled(
-    (cid: Rep[Int]) => Category.filter(_.cid === cid))
+    (cid: Rep[Int]) => categories.filter(_.cid === cid))
 
   def add(c: Category): Future[Int] = {
-    db.run(Category += c) recover {
+    db.run(categories += c) recover {
       case ex: Exception => -1
     }
   }
@@ -38,7 +38,7 @@ class CategoryService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
   }
 
   def fetchAll: Future[Seq[Category]] = {
-    db.run(Category.result)
+    db.run(categories.result)
   }
 
   def update(c: Category): Future[Int] = {

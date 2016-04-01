@@ -2,7 +2,7 @@ package entity
 
 /**
   * Samsara Aquarius
-  * Info Data row case class
+  * Article row case class
   *
   * @param id info id
   * @param title info title
@@ -10,6 +10,6 @@ package entity
   * @param cid info category
   * @param updateDate info update date
   */
-case class InfoData(id: Int, title: String = "No Title!",
-                    url: String, cid: Int, updateDate: java.sql.Date)
+case class Article(id: Int, title: String = "No Title!",
+                   url: String, cid: Int, updateDate: java.sql.Date)
 

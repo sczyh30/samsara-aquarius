@@ -29,19 +29,19 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 
   import driver.api._
 
-  private val Users = TableQuery[UserTable]
+  private val users = TableQuery[UserTable]
 
   private val queryByUid = Compiled(
     (uid: Rep[Int]) =>
-      Users.filter(_.uid === uid))
+      users.filter(_.uid === uid))
 
   private val queryByName = Compiled(
     (username: Rep[String]) =>
-      Users.filter(_.username === username))
+      users.filter(_.username === username))
 
   private val queryLogin = Compiled {
     (username: Rep[String], password: Rep[String]) =>
-      Users.filter(_.username === username)
+      users.filter(_.username === username)
         .map(_.password === password)
   }
 
@@ -70,7 +70,7 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     * @return the async status
     */
   def add(user: User): Future[String] = {
-    db.run(Users += user) map { res =>
+    db.run(users += user) map { res =>
       Logger.debug("user_reg:" + user)
       "user_add_success"
     } recover {
@@ -81,15 +81,15 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
   }
 
   def fetchAll: Future[Seq[User]] = {
-    db.run(Users.result)
+    db.run(users.result)
   }
 
   def fetch(uid: Int): Future[Option[User]] = {
-    db.run(Users.filter(_.uid === uid).result.headOption)
+    db.run(users.filter(_.uid === uid).result.headOption)
   }
 
   def update(user: User): Future[Int] = {
-    db.run(Users.filter(_.uid === user.uid).update(user))
+    db.run(users.filter(_.uid === user.uid).update(user))
   }
 
   /**
@@ -100,6 +100,6 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     * @return the async status
     */
   def remove(uid: Int): Future[Int] = {
-    db.run(Users.filter(_.uid === uid).delete)
+    db.run(users.filter(_.uid === uid).delete)
   }
 }

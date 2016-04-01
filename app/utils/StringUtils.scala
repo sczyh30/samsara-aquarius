@@ -1,5 +1,7 @@
 package utils
 
+import org.apache.commons.lang3.StringEscapeUtils
+
 /**
   * Samsara Aquarius Utils
   * String Utils Object
@@ -33,5 +35,10 @@ object StringUtils {
         hexString.toString.toUpperCase
       case None => ""
     }
+  }
+
+  implicit class StringImplicit(str: String) {
+
+    def escapeHtml() = StringEscapeUtils.escapeHtml4(str)
   }
 }
