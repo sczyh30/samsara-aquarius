@@ -43,27 +43,26 @@ class CommentService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     db.run(comments += comment.safe)
   }
 
-  def fetch(cid: Int) = {
+  def fetch(cid: Int): Future[Option[Comment]] = {
     db.run(getByCidCompiled(cid).result.headOption)
   }
 
-  def fetchByArticle(data_id: Int) = {
+  def fetchByArticle(data_id: Int): Future[Seq[Comment]] = {
     db.run(getByArticleCompiled(data_id).result)
   }
 
-  def fetchByUser(uid: Int) = {
+  def fetchByUser(uid: Int): Future[Seq[Comment]] = {
     db.run(getByUidCompiled(uid).result)
   }
 
-  def fetchCertain(data_id: Int, uid: Int) = {
+  def fetchCertain(data_id: Int, uid: Int): Future[Option[Comment]] = {
     db.run(getCertainCompiled(data_id, uid).result.headOption)
     //db.run(getByUidCompiled(uid).result.andThen(
     //  getByArticleCompiled(data_id).result.headOption))
   }
 
-  def fetchAll = {
+  def fetchAll =
     db.run(comments.result)
-  }
 
   def update(comment: Comment): Future[Int] = {
     db.run(getByCidCompiled(comment.cid).update(comment.safe))

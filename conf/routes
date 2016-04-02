@@ -13,11 +13,25 @@ GET     /register.now               controllers.RegisterController.index
 POST    /register                   controllers.RegisterController.register
 
 # Comment
-#GET     /:id/comments               controllers.CommentController.list(id)
+GET     /:id/comments               controllers.CommentController.list(id: Int)
 
 # Admin Route
 GET     /adm1n6q9/add-info          controllers.AdminController.addInfoPage
 POST    /adm1n6q9/add-info          controllers.AdminController.addInfoProcess
+
+## Samsara Aquarius
+## RESTful API Route
+# API Version
+GET     /api/v                      controllers.api.ApiVersionController.version
+
+# Article API
+#GET     /api/p/:id                 controllers.api.ApiArticleController.fetch(id: Int)
+
+# Comment API
+#GET     /api/:aid/comment          controllers.api.ApiCommentController.fetchByArticle(aid: Int)
+
+# User API
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

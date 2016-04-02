@@ -19,7 +19,7 @@ import scala.concurrent.Future
   * @author sczyh30
   */
 @Singleton
-class AdminController @Inject() (infoDataService: ArticleService) extends Controller {
+class AdminController @Inject() (articleService: ArticleService) extends Controller {
 
   def addInfoPage() = Action { implicit request =>
     Ok(views.html.admin.addInfo(InfoForm.form))
@@ -35,7 +35,7 @@ class AdminController @Inject() (infoDataService: ArticleService) extends Contro
         Future.successful(Ok(views.html.admin.addInfo(errorForm)))
       },
       data => {
-        infoDataService.addInfo(data) map { res =>
+        articleService.addInfo(data) map { res =>
           Redirect(routes.AdminController.addInfoPage())
         }
       })

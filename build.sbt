@@ -16,7 +16,8 @@ libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "5.1.38",
   "com.typesafe.slick" %% "slick-codegen" % "3.1.1",
   "org.scala-lang.modules" % "scala-async_2.11" % "0.9.5",
-  "org.apache.commons" % "commons-lang3" % "3.4"
+  "org.apache.commons" % "commons-lang3" % "3.4",
+  "com.chuusai" % "shapeless_2.11" % "2.3.0"
 )
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"

@@ -85,11 +85,11 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
   }
 
   def fetch(uid: Int): Future[Option[User]] = {
-    db.run(users.filter(_.uid === uid).result.headOption)
+    db.run(queryByUid(uid).result.headOption)
   }
 
   def update(user: User): Future[Int] = {
-    db.run(users.filter(_.uid === user.uid).update(user))
+    db.run(queryByUid(user.uid).update(user))
   }
 
   /**
@@ -100,6 +100,6 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     * @return the async status
     */
   def remove(uid: Int): Future[Int] = {
-    db.run(users.filter(_.uid === uid).delete)
+    db.run(queryByUid(uid).delete)
   }
 }

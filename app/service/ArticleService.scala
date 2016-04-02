@@ -51,6 +51,15 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     db.run(withCategoryCompiled(id).result.headOption)
   }
 
+  def fetchByCategory(cid: Int): Future[Seq[(Article, String)]] = {
+    db.run {
+      (for {
+        a <- articles if a.cid === cid
+        c <- categories if c.cid === a.cid
+      } yield (a, c.name)).result
+    }
+  }
+
   def fetchAll: Future[Seq[(Article, String)]] = {
     db.run(withCategoryAll.result)
   }

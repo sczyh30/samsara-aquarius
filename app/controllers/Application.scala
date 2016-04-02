@@ -9,10 +9,10 @@ import play.api.mvc._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class Application @Inject() (infoDataService: ArticleService) extends Controller {
+class Application @Inject() (articleService: ArticleService) extends Controller {
 
   def index = Action.async { implicit request =>
-    infoDataService.fetchAll map { data =>
+    articleService.fetchAll map { data =>
       Ok(views.html.index(data))
     }
 
