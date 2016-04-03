@@ -1,38 +1,53 @@
 # Routes
 # Higher priority routes first
 
-# Home page
-GET     /                           controllers.Application.index
+## Samsara Aquarius
+## Application
+GET         /                         controllers.Application.index
+GET         /share                    controllers.Application.share
+POST        /share                    controllers.Application.publishShare
+GET         /about                    controllers.Application.about
+
+# Captcha
+GET         /geetest.new              controllers.CaptchaController.init
 
 # Login and logout
-GET     /login.now                  controllers.UserController.index
-POST    /login                      controllers.UserController.login
-GET     /logout                     controllers.UserController.logout
+GET         /login.now                controllers.UserController.loginIndex
+POST        /login                    controllers.UserController.login
+GET         /logout                   controllers.UserController.logout
 
 # Reigster
-GET     /register.now               controllers.RegisterController.index
-POST    /register                   controllers.RegisterController.register
+GET         /register.now             controllers.RegisterController.index
+POST        /register                 controllers.RegisterController.register
+
+# Category
+GET         /category                 controllers.CategoryController.index
+GET         /category/:name           controllers.CategoryController.certain(name)
 
 # Comment
-GET     /:id/comments               controllers.CommentController.list(id: Int)
+GET         /:id/comments             controllers.CommentController.list(id: Int)
+POST        /:id/comments             controllers.CommentController.publish(id: Int)
 
 # Admin Route
-GET     /adm1n6q9/add-info          controllers.AdminController.addInfoPage
-POST    /adm1n6q9/add-info          controllers.AdminController.addInfoProcess
+GET         /adm1n6q9/add-info        controllers.AdminController.addInfoPage
+POST        /adm1n6q9/add-info        controllers.AdminController.addInfoProcess
 
 ## Samsara Aquarius
 ## RESTful API Route
 # API Version
-GET     /api/v                      controllers.api.ApiVersionController.version
+GET         /api/v                    controllers.api.ApiVersionController.version
 
 # Article API
-GET     /api/p/:id                  controllers.api.ApiArticleController.fetch(id: Int)
+GET         /api/p/:id                controllers.api.ApiArticleController.fetch(id: Int)
 
 # Comment API
 #GET     /api/:aid/comment          controllers.api.ApiCommentController.fetchByArticle(aid: Int)
 
 # User API
 
+# Category API
+GET         /api/categories           controllers.api.ApiCategoryController.fetchAll
+
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file             controllers.Assets.versioned(path="/public", file: Asset)

@@ -24,7 +24,7 @@ class CategoryService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   val categories = TableQuery[CategoryTable]
 
-  private val queryByCid = Compiled(
+  protected val queryByCid = Compiled(
     (cid: Rep[Int]) => categories.filter(_.cid === cid))
 
   def add(c: Category): Future[Int] = {

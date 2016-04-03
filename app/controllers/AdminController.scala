@@ -23,7 +23,7 @@ class AdminController @Inject() (articleService: ArticleService, categoryService
 
   def addInfoPage() = Action.async { implicit request =>
     categoryService.fetchAll map { categories =>
-      Ok(views.html.admin.addInfo(InfoForm.form, categories))
+      Ok(views.html.admin.articles.addInfo(InfoForm.form, categories))
     }
   }
 
@@ -35,7 +35,7 @@ class AdminController @Inject() (articleService: ArticleService, categoryService
     InfoForm.form.bindFromRequest.fold(
       errorForm => {
         println(errorForm)
-        Future.successful(BadRequest(views.html.admin.addInfo(errorForm, Seq())))
+        Future.successful(BadRequest(views.html.admin.articles.addInfo(errorForm, Seq())))
       },
       data => {
         articleService.addInfo(data) map { res =>

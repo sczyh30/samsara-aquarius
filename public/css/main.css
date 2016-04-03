@@ -7,3 +7,7 @@ body {
 .text-center {
     text-align: center;
 }
+
+.good_font {
+    font-family: '文泉驿微米黑', '微软雅黑', 'PingFang SC', 'LiHei Pro', Arial, sans-serif;
+}

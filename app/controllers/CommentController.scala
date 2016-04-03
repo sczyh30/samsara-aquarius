@@ -23,4 +23,6 @@ class CommentController @Inject() (service: CommentService) extends Controller {
     }
   }
 
+  def publish(aid: Int) = TODO
+
 }

@@ -1,8 +1,10 @@
 package controllers
 
+import java.util.UUID
 import javax.inject.{Singleton, Inject}
 
 import base.Constants.USER_CACHE_KEY
+import entity.{UserToken, User}
 import entity.form.LoginForm
 import service.UserService
 
@@ -25,8 +27,16 @@ import scala.util.{Failure, Success}
 @Singleton
 class UserController @Inject() (@NamedCache("user-cache") userCache: CacheApi, service: UserService) extends Controller {
 
-  def index = Action { implicit request =>
-    Ok(views.html.login(LoginForm.form))
+  implicit class TokenConverter(user: User) {
+    def toToken: UserToken =
+      UserToken(user.uid, user.username, UUID.randomUUID().toString)
+  }
+
+  def loginIndex = Action { implicit request =>
+    userCache.get[UserToken](USER_CACHE_KEY) match {
+      case Some(user) => Redirect(routes.Application.index())
+      case None => Ok(views.html.login(LoginForm.form))
+    }
   }
 
   def login() = Action.async { implicit request =>
@@ -36,12 +46,12 @@ class UserController @Inject() (@NamedCache("user-cache") userCache: CacheApi, s
       }, data => {
         service.login(data) map {
           case Success(user) =>
-            println("Login OK:" + user)
-            userCache.set(USER_CACHE_KEY, user, 30 minutes)
+            Logger.debug("Login OK:" + user)
+            userCache.set(USER_CACHE_KEY, user.toToken, 30 minutes)
             Redirect(routes.Application.index())
           case Failure(ex) =>
-            println("Login Fail:" + ex.getMessage)
-            Redirect(routes.UserController.index()) //TODO: add text
+            Logger.debug("Login Fail:" + ex.getMessage)
+            Redirect(routes.UserController.loginIndex()) //TODO: add text
         }
       })
   }

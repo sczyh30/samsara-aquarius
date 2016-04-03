@@ -36,7 +36,7 @@ class RegisterController @Inject() (@NamedCache("user-cache") userCache: CacheAp
     */
   def register() = Action.async { implicit request =>
     userCache.get(USER_CACHE_KEY) match {
-      case Some(x) => Future.successful(Redirect(routes.UserController.index())) // if has logined
+      case Some(x) => Future.successful(Redirect(routes.UserController.loginIndex())) // if has logined
       case None =>
         RegisterForm.form.bindFromRequest.fold(
           errorForm => {
@@ -44,7 +44,7 @@ class RegisterController @Inject() (@NamedCache("user-cache") userCache: CacheAp
           },
           data => {
             userService.add(data) map { res =>
-              Redirect(routes.UserController.index())
+              Redirect(routes.UserController.loginIndex())
             }
           })
     }

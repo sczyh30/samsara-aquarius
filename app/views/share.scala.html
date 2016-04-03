@@ -1,0 +1,27 @@
+@import entity.UserToken
+@(implicit user: UserToken)
+@main("好文分享 | Samsara Aquarius", user) {
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("css/main.css")">
+    <div class="good_font">
+        <div class="text-center">
+            <h2>好文分享</h2>
+        </div>
+        <form role="form" id="share-form" action='' method="post">
+            <div class="form-group">
+                <label for="title">标题</label>
+                <input type="text" class="form-control" id="title" name="title"
+                placeholder="请输入文章标题">
+            </div>
+            <div class="form-group">
+                <label for="url">网址</label>
+                <input type="text" class="form-control" id="url" name="url"
+                placeholder="请输入文章对应网址">
+            </div>
+                @captcha()
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">提交</button>
+                <button type="reset" class="btn btn-danger">清空</button>
+            </div>
+        </form>
+    </div>
+}
