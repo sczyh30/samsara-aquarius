@@ -1,8 +1,8 @@
 package controllers.api
 
-import entity.{Results, ArticleResponse, Article}
+import entity.Results
 import service.{SearchService, ArticleService}
-import RestConverter.{resultFormat, articleFormat}
+import RestConverter.{resultFormat, articleFormat, RestArticleConverter}
 
 import javax.inject.{Singleton, Inject}
 
@@ -20,15 +20,17 @@ import scala.language.implicitConversions
 @Singleton
 class ApiArticleController @Inject() (service: ArticleService, qs: SearchService) extends Controller {
 
-  implicit class fitResponse(t: (Article, String)) {
-    def fit = ArticleResponse(t._1, t._2)
-  }
-
   /*def latest = Action.async { implicit request =>
     service.fetchAll map { data =>
       Ok(Json.toJson(data))
     }
   }*/
+
+  def all = Action.async { implicit request =>
+    service.fetchAll map { data =>
+      Ok(Json.toJson(data.map(_.fit)))
+    }
+  }
 
   def fetch(aid: Int) = Action.async { implicit request =>
     service.fetch(aid) map {

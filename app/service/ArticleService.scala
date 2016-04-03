@@ -2,7 +2,7 @@ package service
 
 import javax.inject.{Singleton, Inject}
 
-import entity.{ArticleResponse, Article}
+import entity.{Category, Article}
 import mapper.Tables.{CategoryTable, ArticleTable}
 
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
@@ -31,14 +31,14 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
       for {
         a <- articles if a.id === dataId
         c <- categories if c.cid === a.cid
-      } yield (a, c.name)
+      } yield (a, c)
   }
 
   val withCategoryAll = //TODO: duplicate code
     for {
       a <- articles
       c <- categories if c.cid === a.cid
-    } yield (a, c.name)
+    } yield (a, c)
 
   def addInfo(info: Article): Future[String] = {
     db.run(articles += info) map { res =>
@@ -48,20 +48,20 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     }
   }
 
-  def fetch(id: Int): Future[Option[(Article, String)]] = {
+  def fetch(id: Int): Future[Option[(Article, Category)]] = {
     db.run(withCategoryCompiled(id).result.headOption)
   }
 
-  def fetchByCategory(cid: Int): Future[Seq[(Article, String)]] = {
+  def fetchByCategory(cid: Int): Future[Seq[(Article, Category)]] = {
     db.run {
       (for {
         a <- articles if a.cid === cid
         c <- categories if c.cid === a.cid
-      } yield (a, c.name)).result
+      } yield (a, c)).result
     }
   }
 
-  def fetchAll: Future[Seq[(Article, String)]] = {
+  def fetchAll: Future[Seq[(Article, Category)]] = {
     db.run(withCategoryAll.result)
   }
 

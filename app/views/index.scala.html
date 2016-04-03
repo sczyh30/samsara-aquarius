@@ -1,6 +1,6 @@
-@import entity.Article
+@import entity.{Article, Category}
 @import entity.UserToken
-@(data: Seq[(Article, String)], user: UserToken)
+@(data: Seq[(Article, Category)], user: UserToken)
 
     @main("Samsara Aquarius - 关注最实用，最前沿的技术", user) {
         <div class="row clearfix">
@@ -22,8 +22,8 @@
                             <td><a href="@info.url">@info.title</a></td>
                             <td>Author</td>
                             <td>@info.updateDate</td>
-                            <td>@category</td>
-                            <td><a href="/@info.id/comments">88</a> </td>
+                            <td>@category.name</td>
+                            <td><a href="/@info.id/comments">88</a></td>
                         </tr>
                     }
                     </tbody>
