@@ -3,19 +3,20 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import play.api.mvc.{Action, Controller}
-import utils.GeetestLib
+import utils.captcha.GeetestConfig
+import utils.captcha.GeetestLib
 
 /**
+  * Samsara Aquarius Route
   * Captcha Controller
+  *
+  * @author sczyh30
   */
 @Singleton
 class CaptchaController extends Controller {
 
-  val captcha_id = "sec"
-  val private_key = "sec"
-
   def init = Action { implicit request =>
-    val gtSdk = new GeetestLib(captcha_id, private_key)
+    val gtSdk = new GeetestLib(GeetestConfig.getCaptchaId, GeetestConfig.getPrivateKey)
     val status = gtSdk.preProcess()
     Ok(gtSdk.getResponseStr) withSession((gtSdk.gtServerStatusSessionKey, status.toString))
   }

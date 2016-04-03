@@ -1,6 +1,5 @@
-package utils;
+package utils.captcha;
 
-import java.awt.print.Printable;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
