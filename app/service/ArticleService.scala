@@ -2,7 +2,7 @@ package service
 
 import javax.inject.{Singleton, Inject}
 
-import entity.Article
+import entity.{ArticleResponse, Article}
 import mapper.Tables.{CategoryTable, ArticleTable}
 
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
@@ -10,6 +10,7 @@ import slick.driver.JdbcProfile
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.language.implicitConversions
 
 /**
   * Samsara Aquarius

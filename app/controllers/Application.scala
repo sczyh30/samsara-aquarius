@@ -6,7 +6,7 @@ import service.ArticleService
 
 import play.api.mvc._
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 @Singleton
 class Application @Inject() (articleService: ArticleService) extends Controller {

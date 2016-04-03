@@ -25,7 +25,7 @@ POST    /adm1n6q9/add-info          controllers.AdminController.addInfoProcess
 GET     /api/v                      controllers.api.ApiVersionController.version
 
 # Article API
-#GET     /api/p/:id                 controllers.api.ApiArticleController.fetch(id: Int)
+GET     /api/p/:id                  controllers.api.ApiArticleController.fetch(id: Int)
 
 # Comment API
 #GET     /api/:aid/comment          controllers.api.ApiCommentController.fetchByArticle(aid: Int)
