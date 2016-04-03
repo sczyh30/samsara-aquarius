@@ -1,6 +1,5 @@
-@import entity.Admin
-@(form: Form[entity.form.InfoFormData])(implicit request: RequestHeader)
-
+@import entity.{Admin, Category}
+@(form: Form[entity.form.InfoFormData], categories: Seq[Category])(implicit request: RequestHeader)
 @admin.main("添加新的文章 | Samsara Aquarius Admin",
     Admin(6, "admin6", null, Some(1), "a@b.com")) {
 
@@ -23,17 +22,20 @@
             </div>
             <div class="form-group">
                 <label for="cid">分类</label>
-                <input type="number" class="form-control" id="cid" name="cid"
-                placeholder="请输入文章分类">
+                <select id="cid" name="cid">
+                    @for(c <- categories) {
+                        <option value="@c.cid">@c.name</option>
+                    }
+                </select>
             </div>
             <div class="form-group">
                 <label for="updateDate">更新时间</label>
                 <input type="date" class="form-control" id="updateDate" name="updateDate"
-                placeholder="请输入更新时间">
+                placeholder="请选择文章更新时间">
             </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">添加文章</button>
-                <button type="reset" class="btn btn-danger">清空</button>
+                <button type="reset" class="btn btn-danger">清空信息</button>
             </div>
         </form>
     </div>

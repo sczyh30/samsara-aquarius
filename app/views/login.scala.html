@@ -6,7 +6,7 @@
             <img src="@routes.Assets.versioned("images/61c6258130a63b29b78806e97b1deb6c-biglogo.ico")" alt="LOGO">
             <h2>用户登录</h2>
         </div>
-        <form role="form" id="login-form" action='@routes.LoginController.login()' method="post">
+        <form role="form" id="login-form" action='@routes.UserController.login()' method="post">
             <div class="form-group">
                 <label for="username">用户名</label>
                 <input type="text" class="form-control" id="username" name="username"

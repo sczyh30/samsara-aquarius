@@ -3,10 +3,12 @@ package controllers
 import javax.inject.{Singleton, Inject}
 
 import entity.form.RegisterForm
+import base.Constants.USER_CACHE_KEY
 import service.UserService
 import utils.FormConverter.registerConvert
 
 import play.api.mvc._
+import play.api.cache.{CacheApi, NamedCache}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -18,7 +20,7 @@ import scala.concurrent.Future
   * @author sczyh30
   */
 @Singleton
-class RegisterController @Inject() (userService: UserService) extends Controller {
+class RegisterController @Inject() (@NamedCache("user-cache") userCache: CacheApi, userService: UserService) extends Controller {
 
   /**
     * Register Index Page Route
@@ -33,15 +35,20 @@ class RegisterController @Inject() (userService: UserService) extends Controller
     * <code>POST /register</code>
     */
   def register() = Action.async { implicit request =>
-    RegisterForm.form.bindFromRequest.fold(
-      errorForm => {
-        Future.successful(Ok(views.html.register(errorForm)))
-      },
-      data => {
-        userService.add(data) map { res =>
-          Redirect(routes.Application.index())
-        }
-      })
+    userCache.get(USER_CACHE_KEY) match {
+      case Some(x) => Future.successful(Redirect(routes.UserController.index())) // if has logined
+      case None =>
+        RegisterForm.form.bindFromRequest.fold(
+          errorForm => {
+            Future.successful(Ok(views.html.register(errorForm))) //TODO: error form handler required
+          },
+          data => {
+            userService.add(data) map { res =>
+              Redirect(routes.UserController.index())
+            }
+          })
+    }
+
   }
 
 }

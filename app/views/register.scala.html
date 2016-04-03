@@ -1,4 +1,5 @@
 @(rgForm: Form[entity.form.RegisterFormData])(implicit request: RequestHeader)
+@import helper._
 @main("用户注册 | Samsara Aquarius", null) {
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("css/register.css")">
     <div class="good_font">
@@ -23,8 +24,8 @@
                 placeholder="请输入电子邮箱">
             </div>
             <div class="text-center">
-                <button type="submit" class="btn btn-primary">注册</button>
-                <button type="reset" class="btn btn-danger">清空</button>
+                <input type="submit" class="btn btn-primary" value="注册">
+                <input type="reset" class="btn btn-danger" value="清空">
             </div>
         </form>
     </div>

@@ -13,9 +13,9 @@ object InfoForm extends FormTrait {
 
   val form = Form(
     mapping(
-      "title" → nonEmptyText,
+      "title" → nonEmptyText(minLength = 8),
       "url" → nonEmptyText,
-      "cid" → number,
+      "cid" → number(min = 0),
       "updateDate" → sqlDate
     )(InfoFormData.apply)(InfoFormData.unapply)
   )

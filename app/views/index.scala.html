@@ -1,7 +1,8 @@
 @import entity.Article
-@(data: Seq[(Article, String)])
+@import entity.User
+@(data: Seq[(Article, String)], user: User)
 
-@main("Samsara Aquarius - 关注最实用，最前沿的技术", null) {
+@main("Samsara Aquarius - 关注最实用，最前沿的技术", user) {
 
     <table class="table table-striped">
         <caption>关注最实用，最前沿的技术</caption>

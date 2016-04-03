@@ -2,14 +2,18 @@ package controllers
 
 import javax.inject.{Singleton, Inject}
 
+import base.Constants.USER_CACHE_KEY
 import entity.form.LoginForm
-import play.api.Logger
 import service.UserService
 
 import play.api.mvc._
+import play.api.Logger
+import play.api.cache.{CacheApi, NamedCache}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.language.postfixOps
 import scala.util.{Failure, Success}
 
 /**
@@ -19,7 +23,7 @@ import scala.util.{Failure, Success}
   * @author sczyh30
   */
 @Singleton
-class LoginController @Inject() (service: UserService) extends Controller {
+class UserController @Inject() (@NamedCache("user-cache") userCache: CacheApi, service: UserService) extends Controller {
 
   def index = Action { implicit request =>
     Ok(views.html.login(LoginForm.form))
@@ -31,14 +35,20 @@ class LoginController @Inject() (service: UserService) extends Controller {
         Future.successful(Ok(views.html.login(errorForm)))
       }, data => {
         service.login(data) map {
-          case Success(x) =>
-            println("Login OK:" + data)
-            Redirect(routes.Application.index()) //TODO: add login state
+          case Success(user) =>
+            println("Login OK:" + user)
+            userCache.set(USER_CACHE_KEY, user, 30 minutes)
+            Redirect(routes.Application.index())
           case Failure(ex) =>
             println("Login Fail:" + ex.getMessage)
-            Redirect(routes.LoginController.index()) //TODO: add text
+            Redirect(routes.UserController.index()) //TODO: add text
         }
       })
+  }
+
+  def logout = Action { implicit request =>
+    userCache.remove(USER_CACHE_KEY)
+    Redirect(routes.Application.index())
   }
 
 }

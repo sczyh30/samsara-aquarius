@@ -4,9 +4,10 @@
 # Home page
 GET     /                           controllers.Application.index
 
-# Login
-GET     /login.now                  controllers.LoginController.index
-POST    /login                      controllers.LoginController.login
+# Login and logout
+GET     /login.now                  controllers.UserController.index
+POST    /login                      controllers.UserController.login
+GET     /logout                     controllers.UserController.logout
 
 # Reigster
 GET     /register.now               controllers.RegisterController.index
