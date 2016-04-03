@@ -39,6 +39,7 @@ GET         /api/v                    controllers.api.ApiVersionController.versi
 
 # Article API
 GET         /api/p/:id                controllers.api.ApiArticleController.fetch(id: Int)
+GET         /api/s                    controllers.api.ApiArticleController.byName(q: String)
 
 # Comment API
 #GET     /api/:aid/comment          controllers.api.ApiCommentController.fetchByArticle(aid: Int)

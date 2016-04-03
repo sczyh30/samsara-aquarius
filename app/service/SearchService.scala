@@ -2,10 +2,13 @@ package service
 
 import javax.inject.{Inject, Singleton}
 
+import entity.Article
 import mapper.Tables.ArticleTable
 
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import slick.driver.JdbcProfile
+
+import scala.concurrent.Future
 
 /**
   * Samsara Aquarius
@@ -20,6 +23,12 @@ class SearchService @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   val articles = TableQuery[ArticleTable]
 
-  def byName(name: String) = ???
+  val byNameComplied = Compiled {
+    (name: Rep[String]) => articles.filter(_.title like ("%" + name + "%")) //TODO:BAD PERFORMANCE!
+  }
+
+  def byName(name: String): Future[Seq[Article]] = {
+    db.run(byNameComplied(name).result)
+  }
 
 }

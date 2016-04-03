@@ -1,13 +1,13 @@
 package controllers.api
 
-import entity.{ProcessResult, Results, ArticleResponse, Article}
-import service.ArticleService
-import entity.ProcessResult.resToJson
+import entity.{Results, ArticleResponse, Article}
+import service.{SearchService, ArticleService}
+import RestConverter.{resultFormat, articleFormat}
 
 import javax.inject.{Singleton, Inject}
 
 import play.api.mvc.{Action, Controller}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.implicitConversions
@@ -18,7 +18,7 @@ import scala.language.implicitConversions
   * Article API Controller
   */
 @Singleton
-class ApiArticleController @Inject() (service: ArticleService) extends Controller {
+class ApiArticleController @Inject() (service: ArticleService, qs: SearchService) extends Controller {
 
   implicit class fitResponse(t: (Article, String)) {
     def fit = ArticleResponse(t._1, t._2)
@@ -34,6 +34,12 @@ class ApiArticleController @Inject() (service: ArticleService) extends Controlle
     service.fetch(aid) map {
       case Some(x) => Ok(Json.toJson(x.fit))
       case None => NotFound(Json.toJson(Results.ARTICLE_NOT_FOUND))
+    }
+  }
+
+  def byName(q: String) = Action.async { implicit request =>
+    qs.byName(q) map { res => // v1 version
+      Ok(Json.toJson(res))
     }
   }
 

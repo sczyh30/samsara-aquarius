@@ -32,7 +32,7 @@ class UserController @Inject() (@NamedCache("user-cache") userCache: CacheApi, s
       UserToken(user.uid, user.username, UUID.randomUUID().toString)
   }
 
-  def loginIndex = Action { implicit request =>
+  def loginIndex = Action { implicit request => //TODO:(EM)FATAL ERROR ON CACHE, MUST BE FIXED!! USE GLOBAL CACHE CAREFULLY
     userCache.get[UserToken](USER_CACHE_KEY) match {
       case Some(user) => Redirect(routes.Application.index())
       case None => Ok(views.html.login(LoginForm.form))

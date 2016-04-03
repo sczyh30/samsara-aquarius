@@ -15,4 +15,6 @@ import service.SearchService
 @Singleton
 class SearchController @Inject() (service: SearchService) extends Controller {
 
+  def search(q: String) = TODO
+
 }

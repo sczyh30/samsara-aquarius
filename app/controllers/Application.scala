@@ -30,6 +30,8 @@ class Application @Inject() (@NamedCache("user-cache") userCache: CacheApi, arti
 
   def publishShare = TODO
 
-  def about = TODO
+  def about = Action {
+    Ok(views.html.about(cached))
+  }
 
 }

@@ -1,10 +1,12 @@
 package controllers.api
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
-import com.google.inject.Singleton
-import play.api.mvc.Controller
 import service.CategoryService
+
+import play.api.libs.json.Json
+import play.api.mvc.{Action, Controller}
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 /**
   * Api Category Controller
@@ -12,6 +14,12 @@ import service.CategoryService
 @Singleton
 class ApiCategoryController @Inject() (service: CategoryService) extends Controller {
 
-  def fetchAll = TODO
+  import RestConverter.categoryFormat
+
+  def fetchAll = Action.async { implicit request =>
+    service.fetchAll map { res =>
+      Ok(Json.toJson(res))
+    }
+  }
 
 }

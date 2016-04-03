@@ -15,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 /**
@@ -75,8 +76,6 @@ public class GeetestLib {
 	/**
 	 * 带参数构造函数
 	 * 
-	 * @param captchaId
-	 * @param privateKey
 	 */
 	public GeetestLib(String captchaId, String privateKey) {
 		this.captchaId = captchaId;
@@ -99,7 +98,6 @@ public class GeetestLib {
 	/**
 	 * 预处理失败后的返回格式串
 	 * 
-	 * @return
 	 */
 	private String getFailPreProcessRes() {
 
@@ -146,7 +144,6 @@ public class GeetestLib {
 	/**
 	 * 验证初始化预处理
 	 *
-	 * @param userid
 	 * @return 1表示初始化成功，0表示初始化失败
 	 */
 	public int preProcess(String userid){
@@ -190,7 +187,6 @@ public class GeetestLib {
 	/**
 	 * 发送请求，获取服务器返回结果
 	 * 
-	 * @param getURL
 	 * @return 服务器返回结果
 	 * @throws IOException
 	 */
@@ -227,8 +223,6 @@ public class GeetestLib {
 	/**
 	 * 判断一个表单对象值是否为空
 	 * 
-	 * @param gtObj
-	 * @return
 	 */
 	protected boolean objIsEmpty(Object gtObj) {
 		if (gtObj == null) {
@@ -245,8 +239,6 @@ public class GeetestLib {
 	/**
 	 * 检查客户端的请求是否合法,三个只要有一个为空，则判断不合法
 	 * 
-	 * @param request
-	 * @return
 	 */
 	private boolean resquestIsLegal(String challenge, String validate, String seccode) {
 
@@ -269,9 +261,6 @@ public class GeetestLib {
 	/**
 	 * 服务正常的情况下使用的验证方式,向gt-server进行二次验证,获取验证结果
 	 * 
-	 * @param challenge
-	 * @param validate
-	 * @param seccode
 	 * @return 验证结果,1表示验证成功0表示验证失败
 	 */
 	public int enhencedValidateRequest(String challenge, String validate, String seccode) {	
@@ -288,7 +277,7 @@ public class GeetestLib {
 				(this.sdkLang + "_" + this.verName));
 		String response = "";
 		
-		if (this.userId != ""){
+		if (!Objects.equals(this.userId, "")){
 			query = query + "&user_id=" + this.userId;
 			this.userId = "";
 		}
@@ -321,10 +310,6 @@ public class GeetestLib {
 	/**
 	 * 服务正常的情况下使用的验证方式,向gt-server进行二次验证,获取验证结果
 	 * 
-	 * @param challenge
-	 * @param validate
-	 * @param seccode
-	 * @param userid
 	 * @return 验证结果,1表示验证成功0表示验证失败
 	 */
 	public int enhencedValidateRequest(String challenge, String validate, String seccode, String userid) {	
@@ -336,9 +321,6 @@ public class GeetestLib {
 	/**
 	 * failback使用的验证方式
 	 * 
-	 * @param challenge
-	 * @param validate
-	 * @param seccode
 	 * @return 验证结果,1表示验证成功0表示验证失败
 	 */
 	public int failbackValidateRequest(String challenge, String validate, String seccode) {
@@ -375,10 +357,6 @@ public class GeetestLib {
 
 	/**
 	 *
-	 * @param ans
-	 * @param full_bg_index
-	 * @param img_grp_index
-	 * @return
 	 */
 	private int validateFailImage(int ans, int full_bg_index,
 			int img_grp_index) {
@@ -422,9 +400,6 @@ public class GeetestLib {
 	/**
 	 * 解码随机参数
 	 * 
-	 * @param encodeStr
-	 * @param challenge
-	 * @return
 	 */
 	private int decodeResponse(String challenge, String string) {
 		if (string.length() > 100) {
@@ -464,8 +439,6 @@ public class GeetestLib {
 	/**
 	 * 输入的两位的随机数字,解码出偏移量
 	 * 
-	 * @param randStr
-	 * @return
 	 */
 	private int decodeRandBase(String challenge) {
 
@@ -491,8 +464,6 @@ public class GeetestLib {
 
 	/**
 	 * 输出debug信息，需要开启debugCode
-	 * 
-	 * @param message
 	 */
 	public void gtlog(String message) {
 		if (debugCode) {
@@ -508,12 +479,6 @@ public class GeetestLib {
 	/**
 	 * 貌似不是Post方式，后面重构时修改名字
 	 * 
-	 * @param host
-	 * @param path
-	 * @param data
-	 * @param port
-	 * @return
-	 * @throws Exception
 	 */
 	protected String postValidate(String host, String path, String data,
 			int port) throws Exception {
@@ -550,9 +515,6 @@ public class GeetestLib {
 	/**
 	 * md5 加密
 	 * 
-	 * @time 2014年7月10日 下午3:30:01
-	 * @param plainText
-	 * @return
 	 */
 	private String md5Encode(String plainText) {
 		String re_md5 = new String();
