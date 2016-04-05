@@ -3,57 +3,58 @@
 
 ## Samsara Aquarius
 ## Application
-GET         /                         controllers.Application.index
-GET         /share                    controllers.Application.share
-POST        /share                    controllers.Application.publishShare
-GET         /about                    controllers.Application.about
+GET         /                            controllers.Application.index
+GET         /share                       controllers.Application.share
+POST        /share                       controllers.Application.publishShare
+GET         /about                       controllers.Application.about
 
 # Captcha
-GET         /geetest.new              controllers.CaptchaController.init
+GET         /geetest.new                 controllers.CaptchaController.init
 
-# Login and logout
-GET         /login.now                controllers.UserController.loginIndex
-POST        /login                    controllers.UserController.login
-GET         /logout                   controllers.UserController.logout
+# User (Login, Reigster)
+GET         /login.now                   controllers.UserController.loginIndex
+POST        /login                       controllers.UserController.login
+GET         /logout                      controllers.UserController.logout
+GET         /register.now                controllers.UserController.regIndex
+POST        /register                    controllers.UserController.register
 
-# Reigster
-GET         /register.now             controllers.UserController.regIndex
-POST        /register                 controllers.UserController.register
+# Search
+GET         /s                           controllers.SearchController.search(q: String)
 
 # Category
-GET         /category                 controllers.CategoryController.index
-GET         /category/:name           controllers.CategoryController.certain(name)
+GET         /category                    controllers.CategoryController.index
+GET         /category/:name              controllers.CategoryController.certain(name)
 
 # Comment
-GET         /:id/comments             controllers.CommentController.list(id: Int)
-POST        /:id/comments             controllers.CommentController.publish(id: Int)
+GET         /:id/comments                controllers.CommentController.list(id: Int)
+POST        /:id/comments                controllers.CommentController.publish(id: Int)
 
 # Admin Route
-GET         /adm1n6q9/add-info        controllers.AdminController.addInfoPage
-POST        /adm1n6q9/add-info        controllers.AdminController.addInfoProcess
+GET         /adm1n6q9/add-article        controllers.AdminController.addInfoPage
+POST        /adm1n6q9/add-article        controllers.AdminController.addInfoProcess
 
 ## Samsara Aquarius
 ## RESTful API Route
 # API Version
-GET         /api/v                    controllers.api.ApiVersionController.version
+GET         /api/v                       controllers.api.ApiVersionController.version
 
 # User API
-POST        /api/login                controllers.api.ApiUserController.login(username: String, password: String)
+POST        /api/login                   controllers.api.ApiUserController.login(username: String, password: String)
 #POST        /api/register             controllers.api.ApiUserController.register()
-GET         /api/u/:uid               controllers.api.ApiUserController.fetch(uid: Int)
+GET         /api/u/:uid                  controllers.api.ApiUserController.fetch(uid: Int)
 
 # Article API
-GET         /api/p/latest             controllers.api.ApiArticleController.latest
-GET         /api/p/:id                controllers.api.ApiArticleController.fetch(id: Int)
-GET         /api/s                    controllers.api.ApiArticleController.byName(q: String)
+GET         /api/p/latest                controllers.api.ApiArticleController.latest
+GET         /api/p/:id                   controllers.api.ApiArticleController.fetch(id: Int)
+GET         /api/s                       controllers.api.ApiArticleController.byName(q: String)
 
 # Comment API
-GET         /api/:aid/comment         controllers.api.ApiCommentController.fetchByArticle(aid: Int)
+GET         /api/:aid/comment            controllers.api.ApiCommentController.fetchByArticle(aid: Int)
 #PUT         /api/:aid/comment         controllers.api.ApiCommentController.comment(aid: Int)
 
 # Category API
-GET         /api/categories           controllers.api.ApiCategoryController.fetchAll
+GET         /api/categories              controllers.api.ApiCategoryController.fetchAll
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file             controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                controllers.Assets.versioned(path="/public", file: Asset)

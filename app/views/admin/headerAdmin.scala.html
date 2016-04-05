@@ -1,5 +1,5 @@
 @import entity.Admin
-@(admin: Admin)
+@(admin: Admin)(implicit request: RequestHeader)
 
 @if(admin != null) {
     <!-- navigation bar -->
@@ -19,8 +19,6 @@
                 <ul class="nav navbar-nav ">
                     <li><a href="/">网站主页</a></li>
                     <li><a href="/adm1n6q9">Dashboard</a></li>
-                    <li><a href="#">关于本站</a></li>
-                    <li><a href="#">我要分享</a></li>
                 </ul>
                 <div>
                     <ul class="nav navbar-nav navbar-right">
@@ -32,7 +30,7 @@
                             <ul class="dropdown-menu">
                                 <li><a href="#">管理设置</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">管理</a></li>
+                                <li><a href="#">管理操作</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#">注销</a></li>
                             </ul>

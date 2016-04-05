@@ -1,4 +1,5 @@
 @import entity.Admin
+@()(implicit request: RequestHeader)
 @admin.main("操作成功 | Samsara Aquarius Admin",
     Admin(6, "admin6", null, Some(1), "a@b.com")) {
     <div class="row clearfix">

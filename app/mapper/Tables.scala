@@ -120,15 +120,19 @@ trait Tables {
     */
   class CategoryTable(tag: Tag) extends Table[Category](tag, "category") {
 
-    override def * = (cid, name) <> (entity.Category.tupled, entity.Category.unapply)
+    override def * = (cid, name, abbr) <> (entity.Category.tupled, entity.Category.unapply)
 
     /** Database column cid SqlType(INT), PrimaryKey */
     val cid: Rep[Int] = column[Int]("cid", O.AutoInc, O.PrimaryKey)
     /** Database column name SqlType(VARCHAR) */
     val name: Rep[String] = column[String]("name", O.Length(45, varying = true))
+    /** Database column abbr SqlType(VARCHAR) */
+    val abbr: Rep[String] = column[String]("abbr", O.Length(45, varying = true))
 
-    /** Unique Index over (name) (database name name_UNIQUE) */
-    val index1 = index("name_UNIQUE", name, unique = true)
+    /** Uniqueness Index over (abbr) (database name abbr_UNIQUE) */
+    val index1 = index("abbr_UNIQUE", abbr, unique=true)
+    /** Uniqueness Index over (name) (database name name_UNIQUE) */
+    val index2 = index("name_UNIQUE", name, unique=true)
   }
 
   /** Collection-like TableQuery object for table User */

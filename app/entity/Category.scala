@@ -5,4 +5,4 @@ package entity
   * @param cid category id
   * @param name category name
   */
-case class Category(cid: Int, name: String)
+case class Category(cid: Int, name: String, abbr: String)

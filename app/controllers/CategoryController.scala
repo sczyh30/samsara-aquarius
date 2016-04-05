@@ -1,21 +1,36 @@
 package controllers
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
-import com.google.inject.Singleton
-import play.api.mvc.Controller
-import service.CategoryService
+import service.{ArticleService, CategoryService}
+
+import play.api.mvc.{Action, Controller}
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 /**
+  * Samsara Aquarius Route
   * Category Controller
+  *
+  * @author sczyh30
   */
 @Singleton
-class CategoryController @Inject() (service: CategoryService) extends Controller {
+class CategoryController @Inject() (service: CategoryService, ars: ArticleService) extends Controller {
 
-  def index = TODO
+  def index = Action.async { implicit request =>
+    service.fetchAllWithCount map { res =>
+      Ok(views.html.categories(res))
+    }
+  }
 
   def certainId(cid: Int) = TODO
 
-  def certain(name: String) = TODO
+  def certain(abbr: String) = Action.async { implicit request =>
+    ars.fetchByCAbbr(abbr) map {
+      case Some(data) =>
+        Ok(views.html.articles(Left(data)))
+      case None =>
+        NotFound(views.html.error.NotFound())
+    }
+  }
 
 }

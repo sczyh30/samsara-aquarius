@@ -3,7 +3,7 @@ package service
 import javax.inject.{Singleton, Inject}
 
 import entity.Category
-import mapper.Tables.CategoryTable
+import mapper.Tables.{ArticleTable, CategoryTable}
 
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import slick.driver.JdbcProfile
@@ -22,10 +22,17 @@ class CategoryService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   import driver.api._
 
+  val articles = TableQuery[ArticleTable]
   val categories = TableQuery[CategoryTable]
 
   protected val queryByCid = Compiled(
     (cid: Rep[Int]) => categories.filter(_.cid === cid))
+
+  protected val categoriesCompiled = Compiled {
+    categories.map { c =>
+      (c, articles.filter(_.cid === c.cid).length)
+    }
+  }
 
   def add(c: Category): Future[Int] = {
     db.run(categories += c) recover {
@@ -39,6 +46,10 @@ class CategoryService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   def fetchAll: Future[Seq[Category]] = {
     db.run(categories.result)
+  }
+
+  def fetchAllWithCount: Future[Seq[(Category, Int)]] = {
+    db.run(categoriesCompiled.result)
   }
 
   def update(c: Category): Future[Int] = {

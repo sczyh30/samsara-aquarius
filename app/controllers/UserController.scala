@@ -1,5 +1,6 @@
 package controllers
 
+import java.time.LocalDateTime
 import java.util.UUID
 import javax.inject.{Singleton, Inject}
 
@@ -14,6 +15,7 @@ import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 import scala.concurrent.Future
+import scala.language.postfixOps
 import scala.util.{Failure, Success}
 
 /**
@@ -33,7 +35,8 @@ class UserController @Inject() (service: UserService) extends Controller {
 
     def session: Session = {
       val session = Map("uid" -> user.uid.toString, "username" -> user.username,
-        "aq_token" -> UUID.randomUUID().toString)
+        "aq_token" -> UUID.randomUUID().toString,
+        "timestamp" -> LocalDateTime.now().toString)
       Session(session)
     }
   }
@@ -42,7 +45,7 @@ class UserController @Inject() (service: UserService) extends Controller {
     * Login Index Page Route
     * <code>GET /login.now </code>
     */
-  def loginIndex = Action { implicit request => //TODO:(EM)FATAL ERROR ON CACHE, MUST BE FIXED!! USE GLOBAL CACHE CAREFULLY
+  def loginIndex = Action { implicit request =>
     request.session.get("aq_token") match {
       case Some(user) => Redirect(routes.Application.index())
       case None => Ok(views.html.login(LoginForm.form))

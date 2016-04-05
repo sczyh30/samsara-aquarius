@@ -25,7 +25,7 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   val LIMIT_PAGE = 10
 
-  val articles = TableQuery[ArticleTable].sortBy(_.id.desc)
+  val articles = TableQuery[ArticleTable]
   val categories = TableQuery[CategoryTable]
 
   val withCategoryCompiled = Compiled {
@@ -38,18 +38,16 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   val withCategoryAll =
     for {
-      a <- articles
+      a <- articles.sortBy(_.id.desc)
       c <- categories if c.cid === a.cid
     } yield (a, c)
 
   val queryLatestCompiled =
     withCategoryAll.take(LIMIT_PAGE)
 
-  def addInfo(info: Article): Future[String] = {
-    db.run(articles += info) map { res =>
-      "article_add_success"
-    } recover {
-      case ex: Exception => ex.getCause.getMessage
+  def addInfo(info: Article): Future[Int] = {
+    db.run(articles += info) recover {
+      case ex: Exception => -1
     }
   }
 
@@ -62,7 +60,17 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
       (for {
         a <- articles if a.cid === cid
         c <- categories if c.cid === a.cid
-      } yield (a, c)).result
+      } yield a -> c).result
+    }
+  }
+
+  def fetchByCAbbr(abbr: String): Future[Option[(Category, Seq[Article])]] = {
+    db.run(categories.filter(_.abbr === abbr).result.headOption) flatMap {
+      case Some(c) =>
+        db.run(articles.filter(_.cid === c.cid).result) map { res =>
+          Some(c -> res)
+        }
+      case None => Future(None)
     }
   }
 
