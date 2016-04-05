@@ -23,7 +23,9 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   import driver.api._
 
-  val articles = TableQuery[ArticleTable]
+  val LIMIT_PAGE = 10
+
+  val articles = TableQuery[ArticleTable].sortBy(_.id.desc)
   val categories = TableQuery[CategoryTable]
 
   val withCategoryCompiled = Compiled {
@@ -34,11 +36,14 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
       } yield (a, c)
   }
 
-  val withCategoryAll = //TODO: duplicate code
+  val withCategoryAll =
     for {
       a <- articles
       c <- categories if c.cid === a.cid
     } yield (a, c)
+
+  val queryLatestCompiled =
+    withCategoryAll.take(LIMIT_PAGE)
 
   def addInfo(info: Article): Future[String] = {
     db.run(articles += info) map { res =>
@@ -63,6 +68,10 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   def fetchAll: Future[Seq[(Article, Category)]] = {
     db.run(withCategoryAll.result)
+  }
+
+  def latest: Future[Seq[(Article, Category)]] = {
+    db.run(queryLatestCompiled.result)
   }
 
   def update(info: Article): Future[Int] = {

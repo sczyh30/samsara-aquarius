@@ -9,7 +9,10 @@ import play.api.mvc.{Action, Controller}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 /**
-  * Api Category Controller
+  * Samsara Aquarius API v1
+  * Category API Controller
+  *
+  * @author sczyh30
   */
 @Singleton
 class ApiCategoryController @Inject() (service: CategoryService) extends Controller {

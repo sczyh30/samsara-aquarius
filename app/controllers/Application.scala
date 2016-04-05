@@ -10,6 +10,12 @@ import play.api.mvc._
 
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
+/**
+  * Samsara Aquarius
+  * Main Page Controller
+  *
+  * @author sczyh30
+  */
 @Singleton
 class Application @Inject() (@NamedCache("user-cache") userCache: CacheApi, articleService: ArticleService) extends Controller {
 

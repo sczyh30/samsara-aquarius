@@ -14,21 +14,23 @@ import scala.language.implicitConversions
 
 
 /**
-  * Samsara Aquarius
+  * Samsara Aquarius API v1
   * Article API Controller
+  *
+  * @author sczyh30
   */
 @Singleton
 class ApiArticleController @Inject() (service: ArticleService, qs: SearchService) extends Controller {
 
-  /*def latest = Action.async { implicit request =>
-    service.fetchAll map { data =>
-      Ok(Json.toJson(data))
+  def latest = Action.async { implicit request =>
+    service.latest map { data =>
+      Ok(Json.toJson(data map (_.fit)))
     }
-  }*/
+  }
 
   def all = Action.async { implicit request =>
     service.fetchAll map { data =>
-      Ok(Json.toJson(data.map(_.fit)))
+      Ok(Json.toJson(data map (_.fit)))
     }
   }
 

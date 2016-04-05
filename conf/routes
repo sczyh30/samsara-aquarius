@@ -38,6 +38,7 @@ POST        /adm1n6q9/add-info        controllers.AdminController.addInfoProcess
 GET         /api/v                    controllers.api.ApiVersionController.version
 
 # Article API
+GET         /api/p/latest             controllers.api.ApiArticleController.latest
 GET         /api/p/:id                controllers.api.ApiArticleController.fetch(id: Int)
 GET         /api/s                    controllers.api.ApiArticleController.byName(q: String)
 

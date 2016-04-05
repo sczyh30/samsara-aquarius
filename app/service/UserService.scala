@@ -31,15 +31,15 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 
   private val users = TableQuery[UserTable]
 
-  private val queryByUid = Compiled(
+  private[service] val queryByUid = Compiled(
     (uid: Rep[Int]) =>
       users.filter(_.uid === uid))
 
-  private val queryByName = Compiled(
+  private[service] val queryByName = Compiled(
     (username: Rep[String]) =>
       users.filter(_.username === username))
 
-  private val queryLogin = Compiled {
+  private[service] val queryLogin = Compiled {
     (username: Rep[String], password: Rep[String]) =>
       users.filter(_.username === username)
         .map(_.password === password)
