@@ -1,12 +1,12 @@
 @(rgForm: Form[entity.form.RegisterFormData])(implicit request: RequestHeader)
-@main("用户注册 | Samsara Aquarius", null) {
+@main("用户注册 | Samsara Aquarius") {
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("css/main.css")">
     <div class="good_font">
         <div class="text-center">
             <img src="@routes.Assets.versioned("images/61c6258130a63b29b78806e97b1deb6c-biglogo.ico")" alt="LOGO">
             <h2>用户注册</h2>
         </div>
-        <form role="form" id="register-form" action='@routes.RegisterController.register()' method="post">
+        <form role="form" id="register-form" action='@routes.UserController.register()' method="post">
             <div class="form-group">
                 <label for="username">用户名</label>
                 <input type="text" class="form-control" id="username" name="username"

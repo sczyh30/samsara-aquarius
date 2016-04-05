@@ -18,7 +18,7 @@ class CaptchaController extends Controller {
   def init = Action { implicit request =>
     val gtSdk = new GeetestLib(GeetestConfig.getCaptchaId, GeetestConfig.getPrivateKey)
     val status = gtSdk.preProcess()
-    Ok(gtSdk.getResponseStr) withSession((gtSdk.gtServerStatusSessionKey, status.toString))
+    Ok(gtSdk.getResponseStr) withSession(request.session + (gtSdk.gtServerStatusSessionKey -> status.toString))
   }
 
 }

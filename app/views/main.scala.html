@@ -1,6 +1,6 @@
 @import entity.UserToken
 @import components.{headerMain, footerMain}
-@(title: String, user: UserToken)(content: Html)
+@(title: String)(content: Html)(implicit request: RequestHeader)
 
 <!DOCTYPE html>
 <html lang="zh-cn">
@@ -14,7 +14,7 @@
         <link href="http://cdn.bootcss.com/flat-ui/2.2.2/css/flat-ui.min.css" rel="stylesheet">
     </head>
     <body>
-        @headerMain(user)
+        @headerMain()
         <div class="container">
             @content
         </div>

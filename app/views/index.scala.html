@@ -1,8 +1,8 @@
 @import entity.{Article, Category}
 @import entity.UserToken
-@(data: Seq[(Article, Category)], user: UserToken)
+@(data: Seq[(Article, Category)])(implicit request: RequestHeader)
 
-    @main("Samsara Aquarius - 关注最实用，最前沿的技术", user) {
+    @main("Samsara Aquarius - 关注最实用，最前沿的技术") {
         <div class="row clearfix">
             <div class="col-md-10">
                 <table class="table table-striped">

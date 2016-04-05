@@ -1,14 +1,18 @@
 package base
 
 /**
+  * Samsara Aquarius
   * Constants
   */
 object Constants {
-  private val USER_CACHE_KEY_PREFIX = "user_"
+  // cache key prefix
+  private val USER_TOKEN_CACHE_KEY_PREFIX = "USER_"
 
-  val USER_CACHE_KEY = "user"
+  val WRAP_USER_KEY = (token: String) => USER_TOKEN_CACHE_KEY_PREFIX + token
 
-  val WRAP_USER_KEY = (uid: Int) => USER_CACHE_KEY_PREFIX + uid
-
+  // API version
   val AQUARIUS_API_VERSION = "v1"
+
+  // database process code
+  val DB_ADD_DUPLICATE = -4
 }

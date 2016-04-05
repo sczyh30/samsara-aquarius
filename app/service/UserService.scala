@@ -1,16 +1,15 @@
 package service
 
-import java.util.NoSuchElementException
 import javax.inject.{Singleton, Inject}
 
 import entity.User
-import entity.form.LoginFormData
 import mapper.Tables.UserTable
 import security.Encryptor.ImplicitEc
+import base.Constants.DB_ADD_DUPLICATE
+import service.exception.ValidateWrong
 
 import play.api.Logger
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
-import service.exception.ValidateWrong
 import slick.driver.JdbcProfile
 
 import scala.concurrent.Future
@@ -47,16 +46,15 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 
   /**
     * Process the login
-    * @param form the login form data
     * @return the login result
     */
-  def login(form: LoginFormData): Future[Try[User]] = {
-    db.run(queryLogin(form.username, form.password.encrypt()).result.head) map (r => Success(r)) recover {
+  def login(username: String, password: String): Future[Try[User]] = {
+    db.run(queryLogin(username, password.encrypt()).result.head) map (r => Success(r)) recover {
       case ex: Exception => Failure(ex)
     } flatMap {
       case Success(res) =>
         if(res)
-          db.run(queryByName(form.username).result.head) map (u => Success(u))
+          db.run(queryByName(username).result.head) map (u => Success(u))
         else
           Future(Failure(new ValidateWrong("Login Validate Wrong")))
       case e@Failure(ex) => Future(Failure(ex))
@@ -69,14 +67,10 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     * @param user a user entity
     * @return the async status
     */
-  def add(user: User): Future[String] = {
-    db.run(users += user) map { res =>
-      Logger.debug("user_reg:" + user)
-      "user_add_success"
-    } recover {
-      case ex: Exception =>
-        Logger.info(ex.getCause.getMessage)
-        "user_add_fail"
+  def add(user: User): Future[Int] = {
+    db.run(users += user) recover {
+      case duplicate: com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException => DB_ADD_DUPLICATE
+      case _: Exception => -2
     }
   }
 
@@ -94,7 +88,7 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 
   /**
     * Remove the user from the `user` table
-    * Notice: The comment that owed by the user will not be removed
+    * Notice: The comment that owed by the user will not be removed immediately
  *
     * @param uid user id
     * @return the async status

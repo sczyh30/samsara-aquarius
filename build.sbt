@@ -1,12 +1,13 @@
 name := """samsara-aquarius"""
 
-version := "0.1.54"
+version := "0.1.58"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
+  filters,
   jdbc,
   cache,
   ws,

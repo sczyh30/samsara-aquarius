@@ -2,8 +2,11 @@ package controllers.api
 
 import javax.inject.{Inject, Singleton}
 
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.Controller
 import service.CommentService
+
+
 
 /**
   * Samsara Aquarius API v1
@@ -14,10 +17,10 @@ import service.CommentService
 @Singleton
 class ApiCommentController @Inject() (service: CommentService) extends Controller {
 
-  def fetchByArticle = TODO
+  def fetchByArticle(aid: Int) = TODO
 
-  def comment = TODO
+  def comment(aid: Int) = TODO
 
-  def remove = TODO
+  def remove(aid: Int) = TODO
 
 }

@@ -15,6 +15,8 @@ object RestConverter {
   implicit val articleFormat = Json.format[Article]
   implicit val restArticleFormat = Json.format[RestArticle]
   implicit val resultFormat = Json.format[ProcessResult]
+  implicit val userInfoFormat = Json.format[UserInfo]
+  implicit val userTokenFormat = Json.format[UserToken]
 
   implicit def resToJson(res: ProcessResult): JsValue = Json.toJson(res)
 
@@ -23,5 +25,9 @@ object RestConverter {
 
   implicit class RestArticleConverter(t: (Article, Category)) {
     def fit = RestArticle(t._1.id, t._1.title, t._1.url, t._2, t._1.updateDate)
+  }
+
+  implicit class ApiUserConverter(user: User) {
+    def fit = UserInfo(user.uid, user.username, user.joinDate, user.tips, user.website)
   }
 }
