@@ -23,6 +23,7 @@ CREATE TABLE info_data
 (
   id INT(11) PRIMARY KEY NOT NULL,
   title VARCHAR(85) DEFAULT 'No Title!' NOT NULL,
+  author VARCHAR(45) NOT NULL,
   url VARCHAR(150) NOT NULL,
   cid INT(11) NOT NULL,
   update_date DATE NOT NULL
@@ -40,3 +41,12 @@ CREATE TABLE user
   email VARCHAR(60) NOT NULL
 );
 CREATE UNIQUE INDEX username_UNIQUE ON user (username);
+
+CREATE TABLE category
+(
+  cid INT(11) PRIMARY KEY NOT NULL,
+  name VARCHAR(45) NOT NULL,
+  abbr VARCHAR(45) NOT NULL
+);
+CREATE UNIQUE INDEX abbr_UNIQUE ON category (abbr);
+CREATE UNIQUE INDEX name_UNIQUE ON category (name);

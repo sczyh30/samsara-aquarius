@@ -15,4 +15,10 @@ object Constants {
 
   // database process code
   val DB_ADD_DUPLICATE = -4
+
+  // admin process code
+  val ADMIN_ADD_ARTICLE_SUCCESS = 2611
+  val ADMIN_PROCESS_FAIL_UNKNOWN = 2640
+  val ADMIN_ADD_ARTICLE_FAIL = 2641
+
 }

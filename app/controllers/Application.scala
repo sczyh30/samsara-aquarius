@@ -5,7 +5,6 @@ import javax.inject.{Singleton, Inject}
 import service.ArticleService
 
 import play.api.mvc._
-
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 /**

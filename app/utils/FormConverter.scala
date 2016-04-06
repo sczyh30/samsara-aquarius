@@ -16,7 +16,7 @@ import scala.language.implicitConversions
 object FormConverter {
 
   implicit def infoConvert(data: InfoFormData): Article = {
-    Article(0, data.title, url = data.url, cid = data.cid, updateDate = data.updateDate)
+    Article(0, data.title, url = data.url, author = data.author, cid = data.cid, updateDate = data.updateDate)
   }
 
   implicit def registerConvert(data: RegisterFormData): User = {

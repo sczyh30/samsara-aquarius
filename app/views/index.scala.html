@@ -3,7 +3,7 @@
 
     @main("Samsara Aquarius - 关注最实用，最前沿的技术") {
         <div class="row clearfix">
-            <div class="col-md-10">
+            <div class="col-md-12">
                 <table class="table table-striped">
                     <caption>关注最实用，最前沿的技术</caption>
                     <thead>
@@ -19,7 +19,7 @@
                     @for((info, category) <- data) {
                         <tr>
                             <td><a href="@info.url">@info.title</a></td>
-                            <td>Author</td>
+                            <td>@info.author</td>
                             <td>@info.updateDate</td>
                             <td>@category.name</td>
                             <td><a href="/@info.id/comments">88</a></td>

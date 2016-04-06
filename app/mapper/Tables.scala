@@ -76,14 +76,16 @@ trait Tables {
     */
   class ArticleTable(tag: Tag) extends Table[Article](tag, "info_data") {
 
-    override def * = (id, title, url, cid, updateDate) <> (entity.Article.tupled, entity.Article.unapply)
+    override def * = (id, title, author, url, cid, updateDate) <> (entity.Article.tupled, entity.Article.unapply)
 
     /** Database column id SqlType(INT), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
     /** Database column title SqlType(VARCHAR) */
-    val title: Rep[String] = column[String]("title", O.Length(85, varying=true), O.Default("No Title!"))
+    val title: Rep[String] = column[String]("title", O.Length(85, varying = true), O.Default("No Title!"))
+    /** Database column author SqlType(VARCHAR) */
+    val author: Rep[String] = column[String]("author", O.Length(45, varying = true))
     /** Database column url SqlType(VARCHAR) */
-    val url: Rep[String] = column[String]("url", O.Length(150, varying=true))
+    val url: Rep[String] = column[String]("url", O.Length(150, varying = true))
     /** Database column cid SqlType(INT) */
     val cid: Rep[Int] = column[Int]("cid")
     /** Database column update_date SqlType(DATE) */

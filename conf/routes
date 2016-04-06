@@ -29,7 +29,11 @@ GET         /category/:name              controllers.CategoryController.certain(
 GET         /:id/comments                controllers.CommentController.list(id: Int)
 POST        /:id/comments                controllers.CommentController.publish(id: Int)
 
-# Admin Route
+## Admin Route
+# Dashboard
+GET         /adm1n6q9                    controllers.AdminController.dashboard()
+
+# Article Manage
 GET         /adm1n6q9/add-article        controllers.AdminController.addInfoPage
 POST        /adm1n6q9/add-article        controllers.AdminController.addInfoProcess
 

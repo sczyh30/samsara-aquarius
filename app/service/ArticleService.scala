@@ -45,6 +45,9 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   val queryLatestCompiled =
     withCategoryAll.take(LIMIT_PAGE)
 
+  val withCategoryByPage =
+    (offset: Int) => withCategoryAll.drop(offset).take(LIMIT_PAGE)
+
   def addInfo(info: Article): Future[Int] = {
     db.run(articles += info) recover {
       case ex: Exception => -1
@@ -53,6 +56,10 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
 
   def fetch(id: Int): Future[Option[(Article, Category)]] = {
     db.run(withCategoryCompiled(id).result.headOption)
+  }
+
+  def fetchWithPage(offset: Int): Future[Seq[(Article, Category)]] = {
+    db.run(withCategoryByPage(offset).result)
   }
 
   def fetchByCategory(cid: Int): Future[Seq[(Article, Category)]] = {
