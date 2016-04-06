@@ -1,6 +1,5 @@
-@* t = 1 :: Category Result, t = 2 :: Search Result *@
-@import entity.{Article, Category}
-@(data: Either[(Category, Seq[Article]), (Seq[(Article, Category)], String)])(implicit request: RequestHeader)
+@import base.Constants.{CCPT, SCPT}
+@(data: Either[CCPT, SCPT])(implicit request: RequestHeader)
 @main(data match {
     case Left(x) => s"${x._1.name} | Samsara Aquarius - 关注最实用，最前沿的技术"
     case Right(y) => "搜索结果 | Samsara Aquarius - 关注最实用，最前沿的技术"

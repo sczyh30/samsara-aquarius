@@ -1,5 +1,5 @@
-@import entity.{Article, Category}
-@(data: Seq[(Article, Category)])(implicit request: RequestHeader)
+@import entity.{Article, Category, Page}
+@(data: Seq[(Article, Category)], page: Page)(implicit request: RequestHeader)
 
     @main("Samsara Aquarius - 关注最实用，最前沿的技术") {
         <div class="row clearfix">
@@ -27,6 +27,7 @@
                     }
                     </tbody>
                 </table>
+                @components.pagination(page)
             </div>
         </div>
     }

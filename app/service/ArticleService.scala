@@ -54,6 +54,16 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     }
   }
 
+  def calcPage: Future[Int] = {
+    db.run(articles.length.result) map { all =>
+      val p = all % LIMIT_PAGE == 0
+      if (p) all / LIMIT_PAGE
+      else (all / LIMIT_PAGE) + 1
+    } recover {
+      case ex: Exception => 0
+    }
+  }
+
   def fetch(id: Int): Future[Option[(Article, Category)]] = {
     db.run(withCategoryCompiled(id).result.headOption)
   }

@@ -30,9 +30,9 @@
                                 <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="/user/@request.session.get("uid")">用户中心</a></li>
+                                <li><a href="/user">个人中心</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">我的信息</a></li>
+                                <li><a href="/user/@request.session.get("username")">我的信息</a></li>
                                 <li class="divider"></li>
                                 <li><a href="/logout">注销</a></li>
                             </ul>

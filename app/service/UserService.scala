@@ -82,6 +82,10 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     db.run(queryByUid(uid).result.headOption)
   }
 
+  def fetchByName(username: String): Future[Option[User]] = {
+    db.run(queryByName(username).result.headOption)
+  }
+
   def update(user: User): Future[Int] = {
     db.run(queryByUid(user.uid).update(user))
   }

@@ -74,6 +74,30 @@ class UserController @Inject() (service: UserService) extends Controller {
   }
 
   /**
+    * User Center
+    */
+  def userCenter = Action { implicit request =>
+    request.session.get("uid") match {
+      case Some(user) =>
+        Ok(views.html.user.center())
+      case None => Ok(views.html.login(LoginForm.form))
+    }
+  }
+
+  /**
+    * User Info Page
+    * @param username username
+    */
+  def userInfo(username: String) = Action.async { implicit request =>
+    service.fetchByName(username) map {
+      case Some(user) =>
+        Ok(views.html.user.user(user.copy(password = null)))
+      case None =>
+        NotFound(views.html.error.NotFound())
+    }
+  }
+
+  /**
     * Register Index Page Route
     * <code>GET /register.now </code>
     */
