@@ -2,6 +2,7 @@
 @(data: Seq[(Article, Category)], page: Page)(implicit request: RequestHeader)
 
     @main("Samsara Aquarius - 关注最实用，最前沿的技术") {
+        @error.DebugMode()
         <div class="row clearfix">
             <div class="col-md-12">
                 <table class="table table-striped">

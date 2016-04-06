@@ -26,7 +26,9 @@ GET         /s                           controllers.SearchController.search(q: 
 
 # Category
 GET         /category                    controllers.CategoryController.index
-GET         /category/:name              controllers.CategoryController.certain(name)
+GET         /c                           controllers.CategoryController.index
+GET         /c/:page                     controllers.CategoryController.page(page: Int)
+GET         /category/:name              controllers.CategoryController.certain(name: String)
 
 # Comment
 GET         /:id/comments                controllers.CommentController.list(id: Int)

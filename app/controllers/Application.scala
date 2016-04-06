@@ -20,11 +20,6 @@ import scala.concurrent.Future
 @Singleton
 class Application @Inject() (articleService: ArticleService) extends Controller {
 
-  /**implicit lazy val cached = userCache.get[UserToken]("user") match {
-    * case Some(user) => user
-    * case None => null
-    * }*/
-
   def index() = Action.async { implicit request =>
     for {
       data <- articleService.fetchWithPage(0)
@@ -42,15 +37,6 @@ class Application @Inject() (articleService: ArticleService) extends Controller 
       else
         Future.successful(NotFound(views.html.error.NotFound()))
     }
-    /*for {
-      data <- articleService.fetchWithPage(WRAP_PAGE(page))
-      pages <- articleService.calcPage
-    } yield {
-      if (page > 0 && page <= pages)
-        Ok(views.html.index(data, Page(page, pages, "/page")))
-      else
-        NotFound(views.html.error.NotFound())
-    }*/
   }
 
   def share = Action { implicit request =>

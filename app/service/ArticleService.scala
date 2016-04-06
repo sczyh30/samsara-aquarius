@@ -4,6 +4,7 @@ import javax.inject.{Singleton, Inject}
 
 import entity.{Category, Article}
 import mapper.Tables.{CategoryTable, ArticleTable}
+import base.Constants.LIMIT_PAGE
 
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import slick.driver.JdbcProfile
@@ -22,8 +23,6 @@ import scala.language.implicitConversions
 class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
 
   import driver.api._
-
-  val LIMIT_PAGE = 10
 
   val articles = TableQuery[ArticleTable]
   val categories = TableQuery[CategoryTable]
@@ -48,7 +47,7 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   val withCategoryByPage =
     (offset: Int) => withCategoryAll.drop(offset).take(LIMIT_PAGE)
 
-  def addInfo(info: Article): Future[Int] = {
+  def add(info: Article): Future[Int] = {
     db.run(articles += info) recover {
       case ex: Exception => -1
     }

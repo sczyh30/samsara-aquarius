@@ -1,5 +1,6 @@
 @import entity.Category
-@(data: Seq[(Category, Int)])(implicit request: RequestHeader)
+@import entity.Page
+@(data: Seq[(Category, Int)], page: Page)(implicit request: RequestHeader)
 
 @main("文章分类 | Samsara Aquarius - 关注最实用，最前沿的技术") {
     <div class="row clearfix">
@@ -21,6 +22,7 @@
                 }
                 </tbody>
             </table>
+            @components.pagination(page)
         </div>
     </div>
 }

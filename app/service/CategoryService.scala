@@ -18,7 +18,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * @author sczyh30
   */
 @Singleton
-class CategoryService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
+class CategoryService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+  extends WithPageProvider with BaseDao[Category, Int] {
 
   import driver.api._
 
@@ -28,11 +29,16 @@ class CategoryService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
   protected val queryByCid = Compiled(
     (cid: Rep[Int]) => categories.filter(_.cid === cid))
 
-  protected val categoriesCompiled = Compiled {
+  protected val categoriesCompiled =
     categories.map { c =>
       (c, articles.filter(_.cid === c.cid).length)
     }
-  }
+
+  def calcPage: Future[Int] =
+    page(categories)
+
+  def fetchWithPage(offset: Int): Future[Seq[(Category, Int)]] =
+    db.run(categoriesCompiled.drop(offset).take(base.Constants.LIMIT_PAGE).result)
 
   def add(c: Category): Future[Int] = {
     db.run(categories += c) recover {
