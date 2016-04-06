@@ -1,5 +1,7 @@
 package base
 
+import entity.{Category, Article}
+
 /**
   * Samsara Aquarius
   * Constants
@@ -29,7 +31,8 @@ object Constants {
   val ADMIN_ADD_ARTICLE_FAIL = 2641
 
   // Custom Types
-  type CCPT = (entity.Category, Seq[entity.Article]) // CategoryCertainPageType
-  type SCPT = (Seq[(entity.Article, entity.Category)], String) // SearchCertainPageType
+  type CCPT = (Category, Seq[Article]) // CategoryCertainPageType
+  type SCPT = (Seq[(Article, Category)], String) // SearchCertainPageType
+  type IndexArticleRes = (Article, Category, Int)
 
 }

@@ -11,3 +11,16 @@ body {
 .good_font {
     font-family: '文泉驿微米黑', '微软雅黑', 'PingFang SC', 'LiHei Pro', Arial, sans-serif;
 }
+
+.img-medium {
+    max-width: 400px;
+    max-height: 300px;
+}
+
+.mgr-10 {
+    margin-right: 10px;
+}
+
+.mgr-20 {
+    margin-right: 20px;
+}

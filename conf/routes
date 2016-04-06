@@ -22,7 +22,7 @@ GET         /user                        controllers.UserController.userCenter
 GET         /user/:username              controllers.UserController.userInfo(username: String)
 
 # Search
-GET         /s                           controllers.SearchController.search(q: String)
+GET         /search                      controllers.SearchController.search(q: String)
 
 # Category
 GET         /category                    controllers.CategoryController.index

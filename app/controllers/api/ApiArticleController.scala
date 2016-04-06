@@ -28,12 +28,6 @@ class ApiArticleController @Inject() (service: ArticleService, qs: SearchService
     }
   }
 
-  def all = Action.async { implicit request =>
-    service.fetchAll map { data =>
-      Ok(Json.toJson(data map (_.fit)))
-    }
-  }
-
   def fetch(aid: Int) = Action.async { implicit request =>
     service.fetch(aid) map {
       case Some(x) => Ok(Json.toJson(x.fit))

@@ -31,8 +31,15 @@ class CommentService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   protected val getByUidCompiled = Compiled(
     (uid: Rep[Int]) => comments.filter(_.uid === uid))
 
+  protected val getByArticle =
+    (data_id: Rep[Int]) => comments.filter(_.dataId === data_id)
+
   protected val getByArticleCompiled = Compiled(
-    (data_id: Rep[Int]) => comments.filter(_.dataId === data_id))
+    (data_id: Rep[Int]) => getByArticle(data_id))
+
+  protected val getCountByArticleCompiled = Compiled(
+    (data_id: Rep[Int]) => getByArticle(data_id).length
+  )
 
   protected val getCertainCompiled = Compiled{
     (data_id: Rep[Int], uid: Rep[Int]) => comments.filter(r =>
