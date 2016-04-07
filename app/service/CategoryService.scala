@@ -5,7 +5,7 @@ import javax.inject.{Singleton, Inject}
 import entity.Category
 import mapper.Tables.{ArticleTable, CategoryTable}
 
-import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
+import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
 import scala.concurrent.Future
@@ -37,8 +37,16 @@ class CategoryService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
   def calcPage: Future[Int] =
     page(categories)
 
+  //def fetchWithPage(offset: Int): Future[Seq[(Category, Int)]] =
+  //  db.run(categoriesCompiled.drop(offset).take(base.Constants.LIMIT_PAGE).result)
+
+  /**
+    * Fetch the categories with page
+    * @param offset query offset. The first offset entries will be dropped.
+    * @return the async result of the entries
+    */
   def fetchWithPage(offset: Int): Future[Seq[(Category, Int)]] =
-    db.run(categoriesCompiled.drop(offset).take(base.Constants.LIMIT_PAGE).result)
+    super.fetchWithPage(categoriesCompiled.drop(offset).take(base.Constants.LIMIT_PAGE), offset)
 
   def add(c: Category): Future[Int] = {
     db.run(categories += c) recover {
