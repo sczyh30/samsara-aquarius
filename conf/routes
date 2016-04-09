@@ -3,7 +3,8 @@
 
 ## Samsara Aquarius
 ## Application
-GET         /                            controllers.Application.index
+GET         /                            controllers.Application.index()
+GET         /p/:page                     controllers.Application.page(page: Int)
 GET         /share                       controllers.Application.share
 POST        /share                       controllers.Application.publishShare
 GET         /about                       controllers.Application.about
@@ -17,13 +18,17 @@ POST        /login                       controllers.UserController.login
 GET         /logout                      controllers.UserController.logout
 GET         /register.now                controllers.UserController.regIndex
 POST        /register                    controllers.UserController.register
+GET         /user                        controllers.UserController.userCenter
+GET         /user/:username              controllers.UserController.userInfo(username: String)
 
 # Search
-GET         /s                           controllers.SearchController.search(q: String)
+GET         /search                      controllers.SearchController.search(q: String)
 
 # Category
 GET         /category                    controllers.CategoryController.index
-GET         /category/:name              controllers.CategoryController.certain(name)
+GET         /c                           controllers.CategoryController.index
+GET         /c/:page                     controllers.CategoryController.page(page: Int)
+GET         /category/:name              controllers.CategoryController.certain(name: String)
 
 # Comment
 GET         /:id/comments                controllers.CommentController.list(id: Int)

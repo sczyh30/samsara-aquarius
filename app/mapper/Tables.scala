@@ -137,11 +137,25 @@ trait Tables {
     val index2 = index("name_UNIQUE", name, unique=true)
   }
 
+  class ShareTable(tag: Tag) extends Table[Share](tag, "share_pending") {
+
+    def * = (sid, title, url, user) <> (Share.tupled, Share.unapply)
+
+    /** Database column sid SqlType(INT), AutoInc, PrimaryKey */
+    val sid: Rep[Int] = column[Int]("sid", O.AutoInc, O.PrimaryKey)
+    /** Database column title SqlType(VARCHAR) */
+    val title: Rep[String] = column[String]("title", O.Length(85,varying=true))
+    /** Database column url SqlType(VARCHAR) */
+    val url: Rep[String] = column[String]("url", O.Length(150,varying=true))
+    /** Database column user SqlType(INT), Default(0) */
+    val user: Rep[Option[Int]] = column[Option[Int]]("user", O.Default(Some(0)))
+  }
+
   /** Collection-like TableQuery object for table User */
   lazy val User = new TableQuery(tag => new UserTable(tag))
 
   /** Collection-like TableQuery object for table InfoData */
-  lazy val InfoData = new TableQuery(tag => new ArticleTable(tag))
+  lazy val Article = new TableQuery(tag => new ArticleTable(tag))
 
   /** Collection-like TableQuery object for table Comment */
   lazy val Comment = new TableQuery(tag => new CommentTable(tag))
@@ -153,7 +167,8 @@ trait Tables {
   lazy val Category = new TableQuery(tag => new CategoryTable(tag))
 
   /** DDL for all tables */
-  lazy val schema: profile.SchemaDescription = User.schema ++ InfoData.schema ++ Comment.schema ++ Admin.schema
+  lazy val schema: profile.SchemaDescription =
+    User.schema ++ Article.schema ++ Comment.schema ++ Admin.schema ++ Category.schema
 
 }
 

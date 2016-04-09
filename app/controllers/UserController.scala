@@ -29,6 +29,8 @@ class UserController @Inject() (service: UserService) extends Controller {
 
   lazy val gtSdk = new GeetestLib(GeetestConfig.getCaptchaId, GeetestConfig.getPrivateKey)
 
+  //val NotFoundPage = NotFound(views.html.error.NotFound())
+
   implicit class UserConverter(user: User) {
     def toToken: UserToken =
       UserToken(user.uid, user.username, UUID.randomUUID().toString)
@@ -71,6 +73,40 @@ class UserController @Inject() (service: UserService) extends Controller {
             Redirect(routes.UserController.loginIndex()) //TODO: add text
         }
       })
+  }
+
+  /**
+    * User Center
+    */
+  def userCenter = Action.async { implicit request =>
+    val userSession = request.session.get("uid")
+    val unknownError = NotFound(views.html.error.NotFound()) // maybe 400?
+    userSession match {
+      case Some(uid) =>
+        service.fetch(uid.toInt) map {
+          case Some(user) =>
+            Ok(views.html.user.center(user))
+          case None =>
+            NotFound(views.html.error.NotFound())
+        } recover {
+          case _: Exception => unknownError
+        }
+      case None =>
+        Future.successful(Ok(views.html.login(LoginForm.form)))
+    }
+  }
+
+  /**
+    * User Info Page
+    * @param username username
+    */
+  def userInfo(username: String) = Action.async { implicit request =>
+    service.fetchByName(username) map {
+      case Some(user) =>
+        Ok(views.html.user.user(user.copy(password = null)))
+      case None =>
+        NotFound(views.html.error.NotFound())
+    }
   }
 
   /**

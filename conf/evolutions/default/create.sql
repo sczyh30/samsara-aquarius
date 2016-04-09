@@ -50,3 +50,11 @@ CREATE TABLE category
 );
 CREATE UNIQUE INDEX abbr_UNIQUE ON category (abbr);
 CREATE UNIQUE INDEX name_UNIQUE ON category (name);
+
+CREATE TABLE share_pending
+(
+  sid INT(11) PRIMARY KEY NOT NULL,
+  title VARCHAR(85) NOT NULL,
+  url VARCHAR(150) NOT NULL,
+  user INT(11) DEFAULT '0'
+);

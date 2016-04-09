@@ -20,9 +20,11 @@ import scala.concurrent.Future
   * @author sczyh30
   */
 @Singleton
-class SearchService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
+class SearchService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends WithPageProvider {
 
   import driver.api._
+
+  type AWC = (Article, Category) // Article with Category, typed `Tuple2`
 
   val articles = TableQuery[ArticleTable]
   val categories = TableQuery[CategoryTable]
@@ -39,12 +41,26 @@ class SearchService @Inject()(protected val dbConfigProvider: DatabaseConfigProv
     } yield (a, c)
   }
 
+  /**
+    * Search articles by name
+    * for REST API until v0.3.0
+    * @param name article partial name
+    */
   def byName(name: String): Future[Seq[Article]] = {
     db.run(byNameComplied(name, s"%$name%").result)
   }
 
-  def byNameWithCategory(name: String): Future[Seq[(Article, Category)]] = {
+  /**
+    * Search articles by name
+    * For application service
+    * @param name article partial name
+    * @return async result, typed `AWS`
+    */
+  def byNameWithCategory(name: String): Future[Seq[AWC]] = {
     db.run(byNameWithCategoryComplied(name, s"%$name%").result)
   }
+
+  //TODO: optimize this in v0.5.x
+  def byNameWithCategoryPaged(name: String, offset: Int): Future[Seq[AWC]] = ???
 
 }

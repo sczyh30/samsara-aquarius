@@ -24,12 +24,13 @@ case class User(uid: Int, username: String, password: String,
                 email: String)
 
 case class UserInfo(uid: Int, username: String, joinDate: java.sql.Date,
+                    avatar: Option[String] = Some("default"),
                     tips: Option[String] = Some("None~"),
                     website: Option[String] = Some(""))
 
 object UserInfo {
   implicit def convert(user: User): UserInfo =
-    UserInfo(user.uid, user.username, user.joinDate, user.tips, user.website)
+    UserInfo(user.uid, user.username, user.joinDate, user.avatar, user.tips, user.website)
 }
 
 

@@ -1,14 +1,14 @@
-@()(implicit request: RequestHeader)
+@(title: String, info: String)(implicit request: RequestHeader)
 @main("Oops...") {
     <div class="row clearfix">
         <div id="register-mn">
             <div class="col-md-10">
-                <div class="panel panel-warning">
+                <div class="panel panel-danger">
                     <div class="panel-heading">
-                        <h3 class="panel-title">404 NOT FOUND</h3>
+                        <h3 class="panel-title">@title</h3>
                     </div>
                     <div class="panel-body text-center">
-                        <p>外星人掳走了这里的记忆。。。</p>
+                        <p>@info</p>
                         <button class="btn btn-warning" id="ret-index">返回主页</button>
                     </div>
                 </div>

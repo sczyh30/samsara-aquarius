@@ -8,6 +8,62 @@ body {
     text-align: center;
 }
 
+.text-right {
+    text-align: right;
+}
+
+.text-red {
+    color: firebrick;
+}
+
 .good_font {
     font-family: '文泉驿微米黑', '微软雅黑', 'PingFang SC', 'LiHei Pro', Arial, sans-serif;
+}
+
+.img-medium {
+    max-width: 400px;
+    max-height: 300px;
+}
+
+.mgr-10 {
+    margin-right: 10px;
+}
+
+.mgr-20 {
+    margin-right: 20px;
+}
+
+.aq-ca {
+
+}
+
+#aq-comment-tab {
+    border-radius: 25px;
+    border: 2px solid #8AC007;
+    padding: 10px;
+    width: 100px;
+    height: 50px;
+    margin-bottom: 20px;
+}
+
+.aq-comment {
+    padding-bottom: 30px;
+}
+
+.aq-comment-post {
+
+}
+
+.aq-comment-avatar {
+    position: relative;
+    float: left;
+}
+
+.aq-comment-avatar img {
+    width:  50px !important;
+    height: 50px !important;
+}
+
+.aq-comment-body {
+    padding-left: 70px !important;
 }

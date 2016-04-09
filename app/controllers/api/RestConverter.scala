@@ -1,6 +1,7 @@
 package controllers.api
 
 import entity._
+import base.Constants._
 
 import play.api.libs.json.{JsValue, Json}
 
@@ -23,7 +24,7 @@ object RestConverter {
   case class RestArticle(id: Int, title: String = "None",
                          url: String, category: Category, updateDate: java.sql.Date)
 
-  implicit class RestArticleConverter(t: (Article, Category)) {
+  implicit class RestArticleConverter(t: (Article, Category)) { // Article with Category
     def fit = RestArticle(t._1.id, t._1.title, t._1.url, t._2, t._1.updateDate)
   }
 

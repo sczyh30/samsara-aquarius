@@ -1,0 +1,14 @@
+@import entity.Page
+@(page: Page)(implicit request: RequestHeader)
+
+<ul class="pagination">
+    <li class="active"><a href="@page.path/1">&laquo;</a></li>
+    @for(i <- 1 until page.now) {
+        <li><a href="@page.path/@i">@i</a></li>
+    }
+    <li class="active"><a href="@page.path/@page.now">@page.now</a></li>
+    @for(i <- page.now + 1 to page.all) {
+        <li><a href="@page.path/@i">@i</a></li>
+    }
+    <li class="active"><a href="@page.path/@page.all">&raquo;</a></li>
+</ul>

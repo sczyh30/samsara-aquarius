@@ -9,7 +9,6 @@ import base.Constants._
 
 import play.api.mvc._
 
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -55,7 +54,7 @@ class AdminController @Inject() (articleService: ArticleService, categoryService
         Future.successful(BadRequest(views.html.admin.articles.addInfo(errorForm, Seq())))
       },
       data => {
-        articleService.addInfo(data) map { res =>
+        articleService.add(data) map { res =>
           if (res >= 0)
             processOkResult(ADMIN_ADD_ARTICLE_SUCCESS)
           else

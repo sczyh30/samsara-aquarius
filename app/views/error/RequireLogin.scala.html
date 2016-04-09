@@ -1,0 +1,13 @@
+@(info: String)(implicit request: RequestHeader)
+
+<div class="row clearfix">
+    <div id="require-login-alert">
+        <div class="col-md-10">
+            <div class="alert alert-warning alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h4>Samsara Aquarius</h4>
+                <div><strong>@info 需要<a href="/login.now">登录</a>。</strong></div>
+            </div>
+        </div>
+    </div>
+</div>

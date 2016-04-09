@@ -18,7 +18,7 @@ class SearchController @Inject() (service: SearchService) extends Controller {
 
   def search(q: String) = Action.async { implicit request =>
     service.byNameWithCategory(q) map { res =>
-      Ok(views.html.articles(Right(res -> q)))
+      Ok(views.html.articles(Right(res → q)))
     }
   }
 

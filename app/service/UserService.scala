@@ -5,17 +5,15 @@ import javax.inject.{Singleton, Inject}
 import entity.User
 import mapper.Tables.UserTable
 import security.Encryptor.ImplicitEc
-import base.Constants.DB_ADD_DUPLICATE
+import base.Constants.{DB_ADD_DUPLICATE, UserCommentInfo}
 import service.exception.ValidateWrong
 
-import play.api.Logger
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import slick.driver.JdbcProfile
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success, Try}
-import scala.async.Async._
 
 /**
   * Samsara Aquarius
@@ -24,7 +22,7 @@ import scala.async.Async._
   * @author sczyh30
   */
 @Singleton
-class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
+class UserService @Inject() (protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
 
   import driver.api._
 
@@ -42,6 +40,11 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     (username: Rep[String], password: Rep[String]) =>
       users.filter(_.username === username)
         .map(_.password === password)
+  }
+
+  private[service] val queryCommentInfo = Compiled {
+    (uid: Rep[Int]) =>
+      users.filter(_.uid === uid).map(x => (x.username, x.avatar))
   }
 
   /**
@@ -62,7 +65,15 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
   }
 
   /**
-    * Add a user to database
+    * Fetch the comment info about user
+    * @param uid user id
+    */
+  def fetchCommentInfo(uid: Int): Future[UserCommentInfo] = { // note: do not return Future[Option[UserCommentInfo]]
+    db.run(queryCommentInfo(uid).result.head) // hazardous
+  }
+
+  /**
+    * Add a user to database, represent register logic
     *
     * @param user a user entity
     * @return the async status
@@ -82,6 +93,10 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     db.run(queryByUid(uid).result.headOption)
   }
 
+  def fetchByName(username: String): Future[Option[User]] = {
+    db.run(queryByName(username).result.headOption)
+  }
+
   def update(user: User): Future[Int] = {
     db.run(queryByUid(user.uid).update(user))
   }
@@ -89,7 +104,7 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
   /**
     * Remove the user from the `user` table
     * Notice: The comment that owed by the user will not be removed immediately
- *
+    *
     * @param uid user id
     * @return the async status
     */

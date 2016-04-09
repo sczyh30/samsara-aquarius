@@ -1,7 +1,9 @@
-@import entity.{Article, Category}
-@(data: Seq[(Article, Category)])(implicit request: RequestHeader)
+@import entity.Page
+@import base.Constants.IndexArticleRes
+@(data: Seq[IndexArticleRes], page: Page)(implicit request: RequestHeader)
 
     @main("Samsara Aquarius - 关注最实用，最前沿的技术") {
+        @error.DebugMode()
         <div class="row clearfix">
             <div class="col-md-12">
                 <table class="table table-striped">
@@ -16,17 +18,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @for((info, category) <- data) {
+                    @for((info, category, nc) <- data) {
                         <tr>
                             <td><a href="@info.url">@info.title</a></td>
                             <td>@info.author</td>
                             <td>@info.updateDate</td>
                             <td>@category.name</td>
-                            <td><a href="/@info.id/comments">88</a></td>
+                            <td><a href="/@info.id/comments">@nc</a></td>
                         </tr>
                     }
                     </tbody>
                 </table>
+                @components.pagination(page)
             </div>
         </div>
     }
