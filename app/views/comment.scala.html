@@ -2,5 +2,20 @@
 @(comments: Seq[Comment])(implicit request: RequestHeader)
 
     @main("文章评论 | Samsara Aquarius - 关注最实用，最前沿的技术") {
+    <div class="row clearfix">
+        <div class="col-md-10">
+            @for(c <- comments; i <- 1 to comments.length) {
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">@i 楼</h3>
+                    </div>
+                    <div class="panel-body text-center">
+                        <p>@c.text</p>
+                        <p>@c.time</p>
+                    </div>
+                </div>
+            }
 
+        </div>
+    </div>
     }

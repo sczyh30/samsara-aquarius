@@ -19,7 +19,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * @author sczyh30
   */
 @Singleton
-class CommentService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
+class CommentService @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
+  extends WithPageProvider {
 
   import driver.api._
 
@@ -41,10 +42,17 @@ class CommentService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     (data_id: Rep[Int]) => getByArticle(data_id).length
   )
 
-  protected val getCertainCompiled = Compiled{
+  protected val getCertainCompiled = Compiled {
     (data_id: Rep[Int], uid: Rep[Int]) => comments.filter(r =>
       r.uid === uid && r.dataId === data_id)
   }
+
+  /** page calc */
+
+  def calcPage(aid: Int): Future[Int] =
+    page(getByArticle(aid))
+
+  /** basic db process */
 
   def add(comment: Comment): Future[Int] = {
     db.run(comments += comment.safe)
@@ -58,14 +66,16 @@ class CommentService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     db.run(getByArticleCompiled(data_id).result)
   }
 
+  def fetchByArticlePaged(aid: Int, offset: Int): Future[Seq[Comment]] = {
+    fetchWithPage(getByArticle(aid), offset)
+  }
+
   def fetchByUser(uid: Int): Future[Seq[Comment]] = {
     db.run(getByUidCompiled(uid).result)
   }
 
   def fetchCertain(data_id: Int, uid: Int): Future[Option[Comment]] = {
     db.run(getCertainCompiled(data_id, uid).result.headOption)
-    //db.run(getByUidCompiled(uid).result.andThen(
-    //  getByArticleCompiled(data_id).result.headOption))
   }
 
   def fetchAll =

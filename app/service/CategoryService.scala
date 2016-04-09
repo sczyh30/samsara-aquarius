@@ -6,7 +6,6 @@ import entity.Category
 import mapper.Tables.{ArticleTable, CategoryTable}
 
 import play.api.db.slick.DatabaseConfigProvider
-import slick.driver.JdbcProfile
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -18,7 +17,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * @author sczyh30
   */
 @Singleton
-class CategoryService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
+class CategoryService @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
   extends WithPageProvider with BaseDao[Category, Int] {
 
   import driver.api._
@@ -29,16 +28,17 @@ class CategoryService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
   protected val queryByCid = Compiled(
     (cid: Rep[Int]) => categories.filter(_.cid === cid))
 
-  protected val categoriesCompiled =
+  protected val categoriesCompiled = // used in categories page
     categories.map { c =>
       (c, articles.filter(_.cid === c.cid).length)
     }
 
+  /**
+    * Calc the page number
+    * @return the async result of page number
+    */
   def calcPage: Future[Int] =
     page(categories)
-
-  //def fetchWithPage(offset: Int): Future[Seq[(Category, Int)]] =
-  //  db.run(categoriesCompiled.drop(offset).take(base.Constants.LIMIT_PAGE).result)
 
   /**
     * Fetch the categories with page
@@ -46,7 +46,15 @@ class CategoryService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
     * @return the async result of the entries
     */
   def fetchWithPage(offset: Int): Future[Seq[(Category, Int)]] =
-    super.fetchWithPage(categoriesCompiled.drop(offset).take(base.Constants.LIMIT_PAGE), offset)
+    super.fetchWithPage(categoriesCompiled, offset)
+
+  /**
+    * Fetch all categories with article number in this category
+    * @return the async result
+    */
+  def fetchAllWithCount: Future[Seq[(Category, Int)]] = {
+    db.run(categoriesCompiled.result)
+  }
 
   def add(c: Category): Future[Int] = {
     db.run(categories += c) recover {
@@ -60,10 +68,6 @@ class CategoryService @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   def fetchAll: Future[Seq[Category]] = {
     db.run(categories.result)
-  }
-
-  def fetchAllWithCount: Future[Seq[(Category, Int)]] = {
-    db.run(categoriesCompiled.result)
   }
 
   def update(c: Category): Future[Int] = {

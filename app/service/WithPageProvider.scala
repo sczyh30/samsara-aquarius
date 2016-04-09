@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * @author sczyh30
   * @since 0.2.0
   */
-trait WithPageProvider extends HasDatabaseConfigProvider[JdbcProfile] with PageDao {
+trait WithPageProvider extends HasDatabaseConfigProvider[JdbcProfile] with SlickPageDao {
 
   import driver.api._
 

@@ -7,7 +7,6 @@ import mapper.Tables.{CommentTable, CategoryTable, ArticleTable}
 import base.Constants.{LIMIT_PAGE, IndexArticleRes, CCPT}
 
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
-import slick.driver.JdbcProfile
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,22 +14,24 @@ import scala.language.implicitConversions
 
 /**
   * Samsara Aquarius
-  * Info Data Service
+  * Article Service
   *
   * @author sczyh30
   */
 @Singleton
-class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
+class ArticleService @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
+  extends WithPageProvider with BaseDao[Article, Int] {
 
   import driver.api._
 
-  type AWC = (Article, Category)
+  type AWC = (Article, Category) // Article with Category, typed `Tuple2`
 
   val articles = TableQuery[ArticleTable]
   val categories = TableQuery[CategoryTable]
   val comments = TableQuery[CommentTable]
 
   // Queries and compiled queries
+  // query result: AWC by id
   val withCategoryCompiled = Compiled {
     (dataId: Rep[Int]) =>
       for {
@@ -39,12 +40,14 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
       } yield (a, c)
   }
 
+  // query result: AWC (all)
   val withCategory =
     for {
       a <- articles.sortBy(_.id.desc)
       c <- categories if c.cid === a.cid
     } yield (a, c)
 
+  // query result: (Article, Category, Comment Num)
   val withCategoryComplicated =
     for {
       a <- articles.sortBy(_.id.desc)
@@ -52,13 +55,14 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
       c <- categories if c.cid === a.cid
     } yield (a, c, cn)
 
+  // only for REST API
   val queryLatestCompiled =
     withCategory.take(LIMIT_PAGE)
 
-  val withCategoryByPage =
-    (offset: Int) => withCategoryComplicated.drop(offset).take(LIMIT_PAGE)
+  //val withCategoryByPage =
+  // (offset: Int) => withCategoryComplicated.drop(offset).take(LIMIT_PAGE)
 
-  // basic db process
+  /** basic db process */
 
   def add(info: Article): Future[Int] = {
     db.run(articles += info) recover {
@@ -77,7 +81,8 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     db.run(withCategoryCompiled(id).result.headOption)
   }
 
-  @deprecated def fetchAll: Future[Seq[IndexArticleRes]] = {
+  @deprecated(message = "Fetch-all process consumes too much resources", since = "0.3.0")
+  def fetchAll: Future[Seq[IndexArticleRes]] = {
     db.run(withCategoryComplicated.result)
   }
 
@@ -108,18 +113,10 @@ class ArticleService @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     * Retrieve length of the results and then calc the page number
     * @return page number
     */
-  def calcPage: Future[Int] = {
-    db.run(articles.length.result) map { all =>
-      val p = all % LIMIT_PAGE == 0
-      if (p) all / LIMIT_PAGE
-      else (all / LIMIT_PAGE) + 1
-    } recover {
-      case ex: Exception => 0
-    }
-  }
+  def calcPage: Future[Int] = page(articles)
 
   def fetchWithPage(offset: Int): Future[Seq[IndexArticleRes]] = {
-    db.run(withCategoryByPage(offset).result)
+    super.fetchWithPage(withCategoryComplicated, offset)
   }
 
   /**

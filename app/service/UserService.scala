@@ -8,14 +8,12 @@ import security.Encryptor.ImplicitEc
 import base.Constants.DB_ADD_DUPLICATE
 import service.exception.ValidateWrong
 
-import play.api.Logger
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import slick.driver.JdbcProfile
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success, Try}
-import scala.async.Async._
 
 /**
   * Samsara Aquarius
@@ -62,7 +60,7 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
   }
 
   /**
-    * Add a user to database
+    * Add a user to database, represent register logic
     *
     * @param user a user entity
     * @return the async status
@@ -93,7 +91,7 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
   /**
     * Remove the user from the `user` table
     * Notice: The comment that owed by the user will not be removed immediately
- *
+    *
     * @param uid user id
     * @return the async status
     */
