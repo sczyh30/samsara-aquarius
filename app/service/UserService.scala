@@ -5,7 +5,7 @@ import javax.inject.{Singleton, Inject}
 import entity.User
 import mapper.Tables.UserTable
 import security.Encryptor.ImplicitEc
-import base.Constants.DB_ADD_DUPLICATE
+import base.Constants.{DB_ADD_DUPLICATE, UserCommentInfo}
 import service.exception.ValidateWrong
 
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
@@ -22,7 +22,7 @@ import scala.util.{Failure, Success, Try}
   * @author sczyh30
   */
 @Singleton
-class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
+class UserService @Inject() (protected val dbConfigProvider: DatabaseConfigProvider) extends HasDatabaseConfigProvider[JdbcProfile] {
 
   import driver.api._
 
@@ -42,6 +42,11 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
         .map(_.password === password)
   }
 
+  private[service] val queryCommentInfo = Compiled {
+    (uid: Rep[Int]) =>
+      users.filter(_.uid === uid).map(x => (x.username, x.avatar))
+  }
+
   /**
     * Process the login
     * @return the login result
@@ -57,6 +62,14 @@ class UserService @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
           Future(Failure(new ValidateWrong("Login Validate Wrong")))
       case e@Failure(ex) => Future(Failure(ex))
     }
+  }
+
+  /**
+    * Fetch the comment info about user
+    * @param uid user id
+    */
+  def fetchCommentInfo(uid: Int): Future[UserCommentInfo] = { // note: do not return Future[Option[UserCommentInfo]]
+    db.run(queryCommentInfo(uid).result.head) // hazardous
   }
 
   /**

@@ -3,7 +3,7 @@ package service
 import javax.inject.{Singleton, Inject}
 
 import entity.{Category, Article}
-import mapper.Tables.{CommentTable, CategoryTable, ArticleTable}
+import mapper.Tables.{ShareTable, CommentTable, CategoryTable, ArticleTable}
 import base.Constants.{LIMIT_PAGE, IndexArticleRes, CCPT}
 
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
@@ -29,6 +29,7 @@ class ArticleService @Inject() (protected val dbConfigProvider: DatabaseConfigPr
   val articles = TableQuery[ArticleTable]
   val categories = TableQuery[CategoryTable]
   val comments = TableQuery[CommentTable]
+  val pendings = TableQuery[ShareTable]
 
   // Queries and compiled queries
   // query result: AWC by id
@@ -81,6 +82,10 @@ class ArticleService @Inject() (protected val dbConfigProvider: DatabaseConfigPr
     db.run(withCategoryCompiled(id).result.headOption)
   }
 
+  def fetchOnly(id: Int): Future[Article] = {
+    db.run(articles.filter(_.id === id).result.head)
+  }
+
   @deprecated(message = "Fetch-all process consumes too much resources", since = "0.3.0")
   def fetchAll: Future[Seq[IndexArticleRes]] = {
     db.run(withCategoryComplicated.result)
@@ -89,6 +94,7 @@ class ArticleService @Inject() (protected val dbConfigProvider: DatabaseConfigPr
   /**
     * Fetch the latest 10 article info
     * Only for REST API
+    *
     * @return result(Article with Category)
     */
   def latest: Future[Seq[AWC]] = {
@@ -111,6 +117,7 @@ class ArticleService @Inject() (protected val dbConfigProvider: DatabaseConfigPr
 
   /**
     * Retrieve length of the results and then calc the page number
+    *
     * @return page number
     */
   def calcPage: Future[Int] = page(articles)
@@ -121,6 +128,7 @@ class ArticleService @Inject() (protected val dbConfigProvider: DatabaseConfigPr
 
   /**
     * Fetch articles by the abbr of the category
+    *
     * @param abbr the abbr of the category
     * @return article result (CCPT type)
     */
@@ -131,6 +139,12 @@ class ArticleService @Inject() (protected val dbConfigProvider: DatabaseConfigPr
           Some(c -> res)
         }
       case None => Future(None)
+    }
+  }
+
+  def shareArticle(s: entity.Share): Future[Int] = {
+    db.run(pendings += s) recover {
+      case ex: Exception => -1
     }
   }
 

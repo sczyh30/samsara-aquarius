@@ -34,5 +34,6 @@ object Constants {
   type CCPT = (Category, Seq[Article]) // CategoryCertainPageType
   type SCPT = (Seq[(Article, Category)], String) // SearchCertainPageType
   type IndexArticleRes = (Article, Category, Int)
+  type UserCommentInfo = (String, Option[String])
 
 }
