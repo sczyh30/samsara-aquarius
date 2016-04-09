@@ -6,7 +6,7 @@ import entity.{Category, Article}
 import mapper.Tables.{ShareTable, CommentTable, CategoryTable, ArticleTable}
 import base.Constants.{LIMIT_PAGE, IndexArticleRes, CCPT}
 
-import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
+import play.api.db.slick.DatabaseConfigProvider
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -59,9 +59,6 @@ class ArticleService @Inject() (protected val dbConfigProvider: DatabaseConfigPr
   // only for REST API
   val queryLatestCompiled =
     withCategory.take(LIMIT_PAGE)
-
-  //val withCategoryByPage =
-  // (offset: Int) => withCategoryComplicated.drop(offset).take(LIMIT_PAGE)
 
   /** basic db process */
 

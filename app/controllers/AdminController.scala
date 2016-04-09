@@ -9,7 +9,6 @@ import base.Constants._
 
 import play.api.mvc._
 
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 

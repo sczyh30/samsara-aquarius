@@ -7,6 +7,11 @@ import entity.{Category, Article}
   * Constants
   */
 object Constants {
+  // Samsara Aquarius Dev Version
+  val AQUARIUS_DEV_VERSION = "0.3.x"
+  // API version
+  val AQUARIUS_API_VERSION = "v1"
+
   // cache key prefix
   private val USER_TOKEN_CACHE_KEY_PREFIX = "USER_"
 
@@ -18,9 +23,6 @@ object Constants {
   val IS_VALIDATE_PAGE = (page: Int, all: Int) => {
     if (page > 0 && page <= all) true else false
   }
-
-  // API version
-  val AQUARIUS_API_VERSION = "v1"
 
   // database process code
   val DB_ADD_DUPLICATE = -4
