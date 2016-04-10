@@ -36,7 +36,7 @@ trait Tables {
     /** Database column join_date SqlType(DATE) */
     val joinDate: Rep[java.sql.Date] = column[java.sql.Date]("join_date")
     /** Database column avatar SqlType(VARCHAR) */
-    val avatar: Rep[Option[String]] = column[Option[String]]("avatar", O.Length(65, varying = true), O.Default(Some("default")))
+    val avatar: Rep[Option[String]] = column[Option[String]]("avatar", O.Length(65, varying = true), O.Default(Some("default.png")))
     /** Database column tips SqlType(VARCHAR) */
     val tips: Rep[Option[String]] = column[Option[String]]("tips", O.Length(100, varying = true), O.Default(Some("None~")))
     /** Database column website SqlType(VARCHAR) */

@@ -51,7 +51,7 @@ class AdminController @Inject() (articleService: ArticleService, categoryService
   def addInfoProcess() = Action.async { implicit request =>
     InfoForm.form.bindFromRequest.fold(
       errorForm => {
-        Future.successful(BadRequest(views.html.admin.articles.addInfo(errorForm, Seq())))
+        Future.successful(Redirect(routes.AdminController.addInfoPage()) flashing "add_article__error" -> "表单格式错误，请检查表单！")
       },
       data => {
         articleService.add(data) map { res =>

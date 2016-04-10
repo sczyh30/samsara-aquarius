@@ -29,8 +29,6 @@ class UserController @Inject() (service: UserService) extends Controller {
 
   lazy val gtSdk = new GeetestLib(GeetestConfig.getCaptchaId, GeetestConfig.getPrivateKey)
 
-  //val NotFoundPage = NotFound(views.html.error.NotFound())
-
   implicit class UserConverter(user: User) {
     def toToken: UserToken =
       UserToken(user.uid, user.username, UUID.randomUUID().toString)
@@ -48,9 +46,12 @@ class UserController @Inject() (service: UserService) extends Controller {
     * <code>GET /login.now </code>
     */
   def loginIndex = Action { implicit request =>
+    utils.DateUtils.ensureSession
     request.session.get("aq_token") match {
-      case Some(user) => Redirect(routes.Application.index())
-      case None => Ok(views.html.login(LoginForm.form))
+      case Some(user) =>
+        Redirect(routes.Application.index())
+      case None =>
+        Ok(views.html.login(LoginForm.form))
     }
   }
 
@@ -61,7 +62,7 @@ class UserController @Inject() (service: UserService) extends Controller {
   def login() = Action.async { implicit request =>
     LoginForm.form.bindFromRequest().fold(
       errorForm => {
-        Future.successful(Ok(views.html.login(errorForm)))
+        Future.successful(Redirect(routes.UserController.loginIndex()) flashing "login_error" -> "用户名或密码长度错误。")
       }, data => {
         service.login(data.username, data.password) map {
           case Success(user) =>
@@ -70,7 +71,7 @@ class UserController @Inject() (service: UserService) extends Controller {
             Redirect(routes.Application.index()) withSession user.session //TODO: need session expired time
           case Failure(ex) =>
             Logger.debug(s"Login Fail:${ex.getMessage}")
-            Redirect(routes.UserController.loginIndex()) //TODO: add text
+            Redirect(routes.UserController.loginIndex()) flashing "login_error" -> "用户名或密码不正确。"
         }
       })
   }
@@ -85,7 +86,7 @@ class UserController @Inject() (service: UserService) extends Controller {
       case Some(uid) =>
         service.fetch(uid.toInt) map {
           case Some(user) =>
-            Ok(views.html.user.center(user))
+            Ok(views.html.user.center(user)) withSession "timestamp" -> java.time.LocalDateTime.now().toString
           case None =>
             NotFound(views.html.error.NotFound())
         } recover {
@@ -128,16 +129,30 @@ class UserController @Inject() (service: UserService) extends Controller {
       case None =>
         RegisterForm.form.bindFromRequest.fold(
           errorForm => {
-            Future.successful(Ok(views.html.register(errorForm))) //TODO: error form handler required
+            Future.successful(Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "表单安全验证失败。")
           },
           data => {
             // validate the captcha
-
-            service.add(data) map { res =>
-              if (res > 0)
-                Redirect(routes.UserController.loginIndex())
-              else
-                Ok(views.html.register(RegisterForm.form)) //TODO: error form handler required
+            val gtResult = {
+              request.session.get(gtSdk.gtServerStatusSessionKey).get.toInt match {
+                case 1 =>
+                  gtSdk.enhencedValidateRequest(data.geetest_challenge,
+                    data.geetest_validate, data.geetest_seccode);
+                case _ =>
+                  gtSdk.failbackValidateRequest(data.geetest_challenge,
+                    data.geetest_validate, data.geetest_seccode);
+              }
+            }
+            gtResult match {
+              case 1 =>
+                service.add(data) map { res =>
+                  if (res > 0)
+                    Redirect(routes.UserController.loginIndex()) //TODO: maybe more friendly
+                  else
+                    Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "注册失败：用户已存在。"
+                }
+              case _ =>
+                Future.successful(Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "安全验证失败。")
             }
           })
     }
@@ -151,8 +166,11 @@ class UserController @Inject() (service: UserService) extends Controller {
     Redirect(routes.Application.index()) withNewSession
   }
 
+  /**
+    * Upload the avatar
+    */
   def uploadAvatar = Action(parse.multipartFormData) { implicit request =>
-    request.body.file("avatar_upload").map { picture => //TODO: NOT SAFE
+    request.body.file("avatar_upload").map { picture => //TODO: NOT SAFE, MUST ONLY BE PIC
       import java.io.File
       val filename = picture.filename
       //val contentType = picture.contentType

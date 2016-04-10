@@ -9,15 +9,16 @@
         <form role="form" id="share-form" action='@routes.Application.publishShare()' method="post">
             <div class="form-group">
                 <label for="title">标题</label>
-                <input type="text" class="form-control" id="title" name="title"
-                placeholder="请输入文章标题">
+                <input type="text" class="form-control" id="title" name="title" minlength="8"
+                placeholder="请输入文章标题" required>
             </div>
             <div class="form-group">
                 <label for="url">网址</label>
-                <input type="text" class="form-control" id="url" name="url"
-                placeholder="请输入文章对应网址">
+                <input type="text" class="form-control" id="url" name="url" maxlength="150"
+                placeholder="请输入文章对应网址" required>
             </div>
-                @captcha()
+            @captcha()
+            @error.FormErrorInfo("share_error")
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">提交</button>
                 <button type="reset" class="btn btn-danger">清空</button>

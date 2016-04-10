@@ -23,6 +23,7 @@ import scala.concurrent.Future
 class Application @Inject()(articleService: ArticleService) extends Controller {
 
   def index() = Action.async { implicit request =>
+    utils.DateUtils.ensureSession
     for {
       data <- articleService.fetchWithPage(0)
       pages <- articleService.calcPage
@@ -42,6 +43,7 @@ class Application @Inject()(articleService: ArticleService) extends Controller {
   }
 
   def share = Action { implicit request =>
+    utils.DateUtils.ensureSession
     Ok(views.html.share(ShareForm.form))
   }
 
@@ -50,7 +52,7 @@ class Application @Inject()(articleService: ArticleService) extends Controller {
 
     ShareForm.form.bindFromRequest().fold(
       errorForm => {
-        Future.successful(Ok(views.html.share(errorForm))) // TODO: error info
+        Future.successful(Redirect(routes.Application.share()) flashing "share_error" -> "表单格式错误，请检查表单。")
       }, data => {
         val gtResult = {
           request.session.get(gtSdk.gtServerStatusSessionKey).get.toInt match {
@@ -72,7 +74,7 @@ class Application @Inject()(articleService: ArticleService) extends Controller {
                 Ok(views.html.error.ServerError("?!?", "服务器似乎出了点问题。。。请重试。。。"))
             }
           case _ =>
-            Future.successful(Ok(views.html.share(ShareForm.form))) // TODO: error info
+            Future.successful(Redirect(routes.Application.share()) flashing "share_error" -> "安全验证失败，请检查验证码。")
         }
       }
     )

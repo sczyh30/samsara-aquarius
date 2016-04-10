@@ -18,13 +18,13 @@ import scala.language.implicitConversions
   */
 case class User(uid: Int, username: String, password: String,
                 joinDate: java.sql.Date,
-                avatar: Option[String] = Some("default"),
+                avatar: Option[String] = Some("default.png"),
                 tips: Option[String] = Some("None~"),
                 website: Option[String] = Some(""),
                 email: String)
 
 case class UserInfo(uid: Int, username: String, joinDate: java.sql.Date,
-                    avatar: Option[String] = Some("default"),
+                    avatar: Option[String] = Some("default.png"),
                     tips: Option[String] = Some("None~"),
                     website: Option[String] = Some(""))
 
