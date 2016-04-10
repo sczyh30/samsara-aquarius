@@ -98,6 +98,7 @@ class UserController @Inject() (service: UserService) extends Controller {
 
   /**
     * User Info Page
+    *
     * @param username username
     */
   def userInfo(username: String) = Action.async { implicit request =>
@@ -148,6 +149,18 @@ class UserController @Inject() (service: UserService) extends Controller {
   def logout = Action { implicit request =>
     //userCache.remove(USER_CACHE_KEY)
     Redirect(routes.Application.index()) withNewSession
+  }
+
+  def uploadAvatar = Action(parse.multipartFormData) { implicit request =>
+    request.body.file("avatar_upload").map { picture => //TODO: NOT SAFE
+      import java.io.File
+      val filename = picture.filename
+      //val contentType = picture.contentType
+      picture.ref.moveTo(new File(s"/assets/images/avatar/$filename"))
+      Ok("OK")
+    } getOrElse {
+      Redirect(routes.UserController.userCenter()) flashing("error" -> "missing file")
+    }
   }
 
 }

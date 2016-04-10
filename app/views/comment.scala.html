@@ -1,7 +1,6 @@
-@import base.Constants.UserCommentInfo
-@import entity.Comment
+@import base.Constants.CommentPageInfo
 @import entity.Article
-@(comments: Seq[Comment], article: Article, users: Seq[UserCommentInfo])(implicit request: RequestHeader)
+@(cu: CommentPageInfo, article: Article)(implicit request: RequestHeader)
 
     @main("文章评论 | Samsara Aquarius - 关注最实用，最前沿的技术") {
     <div class="row clearfix">
@@ -10,22 +9,23 @@
                 <div class="panel panel-default" id="aq-article">
                     <div class="panel-body text-center">
                         <a href="@article.url">@article.title</a>
+                        <p>作者：  @article.author</p>
                     </div>
                 </div>
             </div>
             <div class="aq-comment-tab">
-                <p><span class="label label-success">@comments.length</span> 条评论</p>
+                <p><span class="label label-success">@cu.length</span> 条评论</p>
             </div>
             <div class="aq-comment">
-            @for(c <- comments; i <- 1 to comments.length; user <- users) {
+            @for((c, user) <- cu) {
 
-                    <div class="panel panel-default panel-body aq-comment-post">
+                    <div class="panel panel-default panel-body aq-comment-post well">
                         <div class="aq-comment-avatar">
                             <img src="/assets/images/avatar/@{s"${user._2.getOrElse("default")}.png"}" alt="avatar">
                         </div>
                         <div class="aq-comment-body">
                             <a href="/user/@user._1">@user._1</a>
-                            <!--<span class="text-right">@c.time.toLocalDateTime</span>-->
+                            <!--<span class="text-right">@c.time.toLocalDateTime />-->
                             <p>@c.text</p>
 
                         </div>
@@ -34,7 +34,7 @@
             </div>
         </div>
         @if(request.session.get("aq_token").isDefined) {
-
+            @components.commentForm()
         } else {
             @error.RequireLogin("评论此文章")
         }

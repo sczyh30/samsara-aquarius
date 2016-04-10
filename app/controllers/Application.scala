@@ -26,7 +26,7 @@ class Application @Inject()(articleService: ArticleService) extends Controller {
     for {
       data <- articleService.fetchWithPage(0)
       pages <- articleService.calcPage
-    } yield Ok(views.html.index(data, Page(1, pages, "/p")))
+    } yield Ok(views.html.index(data.reverse, Page(1, pages, "/p")))
   }
 
   def page(page: Int) = Action.async { implicit request =>
@@ -50,7 +50,7 @@ class Application @Inject()(articleService: ArticleService) extends Controller {
 
     ShareForm.form.bindFromRequest().fold(
       errorForm => {
-        Future.successful(Ok(views.html.share(errorForm)))
+        Future.successful(Ok(views.html.share(errorForm))) // TODO: error info
       }, data => {
         val gtResult = {
           request.session.get(gtSdk.gtServerStatusSessionKey).get.toInt match {
@@ -67,9 +67,9 @@ class Application @Inject()(articleService: ArticleService) extends Controller {
             val wrapped = entity.Share(0, data.title, data.url, request.session.get("uid").map(_.toInt))
             articleService.shareArticle(wrapped) map { res =>
               if (res >= 0)
-                Ok(views.html.share(ShareForm.form))
+                Ok(views.html.processOk("提交成功", "您的分享已提交成功，管理员将进行评估。"))
               else
-                Ok(views.html.share(ShareForm.form)) // TODO: error info
+                Ok(views.html.error.ServerError("?!?", "服务器似乎出了点问题。。。请重试。。。"))
             }
           case _ =>
             Future.successful(Ok(views.html.share(ShareForm.form))) // TODO: error info
