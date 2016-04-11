@@ -81,3 +81,8 @@ body {
 .aq-user-key-info {
     padding-left: 110px !important;
 }
+
+.aq-no-display {
+    display:none;
+}
+

@@ -1,7 +1,7 @@
 @(errorType: String)(implicit request: RequestHeader)
 
 @if(request.flash.get(errorType).isDefined) {
-    <div class="alert alert-danger alert-dismissable">
+    <div class="alert alert-danger alert-dismissable fade in">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
         <p class="text-red">@request.flash.get(errorType).get</p>
     </div>

@@ -1,27 +1,31 @@
 @(loginForm: Form[entity.form.LoginFormData])(implicit request: RequestHeader)
-@main("用户登录 | Samsara Aquarius") {
-    <script src="http://cdn.bootcss.com/jquery-validate/1.15.0/jquery.validate.min.js"></script>
-    <div class="good_font">
-        <div class="text-center">
-            <img src="@routes.Assets.versioned("images/61c6258130a63b29b78806e97b1deb6c-biglogo.ico")" alt="LOGO">
-            <h2>用户登录</h2>
+    @main("用户登录 | Samsara Aquarius") {
+        <div class="row clearfix">
+            <div class="col-md-10">
+                <script src="http://cdn.bootcss.com/jquery-validate/1.15.0/jquery.validate.min.js"></script>
+                <div class="good_font">
+                    <div class="text-center">
+                        <img src="@routes.Assets.versioned("images/61c6258130a63b29b78806e97b1deb6c-biglogo.ico")" alt="LOGO">
+                        <h2>用户登录</h2>
+                    </div>
+                    <form role="form" id="login-form" action='@routes.UserController.login()' method="post">
+                        <div class="form-group">
+                            <label for="username">用户名</label>
+                            <input type="text" class="form-control" minlength="4" id="username" name="username"
+                            placeholder="请输入用户名" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">密码</label>
+                            <input type="password" class="form-control" minlength="8" id="password" name="password"
+                            placeholder="请输入密码" required>
+                        </div>
+                        @error.FormErrorInfo("login_error")
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-lg btn-primary" data-loading-text="登录中。。。">登录</button>
+                            <button type="reset" class="btn btn-lg btn-danger">清空</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <form role="form" id="login-form" action='@routes.UserController.login()' method="post">
-            <div class="form-group">
-                <label for="username">用户名</label>
-                <input type="text" class="form-control" minlength="4" id="username" name="username"
-                placeholder="请输入用户名" required>
-            </div>
-            <div class="form-group">
-                <label for="password">密码</label>
-                <input type="password" class="form-control" minlength="8" id="password" name="password"
-                placeholder="请输入密码" required>
-            </div>
-            @error.FormErrorInfo("login_error")
-            <div class="text-center">
-                <button type="submit" class="btn btn-lg btn-primary">登录</button>
-                <button type="reset" class="btn btn-lg btn-danger">清空</button>
-            </div>
-        </form>
-    </div>
-}
+    }

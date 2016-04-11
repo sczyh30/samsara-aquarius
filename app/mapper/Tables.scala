@@ -137,9 +137,14 @@ trait Tables {
     val index2 = index("name_UNIQUE", name, unique=true)
   }
 
+  /**
+    * Share Table
+    *
+    * @param tag Tag
+    */
   class ShareTable(tag: Tag) extends Table[Share](tag, "share_pending") {
 
-    def * = (sid, title, url, user) <> (Share.tupled, Share.unapply)
+    override def * = (sid, title, url, user) <> (Share.tupled, Share.unapply)
 
     /** Database column sid SqlType(INT), AutoInc, PrimaryKey */
     val sid: Rep[Int] = column[Int]("sid", O.AutoInc, O.PrimaryKey)
@@ -150,6 +155,23 @@ trait Tables {
     /** Database column user SqlType(INT), Default(0) */
     val user: Rep[Option[Int]] = column[Option[Int]]("user", O.Default(Some(0)))
   }
+
+  class FavoriteTable(tag: Tag) extends Table[Favorite](tag, "favorite") {
+
+    override def * = (articleId, likeUid, ctime) <> (Favorite.tupled, Favorite.unapply)
+
+    /** Database column article_id SqlType(INT) */
+    val articleId: Rep[Int] = column[Int]("article_id")
+    /** Database column like_uid SqlType(INT) */
+    val likeUid: Rep[Int] = column[Int]("like_uid")
+    /** Database column ctime SqlType(TIMESTAMP) */
+    val ctime: Rep[Option[java.sql.Timestamp]] = column[Option[java.sql.Timestamp]]("ctime", O.Default(None))
+
+    /** Primary key of Favorite (database name favorite_PK) */
+    val pk = primaryKey("favorite_PK", (articleId, likeUid))
+  }
+
+
 
   /** Collection-like TableQuery object for table User */
   lazy val User = new TableQuery(tag => new UserTable(tag))

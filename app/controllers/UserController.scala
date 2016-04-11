@@ -67,8 +67,7 @@ class UserController @Inject() (service: UserService) extends Controller {
         service.login(data.username, data.password) map {
           case Success(user) =>
             Logger.debug(s"Login OK:$user")
-            //userCache.set(USER_CACHE_KEY, user.toToken, 30 minutes)
-            Redirect(routes.Application.index()) withSession user.session //TODO: need session expired time
+            Redirect(routes.Application.index()) withSession user.session
           case Failure(ex) =>
             Logger.debug(s"Login Fail:${ex.getMessage}")
             Redirect(routes.UserController.loginIndex()) flashing "login_error" -> "用户名或密码不正确。"
@@ -176,6 +175,7 @@ class UserController @Inject() (service: UserService) extends Controller {
       //val contentType = picture.contentType
       picture.ref.moveTo(new File(s"/assets/images/avatar/$filename"))
       Ok("OK")
+
     } getOrElse {
       Redirect(routes.UserController.userCenter()) flashing("error" -> "missing file")
     }

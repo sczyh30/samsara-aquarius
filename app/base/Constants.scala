@@ -11,7 +11,7 @@ object Constants {
   val AQUARIUS_DEV_VERSION = "0.3.x"
   // API version
   val AQUARIUS_API_VERSION = "v1"
-  // Dev mode flag(1: dev, 0: dist)
+  // Dev mode flag(1: dev, 0: dist, 24: em)
   val AQUARIUS_DEBUG_MODE_FLAG = 1
 
   // cache key prefix
@@ -40,5 +40,8 @@ object Constants {
   type IndexArticleRes = (Article, Category, Int)
   type UserCommentInfo = (String, Option[String])
   type CommentPageInfo = Seq[(Comment, UserCommentInfo)]
+
+  // message system
+  val ARTICLE_LIKE_ACTOR_NAME = "article-favorite-actor"
 
 }

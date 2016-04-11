@@ -1,6 +1,6 @@
 @import base.Constants.CommentPageInfo
 @import entity.Article
-@(cu: CommentPageInfo, article: Article)(implicit request: RequestHeader)
+@(cu: CommentPageInfo, article: Article, flag: Int)(implicit request: RequestHeader)
 
     @main("文章评论 | Samsara Aquarius - 关注最实用，最前沿的技术") {
     <div class="row clearfix">
@@ -10,6 +10,12 @@
                     <div class="panel-body text-center">
                         <a href="@article.url">@article.title</a>
                         <p>作者：  @article.author</p>
+                        <input type="button" @if(flag == 1) {
+                            class="btn btn-warning glyphicon glyphicon-heart"
+                        } else {class="btn btn-success glyphicon glyphicon-heart-empty"} fav-aid="@article.id" fav-s="@flag" id="aq-btn-a-favorite"
+                            @if(flag > 3) {
+                            data-toggle="tooltip" title="登录后收藏" data-placement="right"
+                        } value="@if(flag == 1) {已收藏} else {收藏}"/>
                     </div>
                 </div>
             </div>
