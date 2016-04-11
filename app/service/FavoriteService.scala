@@ -3,8 +3,8 @@ package service
 import javax.inject.{Singleton, Inject}
 
 import base.Constants._
-import entity.Favorite
-import mapper.Tables.FavoriteTable
+import entity.{Article, Favorite}
+import mapper.Tables.{ArticleTable, FavoriteTable}
 
 import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
 import slick.driver.JdbcProfile
@@ -25,10 +25,18 @@ class FavoriteService @Inject() (protected val dbConfigProvider: DatabaseConfigP
   import driver.api._
 
   val favorites = TableQuery[FavoriteTable]
+  val articles = TableQuery[ArticleTable]
 
-  val queryByArticleCompiled = Compiled {
+  val queryByArticleCountCompiled = Compiled {
     (aid: Rep[Int]) =>
       favorites.filter(_.articleId === aid).length
+  }
+
+  val queryByUserCompiled = Compiled {
+    (uid: Rep[Int]) => for {
+      fv <- favorites.filter(_.likeUid === uid)
+      arc <- articles.filter(_.id === fv.articleId)
+    } yield arc
   }
 
   /**
@@ -54,8 +62,16 @@ class FavoriteService @Inject() (protected val dbConfigProvider: DatabaseConfigP
     }.delete)
   }
 
+  def countA(aid: Int): Future[Int] = {
+    db.run(queryByArticleCountCompiled(aid).result)
+  }
+
   def ifLike(aid: Int, uid: Int): Future[Boolean] = {
     db.run(favorites.filter(x => x.articleId === aid && x.likeUid === uid).exists.result)
+  }
+
+  def fetchUserFavorite(uid: Int): Future[Seq[Article]] = {
+    db.run(queryByUserCompiled(uid).result)
   }
 
 }

@@ -35,9 +35,9 @@ object Constants {
   val ADMIN_ADD_ARTICLE_FAIL = 2641
 
   // Custom Types
-  type CCPT = (Category, Seq[Article]) // CategoryCertainPageType
-  type SCPT = (Seq[(Article, Category)], String) // SearchCertainPageType
+  type CCPT = (Category, Seq[(Article, Int)]) // CategoryCertainPageType
   type IndexArticleRes = (Article, Category, Int)
+  type SCPT = (Seq[IndexArticleRes], String) // SearchCertainPageType
   type UserCommentInfo = (String, Option[String])
   type CommentPageInfo = Seq[(Comment, UserCommentInfo)]
 

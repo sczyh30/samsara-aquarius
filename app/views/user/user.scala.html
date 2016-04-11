@@ -1,5 +1,5 @@
-@import entity.UserInfo
-@(user: UserInfo)(implicit request: RequestHeader)
+@import entity.{UserInfo, Article}
+@(u: UserInfo, fv: Seq[Article])(implicit request: RequestHeader)
 @main("用户信息 | Samsara Aquarius") {
     <div class="row clearfix">
         <div id="aquarius-info" class="good_font">
@@ -8,15 +8,15 @@
                     <div class="panel-body">
                         <div class="aq-user-avatar">
                             <img src="/assets/images/avatar/@{
-                                s"${user.avatar.getOrElse("default.png")}"
+                                s"${u.avatar.getOrElse("default.png")}"
                             }" alt="AVT">
                         </div>
                         <div class="aq-user-key-info">
-                            <p>@user.username</p>
-                            @if(user.website.isDefined) {
+                            <p>@u.username</p>
+                            @if(u.website.isDefined) {
 
                         }
-                            <p><span class="glyphicon glyphicon-time"></span>  加入时间： @user.joinDate</p>
+                            <p><span class="glyphicon glyphicon-time"></span>  加入时间： @u.joinDate</p>
                         </div>
                     </div>
                 </div>
@@ -26,8 +26,15 @@
                     <div class="panel-body">
                         <div class="aq-user-avatar">
                             <div class="label label-success">个性签名</div>
-                            <p>@user.tips.getOrElse("无")</p>
+                            <p class="aq-user-tips">@u.tips.getOrElse("无")</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12" id="aq-user-info-favorite">
+                <div class="panel panel-default well">
+                    <div class="panel-body">
+                        @views.html.user.favorite(fv)
                     </div>
                 </div>
             </div>

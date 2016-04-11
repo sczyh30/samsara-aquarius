@@ -132,8 +132,12 @@ class ArticleService @Inject() (protected val dbConfigProvider: DatabaseConfigPr
   def fetchByCAbbr(abbr: String): Future[Option[CCPT]] = {
     db.run(categories.filter(_.abbr === abbr).result.headOption) flatMap {
       case Some(c) =>
-        db.run(articles.filter(_.cid === c.cid).result) map { res =>
-          Some(c -> res)
+        val query = for {
+          ars <- articles if ars.cid === c.cid
+          count = comments.filter(_.dataId === ars.id).length
+        } yield (ars, count)
+        db.run(query.result) map { res =>
+          Some(c, res)
         }
       case None => Future(None)
     }

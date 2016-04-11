@@ -45,7 +45,6 @@ $(document).ready(function() {
                 location.href = '/login.now';
                 break;
             default:
-
                 break;
         }
 

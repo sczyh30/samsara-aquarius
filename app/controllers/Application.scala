@@ -27,7 +27,7 @@ class Application @Inject()(articleService: ArticleService) extends Controller {
     for {
       data <- articleService.fetchWithPage(0)
       pages <- articleService.calcPage
-    } yield Ok(views.html.index(data.reverse, Page(1, pages, "/p")))
+    } yield Ok(views.html.index(data, Page(1, pages, "/p")))
   }
 
   def page(page: Int) = Action.async { implicit request =>

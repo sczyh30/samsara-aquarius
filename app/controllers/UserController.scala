@@ -6,7 +6,7 @@ import javax.inject.{Singleton, Inject}
 
 import entity.{UserToken, User}
 import entity.form.{RegisterForm, LoginForm}
-import service.UserService
+import service.{FavoriteService, UserService}
 import utils.captcha.{GeetestConfig, GeetestLib}
 import utils.FormConverter.registerConvert
 
@@ -25,7 +25,7 @@ import scala.util.{Failure, Success}
   * @author sczyh30
   */
 @Singleton
-class UserController @Inject() (service: UserService) extends Controller {
+class UserController @Inject() (service: UserService, fvs: FavoriteService) extends Controller {
 
   lazy val gtSdk = new GeetestLib(GeetestConfig.getCaptchaId, GeetestConfig.getPrivateKey)
 
@@ -102,11 +102,13 @@ class UserController @Inject() (service: UserService) extends Controller {
     * @param username username
     */
   def userInfo(username: String) = Action.async { implicit request =>
-    service.fetchByName(username) map {
+    service.fetchByName(username) flatMap {
       case Some(user) =>
-        Ok(views.html.user.user(user.copy(password = null)))
+        fvs fetchUserFavorite user.uid map { arcs =>
+          Ok(views.html.user.user(user.copy(password = null), arcs))
+        }
       case None =>
-        NotFound(views.html.error.NotFound())
+        Future.successful(NotFound(views.html.error.NotFound()))
     }
   }
 
@@ -146,7 +148,7 @@ class UserController @Inject() (service: UserService) extends Controller {
               case 1 =>
                 service.add(data) map { res =>
                   if (res > 0)
-                    Redirect(routes.UserController.loginIndex()) //TODO: maybe more friendly
+                    Redirect(routes.UserController.loginIndex()) // may be more friendly
                   else
                     Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "注册失败：用户已存在。"
                 }
@@ -169,7 +171,7 @@ class UserController @Inject() (service: UserService) extends Controller {
     * Upload the avatar
     */
   def uploadAvatar = Action(parse.multipartFormData) { implicit request =>
-    request.body.file("avatar_upload").map { picture => //TODO: NOT SAFE, MUST ONLY BE PIC
+    request.body.file("avatar_upload").map { picture => //TODO: NOT SAFE, MUST ONLY BE PIC. MUST FIX IN 0.5.x!
       import java.io.File
       val filename = picture.filename
       //val contentType = picture.contentType

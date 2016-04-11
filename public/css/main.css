@@ -82,6 +82,15 @@ body {
     padding-left: 110px !important;
 }
 
+.aq-article-fv-count {
+    margin-left: 20px;
+    font-family: Purisa, Monaco, Arial, sans-serif;
+}
+
+.aq-user-tips {
+    margin-top: 15px;
+}
+
 .aq-no-display {
     display:none;
 }
