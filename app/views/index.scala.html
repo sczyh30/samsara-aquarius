@@ -3,7 +3,9 @@
 @(data: Seq[IndexArticleRes], page: Page)(implicit request: RequestHeader)
 
     @main("Samsara Aquarius - 关注最实用，最前沿的技术") {
-        @error.DebugMode()
+        @if(base.Constants.AQUARIUS_DEBUG_MODE_FLAG > 0) {
+            @error.DebugMode()
+        }
         <div class="row clearfix">
             <div class="col-md-12">
                 <table class="table table-striped">
@@ -14,7 +16,7 @@
                             <th>作者</th>
                             <th>收录日期</th>
                             <th>分类</th>
-                            <th>评论数/评论区</th>
+                            <th>评论区</th>
                         </tr>
                     </thead>
                     <tbody>

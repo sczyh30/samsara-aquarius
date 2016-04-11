@@ -23,6 +23,7 @@ import scala.concurrent.Future
 class Application @Inject()(articleService: ArticleService) extends Controller {
 
   def index() = Action.async { implicit request =>
+    utils.DateUtils.ensureSession
     for {
       data <- articleService.fetchWithPage(0)
       pages <- articleService.calcPage
@@ -42,6 +43,7 @@ class Application @Inject()(articleService: ArticleService) extends Controller {
   }
 
   def share = Action { implicit request =>
+    utils.DateUtils.ensureSession
     Ok(views.html.share(ShareForm.form))
   }
 
@@ -50,7 +52,7 @@ class Application @Inject()(articleService: ArticleService) extends Controller {
 
     ShareForm.form.bindFromRequest().fold(
       errorForm => {
-        Future.successful(Ok(views.html.share(errorForm)))
+        Future.successful(Redirect(routes.Application.share()) flashing "share_error" -> "表单格式错误，请检查表单。")
       }, data => {
         val gtResult = {
           request.session.get(gtSdk.gtServerStatusSessionKey).get.toInt match {
@@ -67,12 +69,12 @@ class Application @Inject()(articleService: ArticleService) extends Controller {
             val wrapped = entity.Share(0, data.title, data.url, request.session.get("uid").map(_.toInt))
             articleService.shareArticle(wrapped) map { res =>
               if (res >= 0)
-                Ok(views.html.share(ShareForm.form))
+                Ok(views.html.processOk("提交成功", "您的分享已提交成功，管理员将进行评估。"))
               else
-                Ok(views.html.share(ShareForm.form)) // TODO: error info
+                Ok(views.html.error.ServerError("?!?", "服务器似乎出了点问题。。。请重试。。。"))
             }
           case _ =>
-            Future.successful(Ok(views.html.share(ShareForm.form))) // TODO: error info
+            Future.successful(Redirect(routes.Application.share()) flashing "share_error" -> "安全验证失败，请检查验证码。")
         }
       }
     )

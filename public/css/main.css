@@ -1,6 +1,6 @@
 body {
     padding-top: 70px;
-    padding-bottom: 70px;
+    padding-bottom: 90px;
     font-family: '文泉驿微米黑', '微软雅黑', 'PingFang SC', 'LiHei Pro', Arial, sans-serif;
 }
 
@@ -67,3 +67,31 @@ body {
 .aq-comment-body {
     padding-left: 70px !important;
 }
+
+.aq-user-avatar {
+    position: relative;
+    float: left;
+}
+
+.aq-user-avatar img {
+    width:  85px !important;
+    height: 85px !important;
+}
+
+.aq-user-key-info {
+    padding-left: 110px !important;
+}
+
+.aq-article-fv-count {
+    margin-left: 20px;
+    font-family: Purisa, Monaco, Arial, sans-serif;
+}
+
+.aq-user-tips {
+    margin-top: 15px;
+}
+
+.aq-no-display {
+    display:none;
+}
+

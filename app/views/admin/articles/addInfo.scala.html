@@ -1,47 +1,52 @@
 @import entity.{Admin, Category}
 @(form: Form[entity.form.InfoFormData], categories: Seq[Category])(implicit request: RequestHeader)
-@admin.main("添加新的文章 | Samsara Aquarius CC",
-    Admin(6, "admin6", null, Some(1), "a@b.com")) {
-
-    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("css/main.css")">
-    <div class="good_font">
-        <div class="text-center">
-            <img src="@routes.Assets.versioned("images/61c6258130a63b29b78806e97b1deb6c-biglogo.ico")" alt="LOGO">
-            <h2>添加文章</h2>
+    @admin.main("添加新的文章 | Samsara Aquarius CC",
+        Admin(6, "admin6", null, Some(1), "a@b.com")) {
+        <div class="container">
+            <div class="row clearfix">
+                <div class="col-sm-9">
+                    <div class="good_font">
+                        <div class="text-center">
+                            <img src="@routes.Assets.versioned("images/61c6258130a63b29b78806e97b1deb6c-biglogo.ico")" alt="LOGO">
+                            <h2>添加文章</h2>
+                        </div>
+                        <form role="form" id="add-info-form" action='@routes.AdminController.addInfoProcess()' method="post">
+                            <div class="form-group">
+                                <label for="title">标题</label>
+                                <input type="text" class="form-control" id="title" name="title" minlength="8"
+                                placeholder="请输入文章标题" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="url">网址</label>
+                                <input type="text" class="form-control" id="url" name="url" maxlength="150"
+                                placeholder="请输入文章对应网址" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="author">作者</label>
+                                <input type="text" class="form-control" id="author" name="author" maxlength="45"
+                                placeholder="请输入文章作者" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cid">分类</label>
+                                <select id="cid" name="cid">
+                                @for(c <- categories) {
+                                    <option value="@c.cid">@c.name</option>
+                                }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="updateDate">更新时间</label>
+                                <input type="date" class="form-control" id="updateDate" name="updateDate"
+                                placeholder="请选择文章更新时间" required>
+                            </div>
+                            @error.FormErrorInfo("add_article_error")
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">添加文章</button>
+                                <button type="reset" class="btn btn-danger">清空信息</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-        <form role="form" id="add-info-form" action='@routes.AdminController.addInfoProcess()' method="post">
-            <div class="form-group">
-                <label for="title">标题</label>
-                <input type="text" class="form-control" id="title" name="title"
-                placeholder="请输入文章标题">
-            </div>
-            <div class="form-group">
-                <label for="url">网址</label>
-                <input type="text" class="form-control" id="url" name="url"
-                placeholder="请输入文章对应网址">
-            </div>
-            <div class="form-group">
-                <label for="author">作者</label>
-                <input type="text" class="form-control" id="author" name="author"
-                placeholder="请输入文章作者">
-            </div>
-            <div class="form-group">
-                <label for="cid">分类</label>
-                <select id="cid" name="cid">
-                    @for(c <- categories) {
-                        <option value="@c.cid">@c.name</option>
-                    }
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="updateDate">更新时间</label>
-                <input type="date" class="form-control" id="updateDate" name="updateDate"
-                placeholder="请选择文章更新时间">
-            </div>
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary">添加文章</button>
-                <button type="reset" class="btn btn-danger">清空信息</button>
-            </div>
-        </form>
-    </div>
-}
+    }

@@ -3,7 +3,7 @@ package controllers
 import javax.inject.{Singleton, Inject}
 
 import entity.form.InfoForm
-import service.{CategoryService, ArticleService}
+import service.{AdminService, CategoryService}
 import utils.FormConverter.infoConvert
 import base.Constants._
 
@@ -19,7 +19,7 @@ import scala.concurrent.Future
   * @author sczyh30
   */
 @Singleton
-class AdminController @Inject() (articleService: ArticleService, categoryService: CategoryService) extends Controller {
+class AdminController @Inject() (admin: AdminService, cs: CategoryService) extends Controller {
 
   type PageMessage = (String, String)
 
@@ -43,7 +43,7 @@ class AdminController @Inject() (articleService: ArticleService, categoryService
   def dashboard() = TODO
 
   def addInfoPage() = Action.async { implicit request =>
-    categoryService.fetchAll map { categories =>
+    cs.fetchAll map { categories =>
       Ok(views.html.admin.articles.addInfo(InfoForm.form, categories))
     }
   }
@@ -51,10 +51,10 @@ class AdminController @Inject() (articleService: ArticleService, categoryService
   def addInfoProcess() = Action.async { implicit request =>
     InfoForm.form.bindFromRequest.fold(
       errorForm => {
-        Future.successful(BadRequest(views.html.admin.articles.addInfo(errorForm, Seq())))
+        Future.successful(Redirect(routes.AdminController.addInfoPage()) flashing "add_article__error" -> "表单格式错误，请检查表单！")
       },
       data => {
-        articleService.add(data) map { res =>
+        admin.addArticle(data) map { res =>
           if (res >= 0)
             processOkResult(ADMIN_ADD_ARTICLE_SUCCESS)
           else

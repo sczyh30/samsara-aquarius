@@ -1,1 +1,21 @@
-@()(implicit request: RequestHeader)
+@(data: Seq[entity.Article])(implicit request: RequestHeader)
+
+<table class="table table-striped">
+    @if(data.isEmpty) {
+        <caption>没有收藏文章</caption>
+    } else {
+        <caption>收藏的文章，共@{data.length}篇</caption>
+        <thead>
+            <tr>
+                <th>文章</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for(arc <- data) {
+            <tr>
+                <td><a href="/@arc.id/comments">@arc.title</a></td>
+            </tr>
+        }
+        </tbody>
+    }
+</table>

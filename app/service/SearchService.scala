@@ -2,11 +2,11 @@ package service
 
 import javax.inject.{Inject, Singleton}
 
+import base.Constants._
 import entity.{Category, Article}
-import mapper.Tables.{CategoryTable, ArticleTable}
+import mapper.Tables.{CommentTable, CategoryTable, ArticleTable}
 
-import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
-import slick.driver.JdbcProfile
+import play.api.db.slick.DatabaseConfigProvider
 
 import scala.concurrent.Future
 
@@ -16,6 +16,8 @@ import scala.concurrent.Future
   *
   * Note: In this version, we simply use SQL LIKE clause to implement search functions.
   * This could lead to bad performance. In next version, we may use full-index system to enhance it.
+  *
+  * Milestone: enhance performance :: Maybe 1.1.x
   *
   * @author sczyh30
   */
@@ -28,6 +30,7 @@ class SearchService @Inject()(protected val dbConfigProvider: DatabaseConfigProv
 
   val articles = TableQuery[ArticleTable]
   val categories = TableQuery[CategoryTable]
+  val comments = TableQuery[CommentTable]
 
   val byNameComplied = Compiled {
     (name: Rep[String], pattern: Rep[String]) =>
@@ -37,13 +40,15 @@ class SearchService @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   val byNameWithCategoryComplied = Compiled {
     (name: Rep[String], pattern: Rep[String]) => for {
       a <- articles.sortBy(_.id.desc).filter(_.title like pattern)
+      cn = comments.filter(_.dataId === a.id).length
       c <- categories if c.cid === a.cid
-    } yield (a, c)
+    } yield (a, c, cn)
   }
 
   /**
     * Search articles by name
     * for REST API until v0.3.0
+    *
     * @param name article partial name
     */
   def byName(name: String): Future[Seq[Article]] = {
@@ -53,10 +58,11 @@ class SearchService @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   /**
     * Search articles by name
     * For application service
+    *
     * @param name article partial name
     * @return async result, typed `AWS`
     */
-  def byNameWithCategory(name: String): Future[Seq[AWC]] = {
+  def byNameWithCategory(name: String): Future[Seq[IndexArticleRes]] = {
     db.run(byNameWithCategoryComplied(name, s"%$name%").result)
   }
 

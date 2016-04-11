@@ -1,1 +1,18 @@
-@(title: String, url: String)
+@(title: String, info: String)(implicit request: RequestHeader)
+@main("操作成功 | Samsara Aquarius") {
+    <div class="row clearfix">
+        <div id="process-ok-panel">
+            <div class="col-md-10">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">@title</h3>
+                    </div>
+                    <div class="panel-body text-center">
+                        <p>@info</p>
+                        <button class="btn btn-success" id="ret-index">返回主页</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

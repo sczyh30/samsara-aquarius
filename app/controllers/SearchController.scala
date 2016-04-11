@@ -16,9 +16,14 @@ import service.SearchService
 @Singleton
 class SearchController @Inject() (service: SearchService) extends Controller {
 
+  /**
+    * Search articles by article partial name
+    * <code>/search?q=???</code>
+    * @param q article partial name
+    */
   def search(q: String) = Action.async { implicit request =>
     service.byNameWithCategory(q) map { res =>
-      Ok(views.html.articles(Right(res → q)))
+      Ok(views.html.articles(Right(res -> q)))
     }
   }
 

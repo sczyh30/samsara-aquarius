@@ -1,6 +1,6 @@
 package base
 
-import entity.{Category, Article}
+import entity.{Comment, Category, Article}
 
 /**
   * Samsara Aquarius
@@ -11,6 +11,8 @@ object Constants {
   val AQUARIUS_DEV_VERSION = "0.3.x"
   // API version
   val AQUARIUS_API_VERSION = "v1"
+  // Dev mode flag(1: dev, 0: dist, 24: em)
+  val AQUARIUS_DEBUG_MODE_FLAG = 1
 
   // cache key prefix
   private val USER_TOKEN_CACHE_KEY_PREFIX = "USER_"
@@ -33,9 +35,13 @@ object Constants {
   val ADMIN_ADD_ARTICLE_FAIL = 2641
 
   // Custom Types
-  type CCPT = (Category, Seq[Article]) // CategoryCertainPageType
-  type SCPT = (Seq[(Article, Category)], String) // SearchCertainPageType
+  type CCPT = (Category, Seq[(Article, Int)]) // CategoryCertainPageType
   type IndexArticleRes = (Article, Category, Int)
+  type SCPT = (Seq[IndexArticleRes], String) // SearchCertainPageType
   type UserCommentInfo = (String, Option[String])
+  type CommentPageInfo = Seq[(Comment, UserCommentInfo)]
+
+  // message system
+  val ARTICLE_LIKE_ACTOR_NAME = "article-favorite-actor"
 
 }

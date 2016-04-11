@@ -4,4 +4,4 @@
 
 Samsara Aquarius is a project based on Play 2.5 and Scala 2.11.8.
 
-Present master version: **0.3.x**
+Present master version: **0.5.x**

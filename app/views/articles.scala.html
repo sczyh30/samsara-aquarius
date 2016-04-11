@@ -20,13 +20,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @for(info <- data.left.get._2) {
+                    @for((info, count) <- data.left.get._2) {
                         <tr>
                             <td><a href="@info.url">@info.title</a></td>
                             <td>@info.author</td>
                             <td>@info.updateDate</td>
                             <td>@data.left.get._1.name</td>
-                            <td><a href="/@info.id/comments">88</a></td>
+                            <td><a href="/@info.id/comments">@count</a></td>
                         </tr>
                     }
                     </tbody>
@@ -42,13 +42,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @for((info, category) <- data.right.get._1) {
+                    @for((info, category, cs) <- data.right.get._1) {
                         <tr>
                             <td><a href="@info.url">@info.title</a></td>
                             <td>@info.author</td>
                             <td>@info.updateDate</td>
                             <td>@category.name</td>
-                            <td><a href="/@info.id/comments">88</a></td>
+                            <td><a href="/@info.id/comments">@cs</a></td>
                         </tr>
                     }
                     </tbody>

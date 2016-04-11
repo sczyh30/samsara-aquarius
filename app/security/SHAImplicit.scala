@@ -58,15 +58,6 @@ object SHAImplicit {
       */
     def sha512() = hash(Some(str), SHA512)
 
-    /**
-      * Use SHA-256 algorithm (with salt) to hash the string.
-      *
-      * @param salt the salt string
-      * @return encrypted string
-      */
-    //TODO:TO BE ACCOMPLISHED
-    private def sha256(salt: String) = ???
-
   }
 
 }

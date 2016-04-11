@@ -1,7 +1,6 @@
-@import base.Constants.UserCommentInfo
-@import entity.Comment
+@import base.Constants.CommentPageInfo
 @import entity.Article
-@(comments: Seq[Comment], article: Article, users: Seq[UserCommentInfo])(implicit request: RequestHeader)
+@(cu: CommentPageInfo, article: Article, fvCount: Int, flag: Int)(implicit request: RequestHeader)
 
     @main("文章评论 | Samsara Aquarius - 关注最实用，最前沿的技术") {
     <div class="row clearfix">
@@ -9,32 +8,37 @@
             <div class="aq-ca">
                 <div class="panel panel-default" id="aq-article">
                     <div class="panel-body text-center">
-                        <a href="@article.url">@article.title</a>
+                        <a href="@article.url">@article.title</a><span class="aq-article-fv-count glyphicon glyphicon-heart text-red">@fvCount</span>
+                        <p>作者：  @article.author</p>
+                        <input type="button" @if(flag == 1) {
+                            class="btn btn-warning glyphicon glyphicon-heart"
+                        } else {class="btn btn-success glyphicon glyphicon-heart-empty"} fav-aid="@article.id" fav-s="@flag" id="aq-btn-a-favorite"
+                            @if(flag > 3) {
+                            data-toggle="tooltip" title="登录后收藏" data-placement="right"
+                        } value="@if(flag == 1) {已收藏} else {收藏}"/>
                     </div>
                 </div>
             </div>
             <div class="aq-comment-tab">
-                <p><span class="label label-success">@comments.length</span> 条评论</p>
+                <p><span class="label label-success">@cu.length</span> 条评论</p>
             </div>
             <div class="aq-comment">
-            @for(c <- comments; i <- 1 to comments.length; user <- users) {
-
-                    <div class="panel panel-default panel-body aq-comment-post">
+            @for((c, user) <- cu) {
+                    <div class="panel panel-default panel-body aq-comment-post well">
                         <div class="aq-comment-avatar">
-                            <img src="/assets/images/avatar/@{s"${user._2.getOrElse("default")}.png"}" alt="avatar">
+                            <img src="/assets/images/avatar/@{s"${user._2.getOrElse("default.png")}"}" alt="avatar">
                         </div>
                         <div class="aq-comment-body">
                             <a href="/user/@user._1">@user._1</a>
-                            <!--<span class="text-right">@c.time.toLocalDateTime</span>-->
+                            <!--<span class="text-right">@c.time.toLocalDateTime />-->
                             <p>@c.text</p>
-
                         </div>
                     </div>
             }
             </div>
         </div>
         @if(request.session.get("aq_token").isDefined) {
-
+            @components.commentForm()
         } else {
             @error.RequireLogin("评论此文章")
         }

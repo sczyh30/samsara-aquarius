@@ -25,7 +25,7 @@ object StringUtils {
     def bytes2hex(): String = Option(bytes) match {
       case Some(bs) =>
         val hexString: StringBuilder = new StringBuilder
-        for (b <- bs) { //TODO: need to be more functional
+        for (b <- bs) {
           val strHex: String = Integer.toHexString(b & 0xFF)
           if (strHex.length < 2) {
             hexString.append(0)
