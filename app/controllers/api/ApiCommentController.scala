@@ -2,10 +2,15 @@ package controllers.api
 
 import javax.inject.{Inject, Singleton}
 
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.mvc.Controller
 import service.CommentService
 
+import scala.concurrent.Future
+
+//import RestConverter.commentFormat
+
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.json.Json
+import play.api.mvc.{Action, Controller}
 
 
 /**
@@ -17,7 +22,12 @@ import service.CommentService
 @Singleton
 class ApiCommentController @Inject() (service: CommentService) extends Controller {
 
-  def fetchByArticle(aid: Int) = TODO
+  def fetchByArticle(aid: Int) = Action.async { implicit request =>
+    Future.successful(NotImplemented)
+    /*service fetchByArticle aid map { data =>
+      Ok(Json.toJson(data))
+    }*/
+  }
 
   def comment(aid: Int) = TODO
 

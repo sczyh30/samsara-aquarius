@@ -45,10 +45,10 @@ class FavoriteService @Inject() (protected val dbConfigProvider: DatabaseConfigP
     * @return async result; if less than 0, there is something wrong
     */
   def ❤(favorite: Favorite): Future[Int] = {
-    db.run(favorites += favorite) recover {
+    db.run(favorites += favorite) /*recover {
       case duplicate: com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException => DB_ADD_DUPLICATE
       case _: Exception => -2
-    }
+    }*/
   }
 
   /**

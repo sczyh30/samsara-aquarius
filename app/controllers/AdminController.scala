@@ -8,8 +8,8 @@ import utils.FormConverter.infoConvert
 import base.Constants._
 
 import play.api.mvc._
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**

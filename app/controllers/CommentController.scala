@@ -5,8 +5,8 @@ import javax.inject.{Inject, Singleton}
 import service.{FavoriteService, ArticleService, UserService, CommentService}
 
 import play.api.mvc._
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**

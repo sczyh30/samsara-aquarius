@@ -14,8 +14,8 @@ $(document).ready(function() {
                     success: function(response, textStatus, jqXhr) {
                         if (response.code == '2711') {
                             btn.attr("fav-s", 1);
-                            btn.addClass("btn-default glyphicon-heart");
-                            btn.removeClass("btn-success glyphicon-heart-empty");
+                            btn.addClass("btn-default");
+                            btn.removeClass("btn-success");
                             btn.attr("value", '已收藏');
                         }
                     },
@@ -31,8 +31,8 @@ $(document).ready(function() {
                     success: function(response, textStatus, jqXhr) {
                         if (response.code == '2761') {
                             btn.attr("fav-s", 0);
-                            btn.removeClass("btn-default glyphicon-heart");
-                            btn.addClass("btn-success glyphicon-heart-empty");
+                            btn.removeClass("btn-default");
+                            btn.addClass("btn-success");
                             btn.attr("value", '收藏');
                         }
                     },

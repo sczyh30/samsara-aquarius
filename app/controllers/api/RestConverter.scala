@@ -1,7 +1,6 @@
 package controllers.api
 
 import entity._
-import base.Constants._
 
 import play.api.libs.json.{JsValue, Json}
 
@@ -14,6 +13,7 @@ object RestConverter {
 
   implicit val categoryFormat = Json.format[Category] // JSON automated mapping
   implicit val articleFormat = Json.format[Article]
+  //implicit val commentFormat = Json.format[Comment]
   implicit val restArticleFormat = Json.format[RestArticle]
   implicit val resultFormat = Json.format[ProcessResult]
   implicit val userInfoFormat = Json.format[UserInfo]

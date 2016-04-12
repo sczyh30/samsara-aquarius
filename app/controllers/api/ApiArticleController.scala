@@ -8,8 +8,8 @@ import javax.inject.{Singleton, Inject}
 
 import play.api.mvc.{Action, Controller}
 import play.api.libs.json.Json
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.implicitConversions
 
 
