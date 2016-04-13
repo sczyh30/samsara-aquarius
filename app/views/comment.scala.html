@@ -8,11 +8,11 @@
             <div class="aq-ca">
                 <div class="panel panel-default" id="aq-article">
                     <div class="panel-body text-center">
-                        <a href="@article.url">@article.title</a><span class="aq-article-fv-count glyphicon glyphicon-heart text-red">@fvCount</span>
+                        <a href="@article.url">@article.title</a><span class="aq-article-fv-count glyphicon glyphicon-heart text-red" id="aq-fv-count">@fvCount</span>
                         <p>作者：  @article.author</p>
                         <input type="button" @if(flag == 1) {
-                            class="btn btn-warning glyphicon glyphicon-heart"
-                        } else {class="btn btn-success glyphicon glyphicon-heart-empty"} fav-aid="@article.id" fav-s="@flag" id="aq-btn-a-favorite"
+                            class="btn btn-warning"
+                        } else {class="btn btn-success"} fav-aid="@article.id" fav-s="@flag" id="aq-btn-a-favorite"
                             @if(flag > 3) {
                             data-toggle="tooltip" title="登录后收藏" data-placement="right"
                         } value="@if(flag == 1) {已收藏} else {收藏}"/>

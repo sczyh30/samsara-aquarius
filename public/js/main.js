@@ -1,23 +1,38 @@
 $(document).ready(function() {
+    var article_like_btn = $("#aq-btn-a-favorite");
+
+    // fetch count
+    function refresh_fc_count() {
+        $.ajax({
+            url: '/api/lcount/' + article_like_btn.attr("fav-aid"),
+            type: 'GET',
+            success: function(response, textStatus, jqXhr) {
+                $("#aq-fv-count").html(response);
+            }
+        })
+    }
+    //setInterval(refresh_fc_count, 5000);
+
     $("#ret-index").on("click", function () {
         location.href="/"
     });
 
-    $("#aq-btn-a-favorite").on("click", function () {
-        var btn = $("#aq-btn-a-favorite");
-        var status = Number(btn.attr("fav-s"));
+    article_like_btn.on("click", function () {
+
+        var status = Number(article_like_btn.attr("fav-s"));
         switch (status) {
             case 0:
                 $.ajax({
-                    url: '/api/al/' + btn.attr("fav-aid"),
+                    url: '/api/al/' + article_like_btn.attr("fav-aid"),
                     type: 'PATCH',
                     success: function(response, textStatus, jqXhr) {
                         if (response.code == '2711') {
-                            btn.attr("fav-s", 1);
-                            btn.addClass("btn-default");
-                            btn.removeClass("btn-success");
-                            btn.attr("value", '已收藏');
+                            article_like_btn.attr("fav-s", 1);
+                            article_like_btn.addClass("btn-default");
+                            article_like_btn.removeClass("btn-success");
+                            article_like_btn.attr("value", '已收藏');
                         }
+                        refresh_fc_count()
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
 
@@ -26,15 +41,16 @@ $(document).ready(function() {
                 break;
             case 1:
                 $.ajax({
-                    url: '/api/aul/' + btn.attr("fav-aid"),
+                    url: '/api/aul/' + article_like_btn.attr("fav-aid"),
                     type: 'PATCH',
                     success: function(response, textStatus, jqXhr) {
                         if (response.code == '2761') {
-                            btn.attr("fav-s", 0);
-                            btn.removeClass("btn-default");
-                            btn.addClass("btn-success");
-                            btn.attr("value", '收藏');
+                            article_like_btn.attr("fav-s", 0);
+                            article_like_btn.removeClass("btn-default");
+                            article_like_btn.addClass("btn-success");
+                            article_like_btn.attr("value", '收藏');
                         }
+                        refresh_fc_count()
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
 

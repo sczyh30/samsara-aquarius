@@ -58,4 +58,10 @@ class LikeController @Inject()(articleService: ArticleService, system: ActorSyst
     }
   }
 
+  def likeCount(aid: Int) = Action.async { implicit request =>
+    fvs countA aid map { res =>
+      Ok(res.toString)
+    }
+  }
+
 }

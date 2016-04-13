@@ -67,6 +67,13 @@ trait Tables {
     val text: Rep[String] = column[String]("text", O.Length(150,varying=true))
     /** Database column time SqlType(DATETIME) */
     val time: Rep[java.sql.Timestamp] = column[java.sql.Timestamp]("time")
+
+    /** Index over (dataId) (database name index_aid) */
+    val index1 = index("index_aid", dataId)
+    /** Index over (uid,dataId) (database name index_u_a) */
+    val index2 = index("index_u_a", (uid, dataId))
+    /** Index over (uid) (database name index_uid) */
+    val index3 = index("index_uid", uid)
   }
 
   /**
@@ -90,6 +97,11 @@ trait Tables {
     val cid: Rep[Int] = column[Int]("cid")
     /** Database column update_date SqlType(DATE) */
     val updateDate: Rep[java.sql.Date] = column[java.sql.Date]("update_date")
+
+    /** Index over (cid) (database name index_cid) */
+    val index1 = index("index_cid", cid)
+    /** Index over (title) (database name index_title) */
+    val index2 = index("index_title", title)
   }
 
   /**
@@ -144,7 +156,7 @@ trait Tables {
     */
   class ShareTable(tag: Tag) extends Table[Share](tag, "share_pending") {
 
-    override def * = (sid, title, url, user) <> (Share.tupled, Share.unapply)
+    override def * = (sid, title, url, user) <> (entity.Share.tupled, entity.Share.unapply)
 
     /** Database column sid SqlType(INT), AutoInc, PrimaryKey */
     val sid: Rep[Int] = column[Int]("sid", O.AutoInc, O.PrimaryKey)
@@ -154,11 +166,14 @@ trait Tables {
     val url: Rep[String] = column[String]("url", O.Length(150,varying=true))
     /** Database column user SqlType(INT), Default(0) */
     val user: Rep[Option[Int]] = column[Option[Int]]("user", O.Default(Some(0)))
+
+    /** Index over (title) (database name index_title) */
+    val index1 = index("index_title", title)
   }
 
   class FavoriteTable(tag: Tag) extends Table[Favorite](tag, "favorite") {
 
-    override def * = (articleId, likeUid, ctime) <> (Favorite.tupled, Favorite.unapply)
+    override def * = (articleId, likeUid, ctime) <> (entity.Favorite.tupled, entity.Favorite.unapply)
 
     /** Database column article_id SqlType(INT) */
     val articleId: Rep[Int] = column[Int]("article_id")
@@ -169,8 +184,10 @@ trait Tables {
 
     /** Primary key of Favorite (database name favorite_PK) */
     val pk = primaryKey("favorite_PK", (articleId, likeUid))
-  }
 
+    /** Index over (likeUid) (database name index_uid) */
+    val index1 = index("index_uid", likeUid)
+  }
 
 
   /** Collection-like TableQuery object for table User */
@@ -188,9 +205,15 @@ trait Tables {
   /** Collection-like TableQuery object for table Category */
   lazy val Category = new TableQuery(tag => new CategoryTable(tag))
 
+  /** Collection-like TableQuery object for table Favorite */
+  lazy val Favorite = new TableQuery(tag => new FavoriteTable(tag))
+
+  /** Collection-like TableQuery object for table SharePending */
+  lazy val SharePending = new TableQuery(tag => new ShareTable(tag))
+
   /** DDL for all tables */
   lazy val schema: profile.SchemaDescription =
-    User.schema ++ Article.schema ++ Comment.schema ++ Admin.schema ++ Category.schema
+    User.schema ++ Article.schema ++ Comment.schema ++ Admin.schema ++ Category.schema ++ Favorite.schema ++ SharePending.schema
 
 }
 

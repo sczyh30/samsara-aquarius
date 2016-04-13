@@ -29,7 +29,7 @@ class CommentController @Inject() (service: CommentService, us: UserService, ars
       val uf = for(c <- data) yield us.fetchCommentInfo(c.uid)
       ars.fetchOnly(aid) flatMap { article =>
         Future.sequence(uf) flatMap { users =>
-          fvs countA aid flatMap { count =>
+          fvs countA aid flatMap { count => // maybe too complicated?
             request.session.get("uid") match {
               case Some(uid) =>
                 fvs ifLike(aid, uid.toInt) map {
@@ -40,7 +40,6 @@ class CommentController @Inject() (service: CommentService, us: UserService, ars
                 Future.successful(Ok(views.html.comment(data.zip(users), article, count, 4)))
             }
           }
-
         }
       }
     }

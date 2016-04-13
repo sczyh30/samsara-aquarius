@@ -67,6 +67,7 @@ GET          /api/categories              controllers.api.ApiCategoryController.
 # Like API
 PATCH        /api/al/:aid                 controllers.LikeController.like(aid: Int)
 PATCH        /api/aul/:aid                controllers.LikeController.cancelLike(aid: Int)
+GET          /api/lcount/:aid             controllers.LikeController.likeCount(aid: Int)
 
 
 # Map static resources from the /public folder to the /assets URL path
