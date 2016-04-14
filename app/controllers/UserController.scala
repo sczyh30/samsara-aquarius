@@ -79,13 +79,14 @@ class UserController @Inject() (service: UserService, fvs: FavoriteService) exte
     * User Center
     */
   def userCenter = Action.async { implicit request =>
+    utils.DateUtils.ensureSession
     val userSession = request.session.get("uid")
     val unknownError = NotFound(views.html.error.NotFound()) // maybe 400?
     userSession match {
       case Some(uid) =>
         service.fetch(uid.toInt) map {
           case Some(user) =>
-            Ok(views.html.user.center(user)) withSession "timestamp" -> java.time.LocalDateTime.now().toString
+            Ok(views.html.user.center(user))
           case None =>
             NotFound(views.html.error.NotFound())
         } recover {
@@ -179,7 +180,7 @@ class UserController @Inject() (service: UserService, fvs: FavoriteService) exte
       Ok("OK")
 
     } getOrElse {
-      Redirect(routes.UserController.userCenter()) flashing("error" -> "missing file")
+      Redirect(routes.UserController.userCenter()) flashing "error" -> "missing file"
     }
   }
 

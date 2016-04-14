@@ -2,13 +2,15 @@
 
 <div class="row clearfix">
     <div class="col-md-10">
-        <form role="form" id="comment-form" class="panel panel-default" action='' method="post">
-            <div class="form-group">
-                <label for="comment">评论区</label>
+        <form role="form" id="comment-form" class="panel panel-default text-center" method="post">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-comment"></span> 评论区（还可以输入 <span id="cm_char_cnt">140</span> 个字符）</h3>
             </div>
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary">评论</button>
-                <button type="reset" class="btn btn-danger">清空</button>
+            <div class="form-group" id="aq-comment-textarea">
+                <textarea id="comment" name="comment" rows="3" placeholder="说点什么吧..." required maxlength="140"></textarea>
+            </div>
+            <div class="text-center mgb-10" id="comment-button">
+                <button type="submit" class="btn btn-primary btn-long-50">评论</button>
             </div>
         </form>
     </div>

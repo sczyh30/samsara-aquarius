@@ -1,6 +1,6 @@
 @import entity.{UserInfo, Article}
 @(u: UserInfo, fv: Seq[Article])(implicit request: RequestHeader)
-@main("用户信息 | Samsara Aquarius") {
+@main(s"用户信息 - ${u.username} | Samsara Aquarius") {
     <div class="row clearfix">
         <div id="aquarius-info" class="good_font">
             <div class="col-md-6" id="aq-user-info-avatar">
@@ -12,7 +12,7 @@
                             }" alt="AVT">
                         </div>
                         <div class="aq-user-key-info">
-                            <p>@u.username</p>
+                            <p><strong>@u.username</strong></p>
                             @if(u.website.isDefined) {
 
                         }

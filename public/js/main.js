@@ -1,5 +1,19 @@
-$(document).ready(function() {
+$(document).ready(() => {
+    let MAX_COMMENT_CHAR = 140;
     var article_like_btn = $("#aq-btn-a-favorite");
+
+    // count comment char
+    function count_char() {
+        var comment_input = $("#comment");
+        var cnt_text = $('#cm_char_cnt');
+        comment_input.keyup(() => {
+            cnt_text.html(MAX_COMMENT_CHAR - comment_input.val().length);
+        });
+        comment_input.keydown(() => {
+            cnt_text.html(MAX_COMMENT_CHAR - comment_input.val().length);
+        });
+    }
+    count_char();
 
     // fetch count
     function refresh_fc_count() {
@@ -13,11 +27,11 @@ $(document).ready(function() {
     }
     //setInterval(refresh_fc_count, 5000);
 
-    $("#ret-index").on("click", function () {
+    $("#ret-index").on("click", () => {
         location.href="/"
     });
 
-    article_like_btn.on("click", function () {
+    article_like_btn.on("click", () => {
 
         var status = Number(article_like_btn.attr("fav-s"));
         switch (status) {

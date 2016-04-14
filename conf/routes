@@ -4,6 +4,7 @@
 ## Samsara Aquarius
 ## Application
 GET          /                            controllers.Application.index()
+GET          /404                         controllers.Application.notFound
 GET          /p/:page                     controllers.Application.page(page: Int)
 GET          /share                       controllers.Application.share
 POST         /share                       controllers.Application.publishShare

@@ -32,7 +32,7 @@ class ApiUserController @Inject() (@NamedCache("user-token-cache") tokenCache: C
       UserToken(user.uid, user.username, UUID.randomUUID().toString)
   }
 
-  def register() = TODO
+  def register() = TODO // control fuck request
 
   def login(username: String, password: String) = Action.async { implicit request =>
     service.login(username, password) map {

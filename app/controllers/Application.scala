@@ -38,7 +38,7 @@ class Application @Inject()(articleService: ArticleService) extends Controller {
         }
       }
       else
-        Future.successful(NotFound(views.html.error.NotFound()))
+        Future.successful(Redirect(routes.Application.notFound()))
     }
   }
 

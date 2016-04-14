@@ -11,6 +11,17 @@
         <li><a>...</a></li>
         <li><a href="@page.path/@{page.now-1}">@{page.now -1}</a></li>
         <li class="active"><a href="@page.path/@page.now">@page.now</a></li>
+        @if(page.now < page.all - 2) {
+            <li><a>...</a></li>
+            @for(i <- page.all - 2 to page.all) {
+                <li><a href="@page.path/@i">@i</a></li>
+            }
+        } else {
+            @for(i <- page.now + 1 to page.all) {
+                <li><a href="@page.path/@i">@i</a></li>
+            }
+
+        }
     } else {
         @for(i <- 1 until page.now) {
             <li><a href="@page.path/@i">@i</a></li>
@@ -18,17 +29,6 @@
         <li class="active"><a href="@page.path/@page.now">@page.now</a></li>
         @if(page.now < page.all) {
             <li><a href="@page.path/@{page.now + 1}">@{page.now + 1}</a></li>
-        }
-    }
-
-    @if(page.now < page.all - 2) {
-        <li><a>...</a></li>
-        @for(i <- page.all - 2 to page.all) {
-            <li><a href="@page.path/@i">@i</a></li>
-        }
-    } else {
-        @for(i <- page.now + 1 to page.all) {
-            <li><a href="@page.path/@i">@i</a></li>
         }
     }
     <li><a href="@page.path/@{if (page.now < page.all)  page.now+1 else page.all}">&gt;</a></li>

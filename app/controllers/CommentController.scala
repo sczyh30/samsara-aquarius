@@ -2,8 +2,8 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import service.{FavoriteService, ArticleService, UserService, CommentService}
-
+import entity.Comment
+import service.{ArticleService, CommentService, FavoriteService, UserService}
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
@@ -45,6 +45,35 @@ class CommentController @Inject() (service: CommentService, us: UserService, ars
     }
   }
 
-  def publish(aid: Int) = TODO
+  def publish(aid: Int) = Action.async { implicit request =>
+    case class C(comment: String)
+    object CForm {
+      import play.api.data.Form
+      import play.api.data.Forms._
+
+      val form = Form(
+        mapping(
+          "comment" → nonEmptyText(maxLength = 140)
+        )(C.apply)(C.unapply)
+      )
+    }
+
+    utils.DateUtils.ensureSession
+    request.session.get("aq_token") match {
+      case Some(user) =>
+        CForm.form.bindFromRequest().fold( errorForm => {
+          Future.successful(BadRequest(views.html.error.ServerError("Oops...", "出了一点小问题！")))
+        }, comment => {
+          val uid = request.session.get("uid").getOrElse("-1").toInt // may cause error
+          val c = Comment(0, uid, aid, comment.comment, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()))
+          service.add(c) map { res =>
+            if (res > 0) Redirect(routes.CommentController.list(aid))
+            else BadRequest(views.html.error.ServerError("Oops...", "出了一点小问题！"))
+          }
+        })
+      case None =>
+        Future.successful(Redirect(routes.UserController.loginIndex()))
+    }
+  }
 
 }

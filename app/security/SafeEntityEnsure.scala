@@ -15,7 +15,7 @@ object SafeEntityEnsure {
       *
       * @return the escaped text
       */
-    def safe = c.copy(text = c.text.escapeHtml())
+    def safe = c.copy(text = c.text.escapeHtml)
   }
 
 }
