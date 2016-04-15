@@ -134,3 +134,11 @@ body {
     word-spacing: -0.5px;
 }
 
+.aq-label-link {
+    color: white;
+}
+
+.aq-label-link:hover {
+    color: yellow;
+}
+

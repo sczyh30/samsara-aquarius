@@ -24,7 +24,7 @@ class CommentController @Inject() (service: CommentService, us: UserService, ars
     *
     * @param aid article id
     */
-  def list(aid: Int) = Action.async { implicit request => // 2 queries
+  def list(aid: Int) = Action.async { implicit request =>
     service.fetchByArticle(aid) flatMap { data =>
       val uf = for(c <- data) yield us.fetchCommentInfo(c.uid)
       ars.fetchOnly(aid) flatMap { article =>

@@ -38,7 +38,7 @@ class ApiUserController @Inject() (@NamedCache("user-token-cache") tokenCache: C
     service.login(username, password) map {
       case Success(user) =>
         val token = user.toToken
-        tokenCache.set(WRAP_USER_KEY(token.token), token, 3 days)
+        tokenCache.set(WRAP_USER_KEY(token.token), token, 1 days) // what if duplicate login?
         Ok(Json.toJson(token))
       case Failure(ex) =>
         Ok(Json.toJson(LOGIN_NOT_CORRECT))

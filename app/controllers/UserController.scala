@@ -2,14 +2,14 @@ package controllers
 
 import java.time.LocalDateTime
 import java.util.UUID
-import javax.inject.{Singleton, Inject}
+import javax.inject.{Inject, Singleton}
 
-import entity.{UserToken, User}
-import entity.form.{RegisterForm, LoginForm}
+import base.action.{AuthenticatedAction, RequireNotLogin}
+import entity.{User, UserToken}
+import entity.form.{LoginForm, RegisterForm}
 import service.{FavoriteService, UserService}
 import utils.captcha.{GeetestConfig, GeetestLib}
 import utils.FormConverter.registerConvert
-
 import play.api.mvc._
 import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -25,7 +25,7 @@ import scala.util.{Failure, Success}
   * @author sczyh30
   */
 @Singleton
-class UserController @Inject() (service: UserService, fvs: FavoriteService) extends Controller {
+class UserController @Inject()(service: UserService, fvs: FavoriteService) extends Controller {
 
   lazy val gtSdk = new GeetestLib(GeetestConfig.getCaptchaId, GeetestConfig.getPrivateKey)
 
@@ -45,14 +45,8 @@ class UserController @Inject() (service: UserService, fvs: FavoriteService) exte
     * Login Index Page Route
     * <code>GET /login.now </code>
     */
-  def loginIndex = Action { implicit request =>
-    utils.DateUtils.ensureSession
-    request.session.get("aq_token") match {
-      case Some(user) =>
-        Redirect(routes.Application.index())
-      case None =>
-        Ok(views.html.login(LoginForm.form))
-    }
+  def loginIndex = RequireNotLogin { implicit request =>
+    Ok(views.html.login(LoginForm.form))
   }
 
   /**
@@ -66,10 +60,8 @@ class UserController @Inject() (service: UserService, fvs: FavoriteService) exte
       }, data => {
         service.login(data.username, data.password) map {
           case Success(user) =>
-            Logger.debug(s"Login OK:$user")
             Redirect(routes.Application.index()) withSession user.session
           case Failure(ex) =>
-            Logger.debug(s"Login Fail:${ex.getMessage}")
             Redirect(routes.UserController.loginIndex()) flashing "login_error" -> "用户名或密码不正确。"
         }
       })
@@ -78,22 +70,16 @@ class UserController @Inject() (service: UserService, fvs: FavoriteService) exte
   /**
     * User Center
     */
-  def userCenter = Action.async { implicit request =>
-    utils.DateUtils.ensureSession
-    val userSession = request.session.get("uid")
+  def userCenter = AuthenticatedAction.async { implicit request =>
+    val uid = request.session.get("uid").getOrElse("-1").toInt
     val unknownError = NotFound(views.html.error.NotFound()) // maybe 400?
-    userSession match {
-      case Some(uid) =>
-        service.fetch(uid.toInt) map {
-          case Some(user) =>
-            Ok(views.html.user.center(user))
-          case None =>
-            NotFound(views.html.error.NotFound())
-        } recover {
-          case _: Exception => unknownError
-        }
+    service.fetch(uid) map {
+      case Some(user) =>
+        Ok(views.html.user.center(user))
       case None =>
-        Future.successful(Ok(views.html.login(LoginForm.form)))
+        NotFound(views.html.error.NotFound())
+    } recover {
+      case _: Exception => unknownError
     }
   }
 
@@ -117,7 +103,7 @@ class UserController @Inject() (service: UserService, fvs: FavoriteService) exte
     * Register Index Page Route
     * <code>GET /register.now </code>
     */
-  def regIndex = Action { implicit request =>
+  def regIndex = RequireNotLogin { implicit request =>
     Ok(views.html.register(RegisterForm.form))
   }
 
@@ -125,39 +111,35 @@ class UserController @Inject() (service: UserService, fvs: FavoriteService) exte
     * Register Request Route
     * <code>POST /register</code>
     */
-  def register() = Action.async { implicit request =>
-    request.session.get("aq_token") match {
-      case Some(x) => Future.successful(Redirect(routes.UserController.loginIndex())) // if has logined
-      case None =>
-        RegisterForm.form.bindFromRequest.fold(
-          errorForm => {
-            Future.successful(Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "表单安全验证失败。")
-          },
-          data => {
-            // validate the captcha
-            val gtResult = {
-              request.session.get(gtSdk.gtServerStatusSessionKey).get.toInt match {
-                case 1 =>
-                  gtSdk.enhencedValidateRequest(data.geetest_challenge,
-                    data.geetest_validate, data.geetest_seccode);
-                case _ =>
-                  gtSdk.failbackValidateRequest(data.geetest_challenge,
-                    data.geetest_validate, data.geetest_seccode);
-              }
+  def register() = RequireNotLogin.async { implicit request =>
+    RegisterForm.form.bindFromRequest.fold(
+      errorForm => {
+        Future.successful(Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "表单安全验证失败。")
+      },
+      data => {
+        // validate the captcha
+        val gtResult = {
+          request.session.get(gtSdk.gtServerStatusSessionKey).get.toInt match {
+            case 1 =>
+              gtSdk.enhencedValidateRequest(data.geetest_challenge,
+                data.geetest_validate, data.geetest_seccode);
+            case _ =>
+              gtSdk.failbackValidateRequest(data.geetest_challenge,
+                data.geetest_validate, data.geetest_seccode);
+          }
+        }
+        gtResult match {
+          case 1 =>
+            service.add(data) map { res =>
+              if (res > 0)
+                Redirect(routes.UserController.loginIndex()) // may be more friendly
+              else
+                Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "注册失败：用户已存在。"
             }
-            gtResult match {
-              case 1 =>
-                service.add(data) map { res =>
-                  if (res > 0)
-                    Redirect(routes.UserController.loginIndex()) // may be more friendly
-                  else
-                    Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "注册失败：用户已存在。"
-                }
-              case _ =>
-                Future.successful(Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "安全验证失败。")
-            }
-          })
-    }
+          case _ =>
+            Future.successful(Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "安全验证失败。")
+        }
+      })
   }
 
   /**

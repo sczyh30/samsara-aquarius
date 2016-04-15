@@ -17,6 +17,8 @@ object Results {
   // 2xxx - Process Success
   // 22xx - User
   val USER_LOGOUT_SUCCESS = ProcessResult(2211, "user_logout_success")
+  // 26xx - Comment
+  val API_COMMENT_SUCCESS = ProcessResult(2611, "api_comment_success")
   // 27xx - Message System
   val FAVORITE_PROCESS_SUCCESS = ProcessResult(2711, "favorite_process_success")
   val CANCEL_FAVORITE_PROCESS_SUCCESS = ProcessResult(2761, "cancel_favorite_process_success")
@@ -30,7 +32,9 @@ object Results {
   // 42xx - User
   val USER_NOT_FOUND = ProcessResult(4204, "user_not_found")
   val LOGIN_NOT_CORRECT = ProcessResult(4201, "user_login_not_correct")
-
+  // 46xx - Comment
+  val API_COMMENT_FAILURE_UNKNOWN = ProcessResult(4611, "api_comment_failure_unknown_cause")
+  val API_COMMENT_FAILURE_TOO_LONG = ProcessResult(4611, "api_comment_failure_length_too_long")
   // 47xx - Message System Process Error
   val RECV_UNKNOWN_MSG = ProcessResult(4700, "user_logout_success")
   val FAVORITE_PROCESS_FAIL = ProcessResult(4711, "favorite_process_fail_unknown")

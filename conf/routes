@@ -50,7 +50,7 @@ GET          /api/v                       controllers.api.ApiVersionController.v
 
 # User API
 POST         /api/login                   controllers.api.ApiUserController.login(username: String, password: String)
-#POST        /api/register             controllers.api.ApiUserController.register()
+POST         /api/logout                  controllers.api.ApiUserController.logout(token: String)
 GET          /api/u/:uid                  controllers.api.ApiUserController.fetch(uid: Int)
 
 # Article API
@@ -60,7 +60,7 @@ GET          /api/s                       controllers.api.ApiArticleController.b
 
 # Comment API
 GET          /api/:aid/comment            controllers.api.ApiCommentController.fetchByArticle(aid: Int)
-#PUT         /api/:aid/comment         controllers.api.ApiCommentController.comment(aid: Int)
+PUT          /api/:aid/comment            controllers.api.ApiCommentController.comment(aid: Int, comment: String, token: String)
 
 # Category API
 GET          /api/categories              controllers.api.ApiCategoryController.fetchAll
