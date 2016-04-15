@@ -25,6 +25,7 @@ class AdminService @Inject() (protected val dbConfigProvider: DatabaseConfigProv
   import driver.api._
 
   val bangs = TableQuery[AdminTable]
+  val users = TableQuery[UserTable]
   val articles = TableQuery[ArticleTable]
   val categories = TableQuery[CategoryTable]
   val comments = TableQuery[CommentTable]
@@ -55,6 +56,10 @@ class AdminService @Inject() (protected val dbConfigProvider: DatabaseConfigProv
       case None =>
         Future.successful(Failure(new ValidateWrong("Admin Go Validate Wrong")))
     }
+  }
+
+  def countDashboard: Future[(Int, Int)] = {
+    db.run((users.length, articles.length).result)
   }
 
 

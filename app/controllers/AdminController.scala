@@ -45,7 +45,11 @@ class AdminController @Inject() (admin: AdminService, cs: CategoryService) exten
     Ok(views.html.admin.processFail(msg._1, msg._2))
   }
 
-  def dashboard() = TODO
+  def dashboard() = MustBeAdminGo.async { implicit request =>
+    admin.countDashboard map { counts =>
+      Ok(views.html.admin.dashboard(counts))
+    }
+  }
 
   def goIndex() = Action { implicit request =>
     request.session.get("adm1n_go_token") match {

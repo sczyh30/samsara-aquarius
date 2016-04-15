@@ -21,7 +21,9 @@ GET          /register.now                controllers.UserController.regIndex
 POST         /register                    controllers.UserController.register
 GET          /user                        controllers.UserController.userCenter
 GET          /u/profile                   controllers.UserController.changeProfileIndex
-POST         /u/profile                   controllers.UserController.userCenter
+GET          /u/pwd                       controllers.UserController.changePwdIndex
+POST         /u/pwd                       controllers.UserController.changePwd()
+POST         /u/profile                   controllers.UserController.changeProfile()
 GET          /user/:username              controllers.UserController.userInfo(username: String)
 POST         /upload/avatar               controllers.UserController.uploadAvatar
 

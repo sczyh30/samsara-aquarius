@@ -25,4 +25,9 @@ class AquariusErrorHandler @Inject()(env: Environment,
       NotFound(views.html.error.NotFound()(request))
     )
   }
+
+  override def onBadRequest(request: RequestHeader, message: String) = {
+    //Future.successful(BadRequest(views.html.error.ServerError("Oops", "出了点问题...自函子范畴上的幺半群正在变换中...")(request)))
+    Future.successful(NotFound(views.html.error.NotFound()(request)))
+  }
 }

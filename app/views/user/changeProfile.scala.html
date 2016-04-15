@@ -1,5 +1,5 @@
 @import entity.User
-@(user: User)(implicit request: RequestHeader)
+@(user: User, form: Form[entity.form.ChangeProfileFormData])(implicit request: RequestHeader)
 
 @main("个人资料修改 | Samsara Aquarius") {
     <div class="row clearfix">
@@ -8,7 +8,7 @@
                 <div class="text-center">
                     <h3>个人资料修改</h3>
                 </div>
-                <form role="form" id="user-profile-form" action='@routes.UserController.login()' method="post">
+                <form role="form" id="user-profile-form" action='@routes.UserController.changeProfile()' method="post">
                     <p>用户名：@user.username</p>
                     <p><span class="glyphicon glyphicon-time"></span>  加入时间： @user.joinDate</p>
                     <div class="form-group">
@@ -16,14 +16,14 @@
                         <input type="text" class="form-control" id="tips" name="tips" @if(user.tips.isDefined) {
                             value="@user.tips.get"
                         }
-                        placeholder="个性签名">
+                        placeholder="个性签名" required>
                     </div>
                     <div class="form-group">
                         <label for="website">个人网站</label>
                         <input type="text" class="form-control" id="website" name="website" @if(user.website.isDefined) {
                             value="@user.website.get"
                         }
-                        placeholder="个人网站">
+                        placeholder="个人网站" required>
                     </div>
                     <div class="form-group">
                         <label for="email">邮箱</label>

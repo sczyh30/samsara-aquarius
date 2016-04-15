@@ -1,1 +1,55 @@
-@()(implicit request: RequestHeader)
+@(counts: (Int, Int))(implicit request: RequestHeader)
+
+@admin.main("Dashboard | Samsara Aquarius Admin") {
+    <div class="container">
+        <div class="row clearfix">
+            <div class="text-center">
+                <h2>Go! Dashboard</h2>
+            </div>
+            <div class="aq-go-wb-statics good_font">
+                <div class="col-sm-3">
+                    <dl class="palette palette-turquoise">
+                        <dt>网站PV</dt>
+                        <dd><h4>未统计</h4></dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">
+                    <dl class="palette palette-peter-river">
+                        <dt>文章总数</dt>
+                        <dd><h4>@counts._2</h4></dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">
+                    <dl class="palette palette-orange">
+                        <dt>用户总数</dt>
+                        <dd><h4>@counts._1</h4></dd>
+                    </dl>
+                </div>
+                <div class="col-sm-3">
+                    <dl class="palette palette-nephritis">
+                        <dt>负载</dt>
+                        <dd><h4>正常</h4></dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="aq-go-wb-mn good_font">
+                <div class="col-sm-6">
+                    <dl class="palette palette-belize-hole">
+                        <dt>文章管理</dt>
+                        <dd><h4><span class="glyphicon glyphicon-plus"></span> <a href="/adm1n6q9/add-article" class="aq-label-link">添加文章</a></h4></dd>
+                        <dd><h4><span class="glyphicon glyphicon-tags"></span> <a href="" class="aq-label-link">文章管理</a></h4></dd>
+                        <dd><h4><span class="glyphicon glyphicon-tags"></span> <a href="" class="aq-label-link">查看分享</a></h4></dd>
+                    </dl>
+                </div>
+                <div class="col-sm-6">
+                    <dl class="palette palette-amethyst">
+                        <dt>用户管理</dt>
+                        <dd><h4><span class="glyphicon glyphicon-user"></span> <a href="/adm1n6q9/add-article" class="aq-label-link">用户管理</a></h4></dd>
+                        <dd><h4><span class="glyphicon glyphicon-user"></span> <a href="/adm1n6q9/add-article" class="aq-label-link">权限设置</a></h4></dd>
+                        <dd><h4><span class="glyphicon glyphicon-comment"></span> <a href="" class="aq-label-link">评论管理</a></h4></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+}

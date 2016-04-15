@@ -13,7 +13,7 @@ object MustBeAdminGo extends ActionBuilder[Request] {
 
   override def invokeBlock[A](request: Request[A],
                               block: (Request[A]) => Future[Result]): Future[Result] = {
-    utils.DateUtils.ensureSession("adm1n_go_token", 20)(request)
+    utils.DateUtils.ensureSession("aq_go_timestamp", 20)(request)
     request.session.get("adm1n_go_token") match {
       case Some(u) =>
         block(request)

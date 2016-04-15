@@ -6,12 +6,11 @@ import javax.inject.{Inject, Singleton}
 
 import base.action.{AuthenticatedAction, RequireNotLogin}
 import entity.{User, UserToken}
-import entity.form.{LoginForm, RegisterForm}
+import entity.form.{LoginForm, RegisterForm, ChangeProfileForm}
 import service.{FavoriteService, UserService}
 import utils.captcha.{GeetestConfig, GeetestLib}
 import utils.FormConverter.registerConvert
 import play.api.mvc._
-import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 import scala.concurrent.Future
@@ -153,13 +152,39 @@ class UserController @Inject()(service: UserService, fvs: FavoriteService) exten
     val uid = request.session.get("uid").getOrElse("-1").toInt
     service fetch uid map {
       case Some(user) =>
-        Ok(views.html.user.changeProfile(user.copy(password = "")))
+        Ok(views.html.user.changeProfile(user.copy(password = ""), ChangeProfileForm.form))
       case None =>
         BadRequest
     }
   }
 
-  def changeProfile() = TODO
+  def changePwdIndex = AuthenticatedAction { implicit request =>
+    Ok(views.html.user.changePassword())
+  }
+
+  def changeProfile() = AuthenticatedAction.async { implicit request =>
+    val uid = request.session.get("uid").getOrElse("-1").toInt
+    ChangeProfileForm.form.bindFromRequest.fold(
+      errorForm => {
+        Future.successful(Redirect(routes.UserController.changeProfileIndex()) flashing "profile_error" -> "表单验证失败。")
+      },
+      data => {
+        service.fetch(uid) flatMap {
+          case Some(user) =>
+            val up = user.copy(tips = Some(data.tips), website = Some(data.website), email = data.email)
+            service.update(up) map { res =>
+              if (res > 0)
+                Redirect(routes.UserController.userCenter()) flashing "upload_success" -> "个人资料修改成功！"
+              else
+                Redirect(routes.UserController.changeProfileIndex()) flashing "profile_error" -> "表单验证失败。"
+            }
+          case None =>
+            Future.successful(Redirect(routes.UserController.loginIndex()))
+        }
+      })
+  }
+
+  def changePwd() = TODO
 
   /**
     * Upload the avatar
