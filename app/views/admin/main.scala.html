@@ -1,7 +1,7 @@
 @import entity.Admin
 @import components.footerMain
 @import admin.headerAdmin
-@(title: String, admin: Admin)(content: Html)(implicit request: RequestHeader)
+@(title: String)(content: Html)(implicit request: RequestHeader)
 
 <!DOCTYPE html>
 <html lang="zh-cn">
@@ -18,7 +18,7 @@
         <link href="http://cdn.bootcss.com/flat-ui/2.2.2/css/flat-ui.min.css" rel="stylesheet">
     </head>
     <body>
-        @headerAdmin(admin)
+        @headerAdmin()
         @content
         @footerMain()
     </body>

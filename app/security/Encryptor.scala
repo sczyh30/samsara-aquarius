@@ -13,6 +13,8 @@ object Encryptor {
     def encrypt() = {
       str.sha256()
     }
+
+    def encryptSpecial = str.sha256()
   }
 
 }

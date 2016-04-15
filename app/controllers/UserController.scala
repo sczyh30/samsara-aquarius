@@ -146,23 +146,42 @@ class UserController @Inject()(service: UserService, fvs: FavoriteService) exten
     * Logout Route
     */
   def logout = Action { implicit request =>
-    //userCache.remove(USER_CACHE_KEY)
     Redirect(routes.Application.index()) withNewSession
   }
+
+  def changeProfileIndex = AuthenticatedAction.async { implicit request =>
+    val uid = request.session.get("uid").getOrElse("-1").toInt
+    service fetch uid map {
+      case Some(user) =>
+        Ok(views.html.user.changeProfile(user.copy(password = "")))
+      case None =>
+        BadRequest
+    }
+  }
+
+  def changeProfile() = TODO
 
   /**
     * Upload the avatar
     */
-  def uploadAvatar = Action(parse.multipartFormData) { implicit request =>
-    request.body.file("avatar_upload").map { picture => //TODO: NOT SAFE, MUST ONLY BE PIC. MUST FIX IN 0.5.x!
+  def uploadAvatar = AuthenticatedAction.async(parse.multipartFormData) { implicit request => // in present version we do not reserve previous avatar!
+    val redirect = Redirect(routes.UserController.userCenter())
+    request.body.file("avatar_upload").map { picture =>
       import java.io.File
       val filename = picture.filename
-      //val contentType = picture.contentType
-      picture.ref.moveTo(new File(s"/assets/images/avatar/$filename"))
-      Ok("OK")
-
+      if (filename.endsWith(".png") || filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
+        //val contentType = picture.contentType
+        picture.ref.moveTo(new File(s"public/images/avatar/$filename"))
+        val uid = request.session.get("uid").getOrElse("-1").toInt
+        service.updateAvatar(uid, filename) map { res =>
+          if (res > 0) Redirect(routes.UserController.userCenter()) flashing "upload_success" -> "头像修改成功！"
+          else redirect flashing "upload_error" -> "文件不合要求，请重试！"
+        }
+      } else {
+        Future.successful(redirect flashing "upload_error" -> "文件不合要求，请重试！")
+      }
     } getOrElse {
-      Redirect(routes.UserController.userCenter()) flashing "error" -> "missing file"
+      Future.successful(redirect flashing "upload_error" -> "文件错误！")
     }
   }
 

@@ -101,6 +101,13 @@ class UserService @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
     db.run(queryByUid(user.uid).update(user))
   }
 
+  def updateAvatar(uid: Int, avatar: String): Future[Int] = {
+    val q = users.filter(_.uid === uid).map(_.avatar)
+    db.run(q.update(Some(avatar))) recover {
+      case _: Exception => -1
+    }
+  }
+
   /**
     * Remove the user from the `user` table
     * Notice: The comment that owed by the user will not be removed immediately

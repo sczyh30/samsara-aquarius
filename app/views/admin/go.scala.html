@@ -1,0 +1,33 @@
+@(loginForm: Form[entity.form.LoginFormData])(implicit request: RequestHeader)
+
+@admin.main("CC GO! | Samsara Aquarius Admin") {
+    <div class="container">
+    <div class="row clearfix">
+        <div class="col-md-10">
+            <div class="good_font">
+                <div class="text-center">
+                    <img src="@routes.Assets.versioned("images/61c6258130a63b29b78806e97b1deb6c-biglogo.ico")" alt="LOGO">
+                    <h2>CC GO</h2>
+                </div>
+                <form role="form" id="go-login-form" action='@routes.AdminController.goAhead()' method="post">
+                    <div class="form-group">
+                        <label for="username" class="login-field-icon">番号</label>
+                        <input type="text" class="form-control" minlength="4" id="username" name="username"
+                        placeholder="请输入番号" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">口令</label>
+                        <input type="password" class="form-control" minlength="8" id="password" name="password"
+                        placeholder="请输入口令" required>
+                    </div>
+                    @error.FormErrorInfo("adm1n_auth_error")
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-lg btn-primary" data-loading-text="Go。。。">Go！</button>
+                        <button type="reset" class="btn btn-lg btn-danger">清空</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+}

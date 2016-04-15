@@ -1,6 +1,10 @@
+'use strict';
+
 $(document).ready(() => {
     let MAX_COMMENT_CHAR = 140;
     var article_like_btn = $("#aq-btn-a-favorite");
+
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
 
     // count comment char
     function count_char() {
@@ -77,7 +81,12 @@ $(document).ready(() => {
             default:
                 break;
         }
-
-
-    })
+    });
+    // avatar upload
+    /*$("#fileupload").fileupload({
+        url: '/upload/avatar',
+        maxFileSize: 1024,
+        autoUpload: false,
+        acceptFileTypes: /(\.|\/)(jpe?g|png)$/i
+    })*/
 });

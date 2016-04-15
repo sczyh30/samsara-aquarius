@@ -1,0 +1,8 @@
+@(successType: String)(implicit request: RequestHeader)
+
+@if(request.flash.get(successType).isDefined) {
+    <div class="alert alert-success alert-dismissable fade in">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <p>@request.flash.get(successType).get</p>
+    </div>
+}
