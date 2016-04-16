@@ -45,7 +45,11 @@ class CommentController @Inject() (service: CommentService, us: UserService, ars
     }
   }
 
-  def publish(aid: Int) = Action.async { implicit request =>
+  /**
+    * Publish a new comment
+    * @param aid article id
+    */
+  def publish(aid: Int) = Action.async { implicit request => //TODO: UGLY CODE, TO-REFACTOR
     case class C(comment: String)
     object CForm {
       import play.api.data.Form
@@ -64,11 +68,13 @@ class CommentController @Inject() (service: CommentService, us: UserService, ars
         CForm.form.bindFromRequest().fold( errorForm => {
           Future.successful(BadRequest(views.html.error.ServerError("Oops...", "出了一点小问题！")))
         }, comment => {
-          val uid = request.session.get("uid").getOrElse("-1").toInt // may cause error
+          val uid = request.session.get("uid").getOrElse("-1").toInt // may cause error?
           val c = Comment(0, uid, aid, comment.comment, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()))
           service.add(c) map { res =>
-            if (res > 0) Redirect(routes.CommentController.list(aid))
-            else BadRequest(views.html.error.ServerError("Oops...", "出了一点小问题！"))
+            if (res > 0)
+              Redirect(routes.CommentController.list(aid))
+            else
+              BadRequest(views.html.error.ServerError("Oops...", "出了一点小问题！"))
           }
         })
       case None =>

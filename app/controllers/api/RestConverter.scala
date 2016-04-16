@@ -7,6 +7,7 @@ import play.api.libs.json.{JsValue, Json}
 import scala.language.implicitConversions
 
 /**
+  * Samsara Aquarius
   * REST Data Converter
   */
 object RestConverter {
@@ -21,9 +22,12 @@ object RestConverter {
 
   implicit def resToJson(res: ProcessResult): JsValue = Json.toJson(res)
 
-  case class RestArticle(id: Int, title: String = "None",
+  case class RestArticle(id: Int, title: String,
                          url: String, category: Category, updateDate: java.sql.Date)
 
+  /**
+    * Typeclass for REST Article entity
+    */
   implicit class RestArticleConverter(t: (Article, Category)) { // Article with Category
     def fit = RestArticle(t._1.id, t._1.title, t._1.url, t._2, t._1.updateDate)
   }

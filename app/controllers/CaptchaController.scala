@@ -15,6 +15,10 @@ import utils.captcha.GeetestLib
 @Singleton
 class CaptchaController extends Controller {
 
+  /**
+    * Samsara Aquarius Application
+    * Captcha Init Process
+    */
   def init = Action { implicit request =>
     val gtSdk = new GeetestLib(GeetestConfig.getCaptchaId, GeetestConfig.getPrivateKey)
     val status = gtSdk.preProcess()

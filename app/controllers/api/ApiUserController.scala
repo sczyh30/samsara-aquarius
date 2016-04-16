@@ -27,6 +27,9 @@ import scala.language.postfixOps
 @Singleton
 class ApiUserController @Inject() (@NamedCache("user-token-cache") tokenCache: CacheApi, service: UserService) extends Controller {
 
+  /**
+    * Typeclass for User entity to generate token
+    */
   implicit class TokenConverter(user: User) {
     def toToken: UserToken =
       UserToken(user.uid, user.username, UUID.randomUUID().toString)
@@ -45,6 +48,12 @@ class ApiUserController @Inject() (@NamedCache("user-token-cache") tokenCache: C
     }
   }
 
+  /**
+    * Fetch a certain user's info
+    * @param uid user id
+    *
+    * Note: This does not contains user's email
+    */
   def fetch(uid: Int) = Action.async { implicit request =>
     service.fetch(uid) map {
       case Some(u) => Ok(Json.toJson(u.fit))

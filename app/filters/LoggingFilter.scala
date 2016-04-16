@@ -14,6 +14,7 @@ import scala.concurrent.Future
   * Samsara Aquarius
   * Logging Filter
   */
+@deprecated(message = "Don't use this in dist mode. Bad performance would be caused.", since = "0.7.0")
 class LoggingFilter @Inject() (implicit val mat: Materializer) extends Filter {
 
   override def apply(f: (RequestHeader) => Future[Result])
@@ -29,7 +30,6 @@ class LoggingFilter @Inject() (implicit val mat: Materializer) extends Filter {
 
       Logger.info(s"$action took ${requestTime}ms and returned ${result.header.status}")
 
-      //result.withHeaders("Request-Time" -> requestTime.toString)
       result
     }
   }

@@ -171,6 +171,11 @@ trait Tables {
     val index1 = index("index_title", title)
   }
 
+  /**
+    * Favorite Table
+    *
+    * @param tag Tag
+    */
   class FavoriteTable(tag: Tag) extends Table[Favorite](tag, "favorite") {
 
     override def * = (articleId, likeUid, ctime) <> (entity.Favorite.tupled, entity.Favorite.unapply)

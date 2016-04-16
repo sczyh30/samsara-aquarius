@@ -27,7 +27,7 @@ import play.api.mvc.{Action, Controller}
 @Singleton
 class ApiCommentController @Inject() (@NamedCache("user-token-cache") tokenCache: CacheApi, service: CommentService) extends Controller {
 
-  def fetchByArticle(aid: Int) = Action.async { implicit request =>
+  def fetchByArticle(aid: Int) = Action.async { implicit request => //TODO: implement JSON formatter for Timestamp type
     Future.successful(NotImplemented)
     /*service fetchByArticle aid map { data =>
       Ok(Json.toJson(data))

@@ -22,14 +22,19 @@ import scala.concurrent.Future
 @Singleton
 class Application @Inject()(articleService: ArticleService) extends Controller {
 
+  /**
+    * Samsara Aquarius Application Index page (Articles)
+    */
   def index() = Action.async { implicit request =>
-    utils.DateUtils.ensureSession
     for {
       data <- articleService.fetchWithPage(0)
       pages <- articleService.calcPage
     } yield Ok(views.html.index(data, Page(1, pages, "/p")))
   }
 
+  /**
+    * Samsara Aquarius Application (Articles with page)
+    */
   def page(page: Int) = Action.async { implicit request =>
     articleService.calcPage flatMap { pages =>
       if (IS_VALIDATE_PAGE(page, pages)) {
@@ -42,11 +47,19 @@ class Application @Inject()(articleService: ArticleService) extends Controller {
     }
   }
 
+  /**
+    * Samsara Aquarius Application
+    * Share Page
+    */
   def share = Action { implicit request =>
     utils.DateUtils.ensureSession
     Ok(views.html.share(ShareForm.form))
   }
 
+  /**
+    * Samsara Aquarius Application
+    * Share Process
+    */
   def publishShare = Action.async { implicit request =>
     lazy val gtSdk = new GeetestLib(GeetestConfig.getCaptchaId, GeetestConfig.getPrivateKey)
 
@@ -80,10 +93,18 @@ class Application @Inject()(articleService: ArticleService) extends Controller {
     )
   }
 
+  /**
+    * Samsara Aquarius Application
+    * About Page
+    */
   def about = Action { implicit request =>
     Ok(views.html.about())
   }
 
+  /**
+    * Samsara Aquarius Application
+    * Not Found Page
+    */
   def notFound = Action { implicit request =>
     NotFound(views.html.error.NotFound())
   }

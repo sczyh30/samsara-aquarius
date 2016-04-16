@@ -49,14 +49,6 @@ class FavoriteMessageActor (service: FavoriteService) extends Actor {
         case Failure(ex) =>
           sender ! FAVORITE_PROCESS_FAIL
       }
-      /*service ❤ go map { res =>
-        if (res > 0)
-          sender ! FAVORITE_PROCESS_SUCCESS
-        else if (res == -4)
-          sender ! FAVORITE_ALREADY
-        else
-          sender ! FAVORITE_PROCESS_FAIL
-      }*/
     case shit @ FavoriteOff(a, u) =>
       val sender = super.sender()
       service !♡! shit map { res =>

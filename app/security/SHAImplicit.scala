@@ -29,11 +29,12 @@ object SHAImplicit {
 
     private def hash(str: Option[String], `type`: String): String = Try {
       val digest: MessageDigest = MessageDigest.getInstance(`type`)
-      str.foreach(x => digest.update(x.getBytes))
+      str.foreach { x =>
+        digest.update(x.getBytes)
+      }
       val messageDigest: Array[Byte] = digest.digest
       messageDigest.bytes2hex()
     } recover {
-      case ex: Exception => ex.printStackTrace(); ""
       case _ => ""
     } get
 

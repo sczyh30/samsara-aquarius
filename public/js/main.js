@@ -24,16 +24,11 @@ $(document).ready(() => {
         $.ajax({
             url: '/api/lcount/' + article_like_btn.attr("fav-aid"),
             type: 'GET',
-            success: function(response, textStatus, jqXhr) {
+            success: (response, textStatus, jqXhr) => {
                 $("#aq-fv-count").html(response);
             }
         })
     }
-    //setInterval(refresh_fc_count, 5000);
-
-    $("#ret-index").on("click", () => {
-        location.href="/"
-    });
 
     article_like_btn.on("click", () => {
 
@@ -82,11 +77,4 @@ $(document).ready(() => {
                 break;
         }
     });
-    // avatar upload
-    /*$("#fileupload").fileupload({
-        url: '/upload/avatar',
-        maxFileSize: 1024,
-        autoUpload: false,
-        acceptFileTypes: /(\.|\/)(jpe?g|png)$/i
-    })*/
 });

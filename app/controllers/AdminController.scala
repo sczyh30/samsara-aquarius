@@ -45,12 +45,18 @@ class AdminController @Inject() (admin: AdminService, cs: CategoryService) exten
     Ok(views.html.admin.processFail(msg._1, msg._2))
   }
 
+  /**
+    * Admin Index Page(aka Go! Dashboard)
+    */
   def dashboard() = MustBeAdminGo.async { implicit request =>
     admin.countDashboard map { counts =>
       Ok(views.html.admin.dashboard(counts))
     }
   }
 
+  /**
+    * Admin Login Page
+    */
   def goIndex() = Action { implicit request =>
     request.session.get("adm1n_go_token") match {
       case Some(u) =>
@@ -60,6 +66,10 @@ class AdminController @Inject() (admin: AdminService, cs: CategoryService) exten
     }
   }
 
+  /**
+    * Typeclass for Admin entity to generate admin token
+    * @param admin admin entity
+    */
   implicit class Converter(admin: Admin) {
     def session: Session = {
       val session = Map("adm1n_go_aid" -> admin.id.toString, "adm1n_go_name" -> admin.name,
@@ -69,6 +79,9 @@ class AdminController @Inject() (admin: AdminService, cs: CategoryService) exten
     }
   }
 
+  /**
+    * Admin Login Process(aka Go!Ahead)
+    */
   def goAhead() = Action.async { implicit request =>
     LoginForm.form.bindFromRequest().fold(
       errorForm => {
@@ -83,16 +96,26 @@ class AdminController @Inject() (admin: AdminService, cs: CategoryService) exten
       })
   }
 
+  /**
+    * Logout(aka Go! away)
+    * @return
+    */
   def goAway() = Action { implicit request =>
     Redirect(routes.Application.index()) withNewSession
   }
 
+  /**
+    * Add info page
+    */
   def addInfoPage() = MustBeAdminGo.async { implicit request =>
     cs.fetchAll map { categories =>
       Ok(views.html.admin.articles.addInfo(InfoForm.form, categories))
     }
   }
 
+  /**
+    * Add info process
+    */
   def addInfoProcess() = MustBeAdminGo.async { implicit request =>
     InfoForm.form.bindFromRequest.fold(
       errorForm => {

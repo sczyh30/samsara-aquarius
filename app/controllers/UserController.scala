@@ -5,11 +5,15 @@ import java.util.UUID
 import javax.inject.{Inject, Singleton}
 
 import base.action.{AuthenticatedAction, RequireNotLogin}
+import base.Constants.FormErrorFlags._
+import base.Constants.FormMsgCHS._
 import entity.{User, UserToken}
-import entity.form.{LoginForm, RegisterForm, ChangeProfileForm}
+import entity.form.{ChangeProfileForm, ChangePwdForm, LoginForm, RegisterForm}
 import service.{FavoriteService, UserService}
 import utils.captcha.{GeetestConfig, GeetestLib}
+import security.Encryptor.ImplicitEc
 import utils.FormConverter.registerConvert
+
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
@@ -28,6 +32,10 @@ class UserController @Inject()(service: UserService, fvs: FavoriteService) exten
 
   lazy val gtSdk = new GeetestLib(GeetestConfig.getCaptchaId, GeetestConfig.getPrivateKey)
 
+  /**
+    * Typeclass for user entity<br/>
+    * This is a generator that generates user session and token
+    */
   implicit class UserConverter(user: User) {
     def toToken: UserToken =
       UserToken(user.uid, user.username, UUID.randomUUID().toString)
@@ -53,21 +61,23 @@ class UserController @Inject()(service: UserService, fvs: FavoriteService) exten
     * <code>POST /login</code>
     */
   def login() = Action.async { implicit request =>
+    def wrong(msg: String) =
+      Redirect(routes.UserController.loginIndex()) flashing LOGIN_ERROR_FLAG -> msg
     LoginForm.form.bindFromRequest().fold(
       errorForm => {
-        Future.successful(Redirect(routes.UserController.loginIndex()) flashing "login_error" -> "用户名或密码长度错误。")
+        Future.successful(wrong(LOGIN_FORM_LENGTH_ERR))
       }, data => {
         service.login(data.username, data.password) map {
           case Success(user) =>
             Redirect(routes.Application.index()) withSession user.session
           case Failure(ex) =>
-            Redirect(routes.UserController.loginIndex()) flashing "login_error" -> "用户名或密码不正确。"
+            wrong(LOGIN_FAIL_WR)
         }
       })
   }
 
   /**
-    * User Center
+    * User Center Page
     */
   def userCenter = AuthenticatedAction.async { implicit request =>
     val uid = request.session.get("uid").getOrElse("-1").toInt
@@ -111,9 +121,12 @@ class UserController @Inject()(service: UserService, fvs: FavoriteService) exten
     * <code>POST /register</code>
     */
   def register() = RequireNotLogin.async { implicit request =>
+    def wrong(msg: String) =
+      Redirect(routes.UserController.regIndex()) flashing REG_ERROR_FLAG -> msg
+
     RegisterForm.form.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "表单安全验证失败。")
+        Future.successful(wrong(FORM_ERROR))
       },
       data => {
         // validate the captcha
@@ -133,10 +146,10 @@ class UserController @Inject()(service: UserService, fvs: FavoriteService) exten
               if (res > 0)
                 Redirect(routes.UserController.loginIndex()) // may be more friendly
               else
-                Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "注册失败：用户已存在。"
+                wrong(REG_ERR_EXIST)
             }
           case _ =>
-            Future.successful(Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "安全验证失败。")
+            Future.successful(wrong(CAPTCHA_ERROR))
         }
       })
   }
@@ -148,25 +161,39 @@ class UserController @Inject()(service: UserService, fvs: FavoriteService) exten
     Redirect(routes.Application.index()) withNewSession
   }
 
+  /**
+    * User Profile Modify Page
+    * <code>GET /u/profile</code>
+    */
   def changeProfileIndex = AuthenticatedAction.async { implicit request =>
     val uid = request.session.get("uid").getOrElse("-1").toInt
     service fetch uid map {
       case Some(user) =>
         Ok(views.html.user.changeProfile(user.copy(password = ""), ChangeProfileForm.form))
       case None =>
-        BadRequest
+        Redirect(routes.UserController.loginIndex())
     }
   }
 
+  /**
+    * User Password Modify Page
+    * <code>GET /u/pwd</code>
+    */
   def changePwdIndex = AuthenticatedAction { implicit request =>
-    Ok(views.html.user.changePassword())
+    Ok(views.html.user.changePassword(ChangePwdForm.form)) //TODO: could be more safe(e.g. captcha)
   }
 
+  /**
+    * User Profile Modify Process
+    * <code>POST /u/profile</code>
+    */
   def changeProfile() = AuthenticatedAction.async { implicit request =>
     val uid = request.session.get("uid").getOrElse("-1").toInt
+    def wrong(msg: String) =
+      Redirect(routes.UserController.changeProfileIndex()) flashing PROFILE_ERROR_FLAG -> msg
     ChangeProfileForm.form.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Redirect(routes.UserController.changeProfileIndex()) flashing "profile_error" -> "表单验证失败。")
+        Future.successful(wrong(FORM_ERROR))
       },
       data => {
         service.fetch(uid) flatMap {
@@ -176,7 +203,7 @@ class UserController @Inject()(service: UserService, fvs: FavoriteService) exten
               if (res > 0)
                 Redirect(routes.UserController.userCenter()) flashing "upload_success" -> "个人资料修改成功！"
               else
-                Redirect(routes.UserController.changeProfileIndex()) flashing "profile_error" -> "表单验证失败。"
+                wrong(FORM_UNKNOWN)
             }
           case None =>
             Future.successful(Redirect(routes.UserController.loginIndex()))
@@ -184,13 +211,51 @@ class UserController @Inject()(service: UserService, fvs: FavoriteService) exten
       })
   }
 
-  def changePwd() = TODO
+  /**
+    * User Password Modify Process
+    * <code>POST /u/pwd</code>
+    */
+  def changePwd() = AuthenticatedAction.async { implicit request => //TODO: ugly code, not functional! TO-REFACTOR-REVIEW
+    def wrong(msg: String) =
+      Future.successful(Redirect(routes.UserController.changePwdIndex()) flashing CG_PWD_FLAG -> msg)
+
+    val uid = request.session.get("uid").getOrElse("-1").toInt
+    ChangePwdForm.form.bindFromRequest.fold(
+      errorForm => {
+        wrong(FORM_ERROR)
+      },
+      data => {
+        if (!data.new_pwd.equals(data.new_pwd_r)) {
+          wrong(PWD_RECHECK_WRONG)
+        } else {
+          service.fetch(uid) flatMap {
+            case Some(user) =>
+              if (data.old_pwd.encrypt().equals(user.password)) {
+                val up = user.copy(password = data.new_pwd.encrypt())
+                service.update(up) map { res =>
+                  if (res > 0)
+                    Redirect(routes.UserController.userCenter()) flashing "upload_success" -> "密码修改成功！"
+                  else
+                    Redirect(routes.UserController.changePwdIndex()) flashing CG_PWD_FLAG -> FORM_UNKNOWN
+                }
+              } else
+                wrong(PWD_CHECK_ORIGIN_WRONG)
+            case None =>
+              Future.successful(Redirect(routes.UserController.loginIndex()))
+          }
+        }
+      })
+  }
 
   /**
-    * Upload the avatar
+    * User Avatar Upload Process
+    * TODO: ugly code, not functional! TO-REFACTOR-REVIEW
     */
   def uploadAvatar = AuthenticatedAction.async(parse.multipartFormData) { implicit request => // in present version we do not reserve previous avatar!
     val redirect = Redirect(routes.UserController.userCenter())
+    def wrong(msg: String) =
+      Future.successful(redirect flashing UPLOAD_ERROR_FLAG -> msg)
+
     request.body.file("avatar_upload").map { picture =>
       import java.io.File
       val filename = picture.filename
@@ -199,14 +264,16 @@ class UserController @Inject()(service: UserService, fvs: FavoriteService) exten
         picture.ref.moveTo(new File(s"public/images/avatar/$filename"))
         val uid = request.session.get("uid").getOrElse("-1").toInt
         service.updateAvatar(uid, filename) map { res =>
-          if (res > 0) Redirect(routes.UserController.userCenter()) flashing "upload_success" -> "头像修改成功！"
-          else redirect flashing "upload_error" -> "文件不合要求，请重试！"
+          if (res > 0)
+            Redirect(routes.UserController.userCenter()) flashing "upload_success" -> "头像修改成功！"
+          else
+            redirect flashing UPLOAD_ERROR_FLAG -> FILE_NOT_SUITABLE
         }
       } else {
-        Future.successful(redirect flashing "upload_error" -> "文件不合要求，请重试！")
+        wrong(FILE_NOT_SUITABLE)
       }
     } getOrElse {
-      Future.successful(redirect flashing "upload_error" -> "文件错误！")
+      wrong(FILE_ERROR)
     }
   }
 

@@ -44,7 +44,7 @@ class ArticleService @Inject() (protected val dbConfigProvider: DatabaseConfigPr
   // query result: AWC (all)
   val withCategory = (
     for {
-      a <- articles.sortBy(_.id.desc)
+      a <- articles
       c <- categories if c.cid === a.cid
     } yield (a, c)) sortBy (x => x._1.id.desc)
 
