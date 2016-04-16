@@ -1,12 +1,12 @@
 package service
 
-import javax.inject.{Singleton, Inject}
+import javax.inject.{Inject, Singleton}
 
+import base.Constants._
 import entity.Comment
 import mapper.Tables.CommentTable
 import security.SafeEntityEnsure.SafeCommentEnsure
-
-import play.api.db.slick.{HasDatabaseConfigProvider, DatabaseConfigProvider}
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.driver.JdbcProfile
 
 import scala.concurrent.Future
@@ -55,7 +55,10 @@ class CommentService @Inject() (protected val dbConfigProvider: DatabaseConfigPr
   /** basic db process */
 
   def add(comment: Comment): Future[Int] = {
-    db.run(comments += comment.safe)
+    db.run(comments += comment) recover { // should not escape html, the engine will do this
+      case duplicate: com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException => DB_ADD_DUPLICATE
+      case _: Exception => -2
+    }
   }
 
   def fetch(cid: Int): Future[Option[Comment]] = {

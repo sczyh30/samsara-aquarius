@@ -27,24 +27,33 @@ import scala.language.postfixOps
 @Singleton
 class ApiUserController @Inject() (@NamedCache("user-token-cache") tokenCache: CacheApi, service: UserService) extends Controller {
 
+  /**
+    * Typeclass for User entity to generate token
+    */
   implicit class TokenConverter(user: User) {
     def toToken: UserToken =
       UserToken(user.uid, user.username, UUID.randomUUID().toString)
   }
 
-  def register() = TODO
+  def register() = TODO // control fuck request
 
   def login(username: String, password: String) = Action.async { implicit request =>
     service.login(username, password) map {
       case Success(user) =>
         val token = user.toToken
-        tokenCache.set(WRAP_USER_KEY(token.token), token, 3 days)
+        tokenCache.set(WRAP_USER_KEY(token.token), token, 1 days) // what if duplicate login?
         Ok(Json.toJson(token))
       case Failure(ex) =>
         Ok(Json.toJson(LOGIN_NOT_CORRECT))
     }
   }
 
+  /**
+    * Fetch a certain user's info
+    * @param uid user id
+    *
+    * Note: This does not contains user's email
+    */
   def fetch(uid: Int) = Action.async { implicit request =>
     service.fetch(uid) map {
       case Some(u) => Ok(Json.toJson(u.fit))

@@ -34,27 +34,26 @@ class ArticleService @Inject() (protected val dbConfigProvider: DatabaseConfigPr
   // Queries and compiled queries
   // query result: AWC by id
   val withCategoryCompiled = Compiled {
-    (dataId: Rep[Int]) =>
+    (dataId: Rep[Int]) => (
       for {
         a <- articles if a.id === dataId
         c <- categories if c.cid === a.cid
-      } yield (a, c)
+      } yield (a, c)) sortBy (x => x._1.id.desc)
   }
 
   // query result: AWC (all)
-  val withCategory =
+  val withCategory = (
     for {
-      a <- articles.sortBy(_.id.desc)
+      a <- articles
       c <- categories if c.cid === a.cid
-    } yield (a, c)
+    } yield (a, c)) sortBy (x => x._1.id.desc)
 
   // query result: (Article, Category, Comment Num)
-  val withCategoryComplicated =
-    for {
-      a <- articles.sortBy(_.id.desc)
+  val withCategoryComplicated = (for {
+      a <- articles
       cn = comments.filter(_.dataId === a.id).length
       c <- categories if c.cid === a.cid
-    } yield (a, c, cn)
+    } yield (a, c, cn)) sortBy (x => x._1.id.desc)
 
   // only for REST API
   val queryLatestCompiled =

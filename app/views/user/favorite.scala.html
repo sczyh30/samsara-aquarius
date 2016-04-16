@@ -2,9 +2,9 @@
 
 <table class="table table-striped">
     @if(data.isEmpty) {
-        <caption>没有收藏文章</caption>
+        <caption><span class="glyphicon glyphicon-bookmark"></span>  没有收藏文章</caption>
     } else {
-        <caption>收藏的文章，共@{data.length}篇</caption>
+        <caption><span class="glyphicon glyphicon-bookmark"></span>  收藏的文章，共@{data.length}篇</caption>
         <thead>
             <tr>
                 <th>文章</th>

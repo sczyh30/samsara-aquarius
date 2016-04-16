@@ -1,7 +1,6 @@
 @import entity.Admin
 @(info: String, url: String)(implicit request: RequestHeader)
-@admin.main("操作成功 | Samsara Aquarius Admin",
-    Admin(6, "admin6", null, Some(1), "a@b.com")) {
+@admin.main("操作成功 | Samsara Aquarius Admin") {
     <div class="container">
     <div class="row clearfix">
         <div id="register-mn">
@@ -12,8 +11,8 @@
                     </div>
                     <div class="panel-body text-center">
                         <p>@info</p>
-                        <button class="btn btn-success"><a href="@url">继续操作</a></button>
-                        <button class="btn btn-primary"><a href="/adm1n6q9">返回Dashboard</a></button>
+                        <button class="btn btn-success"><a class="aq-label-link" href="@url">继续操作</a></button>
+                        <button class="btn btn-primary"><a class="aq-label-link" href="/adm1n6q9">返回Dashboard</a></button>
                     </div>
                 </div>
             </div>

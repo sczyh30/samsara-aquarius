@@ -1,0 +1,42 @@
+@import entity.User
+@(user: User, form: Form[entity.form.ChangeProfileFormData])(implicit request: RequestHeader)
+
+@main("个人资料修改 | Samsara Aquarius") {
+    <div class="row clearfix">
+        <div class="col-md-10">
+            <div class="good_font">
+                <div class="text-center">
+                    <h3>个人资料修改</h3>
+                </div>
+                <form role="form" id="user-profile-form" action='@routes.UserController.changeProfile()' method="post">
+                    <p>用户名：@user.username</p>
+                    <p><span class="glyphicon glyphicon-time"></span>  加入时间： @user.joinDate</p>
+                    <div class="form-group">
+                        <label for="tips" class="login-field-icon">个性签名</label>
+                        <input type="text" class="form-control" id="tips" name="tips" @if(user.tips.isDefined) {
+                            value="@user.tips.get"
+                        }
+                        placeholder="个性签名" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="website">个人网站</label>
+                        <input type="text" class="form-control" id="website" name="website" @if(user.website.isDefined) {
+                            value="@user.website.get"
+                        }
+                        placeholder="个人网站" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">邮箱</label>
+                        <input type="email" class="form-control" id="email" name="email" value="@user.email"
+                        placeholder="请输入您的邮箱" required>
+                    </div>
+                    @error.FormErrorInfo("profile_error")
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-lg btn-primary" data-loading-text="正在同步...">保存</button>
+                        <button type="reset" class="btn btn-lg btn-danger">清空</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}

@@ -1,7 +1,7 @@
 @import entity.Admin
-@(admin: Admin)(implicit request: RequestHeader)
+@()(implicit request: RequestHeader)
 
-    @if(admin != null) {
+    @if(request.session.get("adm1n_go_token").isDefined) {
         <!-- navigation bar -->
         <nav id="navbarMain" class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
             <div class="navbar-header">
@@ -20,15 +20,15 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <span class="glyphicon glyphicon-user"></span>  当前管理：@admin.name
+                                <span class="glyphicon glyphicon-user"></span>  当前管理：@request.session.get("adm1n_go_name").get
                                 <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">管理设置</a></li>
+                                <li><a href="/adm1n6q9/settings">管理设置</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">管理操作</a></li>
+                                <li><a href="/adm1n6q9/manage">管理操作</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">注销</a></li>
+                                <li><a href="/adm1n6q9/away">注销</a></li>
                             </ul>
 
                         </li>

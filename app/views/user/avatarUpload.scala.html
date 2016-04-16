@@ -1,0 +1,28 @@
+@()(implicit request: RequestHeader)
+
+<div class="modal fade" id="upload_dialog" tabindex="-1" role="dialog"
+aria-labelledby="upload_dialog_label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/upload/avatar" method="post" enctype="multipart/form-data" id="avatar_upload_form">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                    data-dismiss="modal" aria-hidden="true">
+                            &times;
+                    </button>
+                    <h4 class="modal-title">
+                        头像上传
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <label>头像上传(图片格式为png或jpg，大小不能超过1MB)</label>
+                    <input type="file" accept="image/png, image/jpeg" name="avatar_upload" id="avatar_upload">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消更改</button>
+                    <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-upload"></i>上传</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>

@@ -1,16 +1,21 @@
 package controllers
 
-import javax.inject.{Singleton, Inject}
+import java.time.LocalDateTime
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
 
-import entity.form.InfoForm
+import entity.form.{InfoForm, LoginForm}
 import service.{AdminService, CategoryService}
 import utils.FormConverter.infoConvert
 import base.Constants._
-
+import base.action.MustBeAdminGo
+import entity.Admin
 import play.api.mvc._
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.language.postfixOps
+import scala.util.{Failure, Success}
 
 /**
   * Samsara Aquarius Route
@@ -40,15 +45,78 @@ class AdminController @Inject() (admin: AdminService, cs: CategoryService) exten
     Ok(views.html.admin.processFail(msg._1, msg._2))
   }
 
-  def dashboard() = TODO
+  /**
+    * Admin Index Page(aka Go! Dashboard)
+    */
+  def dashboard() = MustBeAdminGo.async { implicit request =>
+    admin.countDashboard map { counts =>
+      Ok(views.html.admin.dashboard(counts))
+    }
+  }
 
-  def addInfoPage() = Action.async { implicit request =>
+  /**
+    * Admin Login Page
+    */
+  def goIndex() = Action { implicit request =>
+    request.session.get("adm1n_go_token") match {
+      case Some(u) =>
+        Redirect(routes.AdminController.dashboard())
+      case None =>
+        Ok(views.html.admin.go(LoginForm.form))
+    }
+  }
+
+  /**
+    * Typeclass for Admin entity to generate admin token
+    * @param admin admin entity
+    */
+  implicit class Converter(admin: Admin) {
+    def session: Session = {
+      val session = Map("adm1n_go_aid" -> admin.id.toString, "adm1n_go_name" -> admin.name,
+        "adm1n_go_token" -> UUID.randomUUID().toString,
+        "aq_go_timestamp" -> LocalDateTime.now().toString)
+      Session(session)
+    }
+  }
+
+  /**
+    * Admin Login Process(aka Go!Ahead)
+    */
+  def goAhead() = Action.async { implicit request =>
+    LoginForm.form.bindFromRequest().fold(
+      errorForm => {
+        Future.successful(Redirect(routes.AdminController.goIndex()) flashing "adm1n_auth_error" -> "错误！错误！")
+      }, data => {
+        admin.login(data.username, data.password) map {
+          case Success(a) =>
+            Redirect(routes.AdminController.dashboard()) withSession a.session // will clean common user session!
+          case Failure(ex) =>
+            Redirect(routes.AdminController.goIndex()) flashing "adm1n_auth_error" -> "错误！错误！怎么搞的？"
+        }
+      })
+  }
+
+  /**
+    * Logout(aka Go! away)
+    * @return
+    */
+  def goAway() = Action { implicit request =>
+    Redirect(routes.Application.index()) withNewSession
+  }
+
+  /**
+    * Add info page
+    */
+  def addInfoPage() = MustBeAdminGo.async { implicit request =>
     cs.fetchAll map { categories =>
       Ok(views.html.admin.articles.addInfo(InfoForm.form, categories))
     }
   }
 
-  def addInfoProcess() = Action.async { implicit request =>
+  /**
+    * Add info process
+    */
+  def addInfoProcess() = MustBeAdminGo.async { implicit request =>
     InfoForm.form.bindFromRequest.fold(
       errorForm => {
         Future.successful(Redirect(routes.AdminController.addInfoPage()) flashing "add_article__error" -> "表单格式错误，请检查表单！")

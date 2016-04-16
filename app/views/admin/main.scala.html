@@ -1,7 +1,6 @@
-@import entity.Admin
 @import components.footerMain
 @import admin.headerAdmin
-@(title: String, admin: Admin)(content: Html)(implicit request: RequestHeader)
+@(title: String)(content: Html)(implicit request: RequestHeader)
 
 <!DOCTYPE html>
 <html lang="zh-cn">
@@ -11,6 +10,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="@routes.Assets.versioned("css/main.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("css/go.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
         <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
         <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
@@ -18,7 +18,7 @@
         <link href="http://cdn.bootcss.com/flat-ui/2.2.2/css/flat-ui.min.css" rel="stylesheet">
     </head>
     <body>
-        @headerAdmin(admin)
+        @headerAdmin()
         @content
         @footerMain()
     </body>

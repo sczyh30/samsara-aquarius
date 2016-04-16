@@ -1,23 +1,51 @@
-$(document).ready(function() {
-    $("#ret-index").on("click", function () {
-        location.href="/"
-    });
+'use strict';
 
-    $("#aq-btn-a-favorite").on("click", function () {
-        var btn = $("#aq-btn-a-favorite");
-        var status = Number(btn.attr("fav-s"));
+$(document).ready(() => {
+    let MAX_COMMENT_CHAR = 140;
+    var article_like_btn = $("#aq-btn-a-favorite");
+
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
+
+    // count comment char
+    function count_char() {
+        var comment_input = $("#comment");
+        var cnt_text = $('#cm_char_cnt');
+        comment_input.keyup(() => {
+            cnt_text.html(MAX_COMMENT_CHAR - comment_input.val().length);
+        });
+        comment_input.keydown(() => {
+            cnt_text.html(MAX_COMMENT_CHAR - comment_input.val().length);
+        });
+    }
+    count_char();
+
+    // fetch count
+    function refresh_fc_count() {
+        $.ajax({
+            url: '/api/lcount/' + article_like_btn.attr("fav-aid"),
+            type: 'GET',
+            success: (response, textStatus, jqXhr) => {
+                $("#aq-fv-count").html(response);
+            }
+        })
+    }
+
+    article_like_btn.on("click", () => {
+
+        var status = Number(article_like_btn.attr("fav-s"));
         switch (status) {
             case 0:
                 $.ajax({
-                    url: '/api/al/' + btn.attr("fav-aid"),
+                    url: '/api/al/' + article_like_btn.attr("fav-aid"),
                     type: 'PATCH',
                     success: function(response, textStatus, jqXhr) {
                         if (response.code == '2711') {
-                            btn.attr("fav-s", 1);
-                            btn.addClass("btn-default glyphicon-heart");
-                            btn.removeClass("btn-success glyphicon-heart-empty");
-                            btn.attr("value", '已收藏');
+                            article_like_btn.attr("fav-s", 1);
+                            article_like_btn.addClass("btn-default");
+                            article_like_btn.removeClass("btn-success");
+                            article_like_btn.attr("value", '已收藏');
                         }
+                        refresh_fc_count()
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
 
@@ -26,15 +54,16 @@ $(document).ready(function() {
                 break;
             case 1:
                 $.ajax({
-                    url: '/api/aul/' + btn.attr("fav-aid"),
+                    url: '/api/aul/' + article_like_btn.attr("fav-aid"),
                     type: 'PATCH',
                     success: function(response, textStatus, jqXhr) {
                         if (response.code == '2761') {
-                            btn.attr("fav-s", 0);
-                            btn.removeClass("btn-default glyphicon-heart");
-                            btn.addClass("btn-success glyphicon-heart-empty");
-                            btn.attr("value", '收藏');
+                            article_like_btn.attr("fav-s", 0);
+                            article_like_btn.removeClass("btn-default");
+                            article_like_btn.addClass("btn-success");
+                            article_like_btn.attr("value", '收藏');
                         }
+                        refresh_fc_count()
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
 
@@ -47,7 +76,5 @@ $(document).ready(function() {
             default:
                 break;
         }
-
-
-    })
+    });
 });

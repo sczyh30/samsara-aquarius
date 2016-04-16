@@ -11,6 +11,7 @@ import service.FavoriteService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.implicitConversions
+import scala.util.{Failure, Success}
 
 
 object FavoriteMessageActor {
@@ -42,17 +43,15 @@ class FavoriteMessageActor (service: FavoriteService) extends Actor {
   override def receive: Receive = {
     case go @ FavoriteOn(a, u) =>
       val sender = super.sender()
-      service ❤ go foreach { res => // what: if sender in Future context, the sender could be deadLetters
-        if (res > 0)
+      service ❤ go onComplete {
+        case Success(x) =>
           sender ! FAVORITE_PROCESS_SUCCESS
-        else if (res == -4)
-          sender ! FAVORITE_ALREADY
-        else
+        case Failure(ex) =>
           sender ! FAVORITE_PROCESS_FAIL
       }
     case shit @ FavoriteOff(a, u) =>
       val sender = super.sender()
-      service !♡! shit foreach { res =>
+      service !♡! shit map { res =>
         if (res > 0) sender ! CANCEL_FAVORITE_PROCESS_SUCCESS
         else         sender ! FAVORITE_PROCESS_FAIL
       }

@@ -1,6 +1,6 @@
 @import entity.{UserInfo, Article}
 @(u: UserInfo, fv: Seq[Article])(implicit request: RequestHeader)
-@main("用户信息 | Samsara Aquarius") {
+@main(s"用户信息 - ${u.username} | Samsara Aquarius") {
     <div class="row clearfix">
         <div id="aquarius-info" class="good_font">
             <div class="col-md-6" id="aq-user-info-avatar">
@@ -12,10 +12,10 @@
                             }" alt="AVT">
                         </div>
                         <div class="aq-user-key-info">
-                            <p>@u.username</p>
-                            @if(u.website.isDefined) {
+                            <p><strong>@u.username</strong>&nbsp;&nbsp;@if(u.website.isDefined) {
+                                <span class="label label-primary"><span class="glyphicon glyphicon-cloud"></span><a href="@u.website" class="aq-label-link">   Website </a></span>
+                            }</p>
 
-                        }
                             <p><span class="glyphicon glyphicon-time"></span>  加入时间： @u.joinDate</p>
                         </div>
                     </div>
@@ -25,7 +25,7 @@
                 <div class="panel panel-default well">
                     <div class="panel-body">
                         <div class="aq-user-avatar">
-                            <div class="label label-success">个性签名</div>
+                            <div class="label label-success"><span class="glyphicon glyphicon-book"></span> 个性签名</div>
                             <p class="aq-user-tips">@u.tips.getOrElse("无")</p>
                         </div>
                     </div>

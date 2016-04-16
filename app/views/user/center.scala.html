@@ -4,12 +4,42 @@
         <div class="row clearfix">
             <div id="aquarius-info" class="good_font">
                 <div class="col-md-12">
+                    <div class="text-center">
+                        <h5><span class="glyphicon glyphicon-user"></span>&nbsp;个人中心</h5>
+                    </div>
+                    @error.FormErrorInfo("upload_error")
+                    @error.FormSuccessInfo("upload_success")
                     @if(base.Constants.AQUARIUS_DEBUG_MODE_FLAG > 0) {
                         @error.DebugMode()
                     }
-                    <div class="text-center">
-                        <img src="@routes.Assets.versioned("images/61c6258130a63b29b78806e97b1deb6c-biglogo.ico")" alt="LOGO">
-                        <p>@user.username</p>
+                </div>
+                <div class="col-md-12" id="aq-user-center-info">
+                    <div class="panel panel-default well">
+                        <div class="panel-body">
+                            <div class="aq-user-avatar">
+                                <a href="javascript:void(0)" data-toggle="modal" data-target="#upload_dialog" target="_blank">
+                                    <img src="/assets/images/avatar/@{
+                                    s"${user.avatar.getOrElse("default.png")}"
+                                }" alt="AVT" data-toggle="tooltip"
+                                title="修改头像">
+                                </a>
+                            </div>
+                            <div class="aq-user-key-info">
+                                <p><a href="/user/@user.username"><strong>@user.username</strong></a></p>
+
+                                <p><span class="glyphicon glyphicon-time"></span>  加入时间： @user.joinDate</p>
+                                <a href="/u/profile"><button class="btn btn-primary">修改个人资料</button></a>
+                                <a href="/u/pwd"><button class="btn btn-warning">修改密码</button></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @views.html.user.avatarUpload()
+                <div class="col-md-12" id="aq-user-info-favorite">
+                    <div class="panel panel-default well">
+                        <div class="panel-body">
+                        @views.html.user.notifications()
+                        </div>
                     </div>
                 </div>
             </div>

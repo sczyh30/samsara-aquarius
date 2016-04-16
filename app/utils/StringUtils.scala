@@ -39,6 +39,6 @@ object StringUtils {
 
   implicit class StringImplicit(str: String) {
 
-    def escapeHtml() = StringEscapeUtils.escapeHtml4(str)
+    def escapeHtml = StringEscapeUtils.escapeHtml4(str)
   }
 }

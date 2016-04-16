@@ -19,6 +19,9 @@ class ApiCategoryController @Inject() (service: CategoryService) extends Control
 
   import RestConverter.categoryFormat
 
+  /**
+    * Fetch all categories
+    */
   def fetchAll = Action.async { implicit request =>
     service.fetchAll map { res =>
       Ok(Json.toJson(res))

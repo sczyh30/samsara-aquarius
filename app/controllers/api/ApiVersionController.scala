@@ -13,7 +13,7 @@ import play.api.mvc.{Action, Controller}
 @Singleton
 class ApiVersionController extends Controller {
 
-  def version = Action { request =>
+  def version = Action { implicit request =>
     Ok(AQUARIUS_API_VERSION)
   }
 

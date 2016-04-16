@@ -31,7 +31,7 @@ class CategoryService @Inject() (protected val dbConfigProvider: DatabaseConfigP
   protected val categoriesCompiled = // used in categories page
     categories.map { c =>
       (c, articles.filter(_.cid === c.cid).length)
-    }
+    } sortBy (_._1.cid)
 
   /**
     * Calc the page number

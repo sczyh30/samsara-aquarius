@@ -4,6 +4,7 @@
 ## Samsara Aquarius
 ## Application
 GET          /                            controllers.Application.index()
+GET          /404                         controllers.Application.notFound
 GET          /p/:page                     controllers.Application.page(page: Int)
 GET          /share                       controllers.Application.share
 POST         /share                       controllers.Application.publishShare
@@ -19,7 +20,12 @@ GET          /logout                      controllers.UserController.logout
 GET          /register.now                controllers.UserController.regIndex
 POST         /register                    controllers.UserController.register
 GET          /user                        controllers.UserController.userCenter
+GET          /u/profile                   controllers.UserController.changeProfileIndex
+GET          /u/pwd                       controllers.UserController.changePwdIndex
+POST         /u/pwd                       controllers.UserController.changePwd()
+POST         /u/profile                   controllers.UserController.changeProfile()
 GET          /user/:username              controllers.UserController.userInfo(username: String)
+POST         /upload/avatar               controllers.UserController.uploadAvatar
 
 # Search
 GET          /search                      controllers.SearchController.search(q: String)
@@ -37,6 +43,9 @@ POST         /:id/comments                controllers.CommentController.publish(
 ## Admin Route
 # Dashboard
 GET          /adm1n6q9                    controllers.AdminController.dashboard()
+GET          /adm1n6q9/away               controllers.AdminController.goAway()
+GET          /adm1n6q9/go.ahead           controllers.AdminController.goIndex()
+POST         /adm1n6q9/go!                controllers.AdminController.goAhead()
 
 # Article Manage
 GET          /adm1n6q9/add-article        controllers.AdminController.addInfoPage
@@ -49,7 +58,7 @@ GET          /api/v                       controllers.api.ApiVersionController.v
 
 # User API
 POST         /api/login                   controllers.api.ApiUserController.login(username: String, password: String)
-#POST        /api/register             controllers.api.ApiUserController.register()
+POST         /api/logout                  controllers.api.ApiUserController.logout(token: String)
 GET          /api/u/:uid                  controllers.api.ApiUserController.fetch(uid: Int)
 
 # Article API
@@ -59,14 +68,15 @@ GET          /api/s                       controllers.api.ApiArticleController.b
 
 # Comment API
 GET          /api/:aid/comment            controllers.api.ApiCommentController.fetchByArticle(aid: Int)
-#PUT         /api/:aid/comment         controllers.api.ApiCommentController.comment(aid: Int)
+PUT          /api/:aid/comment            controllers.api.ApiCommentController.comment(aid: Int, comment: String, token: String)
 
 # Category API
 GET          /api/categories              controllers.api.ApiCategoryController.fetchAll
 
 # Like API
 PATCH        /api/al/:aid                 controllers.LikeController.like(aid: Int)
-PATCH        /api/aul/:aid                 controllers.LikeController.cancelLike(aid: Int)
+PATCH        /api/aul/:aid                controllers.LikeController.cancelLike(aid: Int)
+GET          /api/lcount/:aid             controllers.LikeController.likeCount(aid: Int)
 
 
 # Map static resources from the /public folder to the /assets URL path

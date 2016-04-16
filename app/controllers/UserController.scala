@@ -2,16 +2,19 @@ package controllers
 
 import java.time.LocalDateTime
 import java.util.UUID
-import javax.inject.{Singleton, Inject}
+import javax.inject.{Inject, Singleton}
 
-import entity.{UserToken, User}
-import entity.form.{RegisterForm, LoginForm}
+import base.action.{AuthenticatedAction, RequireNotLogin}
+import base.Constants.FormErrorFlags._
+import base.Constants.FormMsgCHS._
+import entity.{User, UserToken}
+import entity.form.{ChangeProfileForm, ChangePwdForm, LoginForm, RegisterForm}
 import service.{FavoriteService, UserService}
 import utils.captcha.{GeetestConfig, GeetestLib}
+import security.Encryptor.ImplicitEc
 import utils.FormConverter.registerConvert
 
 import play.api.mvc._
-import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 import scala.concurrent.Future
@@ -25,10 +28,14 @@ import scala.util.{Failure, Success}
   * @author sczyh30
   */
 @Singleton
-class UserController @Inject() (service: UserService, fvs: FavoriteService) extends Controller {
+class UserController @Inject()(service: UserService, fvs: FavoriteService) extends Controller {
 
   lazy val gtSdk = new GeetestLib(GeetestConfig.getCaptchaId, GeetestConfig.getPrivateKey)
 
+  /**
+    * Typeclass for user entity<br/>
+    * This is a generator that generates user session and token
+    */
   implicit class UserConverter(user: User) {
     def toToken: UserToken =
       UserToken(user.uid, user.username, UUID.randomUUID().toString)
@@ -45,14 +52,8 @@ class UserController @Inject() (service: UserService, fvs: FavoriteService) exte
     * Login Index Page Route
     * <code>GET /login.now </code>
     */
-  def loginIndex = Action { implicit request =>
-    utils.DateUtils.ensureSession
-    request.session.get("aq_token") match {
-      case Some(user) =>
-        Redirect(routes.Application.index())
-      case None =>
-        Ok(views.html.login(LoginForm.form))
-    }
+  def loginIndex = RequireNotLogin { implicit request =>
+    Ok(views.html.login(LoginForm.form))
   }
 
   /**
@@ -60,39 +61,34 @@ class UserController @Inject() (service: UserService, fvs: FavoriteService) exte
     * <code>POST /login</code>
     */
   def login() = Action.async { implicit request =>
+    def wrong(msg: String) =
+      Redirect(routes.UserController.loginIndex()) flashing LOGIN_ERROR_FLAG -> msg
     LoginForm.form.bindFromRequest().fold(
       errorForm => {
-        Future.successful(Redirect(routes.UserController.loginIndex()) flashing "login_error" -> "用户名或密码长度错误。")
+        Future.successful(wrong(LOGIN_FORM_LENGTH_ERR))
       }, data => {
         service.login(data.username, data.password) map {
           case Success(user) =>
-            Logger.debug(s"Login OK:$user")
             Redirect(routes.Application.index()) withSession user.session
           case Failure(ex) =>
-            Logger.debug(s"Login Fail:${ex.getMessage}")
-            Redirect(routes.UserController.loginIndex()) flashing "login_error" -> "用户名或密码不正确。"
+            wrong(LOGIN_FAIL_WR)
         }
       })
   }
 
   /**
-    * User Center
+    * User Center Page
     */
-  def userCenter = Action.async { implicit request =>
-    val userSession = request.session.get("uid")
+  def userCenter = AuthenticatedAction.async { implicit request =>
+    val uid = request.session.get("uid").getOrElse("-1").toInt
     val unknownError = NotFound(views.html.error.NotFound()) // maybe 400?
-    userSession match {
-      case Some(uid) =>
-        service.fetch(uid.toInt) map {
-          case Some(user) =>
-            Ok(views.html.user.center(user)) withSession "timestamp" -> java.time.LocalDateTime.now().toString
-          case None =>
-            NotFound(views.html.error.NotFound())
-        } recover {
-          case _: Exception => unknownError
-        }
+    service.fetch(uid) map {
+      case Some(user) =>
+        Ok(views.html.user.center(user))
       case None =>
-        Future.successful(Ok(views.html.login(LoginForm.form)))
+        NotFound(views.html.error.NotFound())
+    } recover {
+      case _: Exception => unknownError
     }
   }
 
@@ -116,7 +112,7 @@ class UserController @Inject() (service: UserService, fvs: FavoriteService) exte
     * Register Index Page Route
     * <code>GET /register.now </code>
     */
-  def regIndex = Action { implicit request =>
+  def regIndex = RequireNotLogin { implicit request =>
     Ok(views.html.register(RegisterForm.form))
   }
 
@@ -124,62 +120,160 @@ class UserController @Inject() (service: UserService, fvs: FavoriteService) exte
     * Register Request Route
     * <code>POST /register</code>
     */
-  def register() = Action.async { implicit request =>
-    request.session.get("aq_token") match {
-      case Some(x) => Future.successful(Redirect(routes.UserController.loginIndex())) // if has logined
-      case None =>
-        RegisterForm.form.bindFromRequest.fold(
-          errorForm => {
-            Future.successful(Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "表单安全验证失败。")
-          },
-          data => {
-            // validate the captcha
-            val gtResult = {
-              request.session.get(gtSdk.gtServerStatusSessionKey).get.toInt match {
-                case 1 =>
-                  gtSdk.enhencedValidateRequest(data.geetest_challenge,
-                    data.geetest_validate, data.geetest_seccode);
-                case _ =>
-                  gtSdk.failbackValidateRequest(data.geetest_challenge,
-                    data.geetest_validate, data.geetest_seccode);
-              }
+  def register() = RequireNotLogin.async { implicit request =>
+    def wrong(msg: String) =
+      Redirect(routes.UserController.regIndex()) flashing REG_ERROR_FLAG -> msg
+
+    RegisterForm.form.bindFromRequest.fold(
+      errorForm => {
+        Future.successful(wrong(FORM_ERROR))
+      },
+      data => {
+        // validate the captcha
+        val gtResult = {
+          request.session.get(gtSdk.gtServerStatusSessionKey).get.toInt match {
+            case 1 =>
+              gtSdk.enhencedValidateRequest(data.geetest_challenge,
+                data.geetest_validate, data.geetest_seccode);
+            case _ =>
+              gtSdk.failbackValidateRequest(data.geetest_challenge,
+                data.geetest_validate, data.geetest_seccode);
+          }
+        }
+        gtResult match {
+          case 1 =>
+            service.add(data) map { res =>
+              if (res > 0)
+                Redirect(routes.UserController.loginIndex()) // may be more friendly
+              else
+                wrong(REG_ERR_EXIST)
             }
-            gtResult match {
-              case 1 =>
-                service.add(data) map { res =>
-                  if (res > 0)
-                    Redirect(routes.UserController.loginIndex()) // may be more friendly
-                  else
-                    Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "注册失败：用户已存在。"
-                }
-              case _ =>
-                Future.successful(Redirect(routes.UserController.regIndex()) flashing "reg_error" -> "安全验证失败。")
-            }
-          })
-    }
+          case _ =>
+            Future.successful(wrong(CAPTCHA_ERROR))
+        }
+      })
   }
 
   /**
     * Logout Route
     */
   def logout = Action { implicit request =>
-    //userCache.remove(USER_CACHE_KEY)
     Redirect(routes.Application.index()) withNewSession
   }
 
   /**
-    * Upload the avatar
+    * User Profile Modify Page
+    * <code>GET /u/profile</code>
     */
-  def uploadAvatar = Action(parse.multipartFormData) { implicit request =>
-    request.body.file("avatar_upload").map { picture => //TODO: NOT SAFE, MUST ONLY BE PIC. MUST FIX IN 0.5.x!
+  def changeProfileIndex = AuthenticatedAction.async { implicit request =>
+    val uid = request.session.get("uid").getOrElse("-1").toInt
+    service fetch uid map {
+      case Some(user) =>
+        Ok(views.html.user.changeProfile(user.copy(password = ""), ChangeProfileForm.form))
+      case None =>
+        Redirect(routes.UserController.loginIndex())
+    }
+  }
+
+  /**
+    * User Password Modify Page
+    * <code>GET /u/pwd</code>
+    */
+  def changePwdIndex = AuthenticatedAction { implicit request =>
+    Ok(views.html.user.changePassword(ChangePwdForm.form)) //TODO: could be more safe(e.g. captcha)
+  }
+
+  /**
+    * User Profile Modify Process
+    * <code>POST /u/profile</code>
+    */
+  def changeProfile() = AuthenticatedAction.async { implicit request =>
+    val uid = request.session.get("uid").getOrElse("-1").toInt
+    def wrong(msg: String) =
+      Redirect(routes.UserController.changeProfileIndex()) flashing PROFILE_ERROR_FLAG -> msg
+    ChangeProfileForm.form.bindFromRequest.fold(
+      errorForm => {
+        Future.successful(wrong(FORM_ERROR))
+      },
+      data => {
+        service.fetch(uid) flatMap {
+          case Some(user) =>
+            val up = user.copy(tips = Some(data.tips), website = Some(data.website), email = data.email)
+            service.update(up) map { res =>
+              if (res > 0)
+                Redirect(routes.UserController.userCenter()) flashing "upload_success" -> "个人资料修改成功！"
+              else
+                wrong(FORM_UNKNOWN)
+            }
+          case None =>
+            Future.successful(Redirect(routes.UserController.loginIndex()))
+        }
+      })
+  }
+
+  /**
+    * User Password Modify Process
+    * <code>POST /u/pwd</code>
+    */
+  def changePwd() = AuthenticatedAction.async { implicit request => //TODO: ugly code, not functional! TO-REFACTOR-REVIEW
+    def wrong(msg: String) =
+      Future.successful(Redirect(routes.UserController.changePwdIndex()) flashing CG_PWD_FLAG -> msg)
+
+    val uid = request.session.get("uid").getOrElse("-1").toInt
+    ChangePwdForm.form.bindFromRequest.fold(
+      errorForm => {
+        wrong(FORM_ERROR)
+      },
+      data => {
+        if (!data.new_pwd.equals(data.new_pwd_r)) {
+          wrong(PWD_RECHECK_WRONG)
+        } else {
+          service.fetch(uid) flatMap {
+            case Some(user) =>
+              if (data.old_pwd.encrypt().equals(user.password)) {
+                val up = user.copy(password = data.new_pwd.encrypt())
+                service.update(up) map { res =>
+                  if (res > 0)
+                    Redirect(routes.UserController.userCenter()) flashing "upload_success" -> "密码修改成功！"
+                  else
+                    Redirect(routes.UserController.changePwdIndex()) flashing CG_PWD_FLAG -> FORM_UNKNOWN
+                }
+              } else
+                wrong(PWD_CHECK_ORIGIN_WRONG)
+            case None =>
+              Future.successful(Redirect(routes.UserController.loginIndex()))
+          }
+        }
+      })
+  }
+
+  /**
+    * User Avatar Upload Process
+    * TODO: ugly code, not functional! TO-REFACTOR-REVIEW
+    */
+  def uploadAvatar = AuthenticatedAction.async(parse.multipartFormData) { implicit request => // in present version we do not reserve previous avatar!
+    val redirect = Redirect(routes.UserController.userCenter())
+    def wrong(msg: String) =
+      Future.successful(redirect flashing UPLOAD_ERROR_FLAG -> msg)
+
+    request.body.file("avatar_upload").map { picture =>
       import java.io.File
       val filename = picture.filename
-      //val contentType = picture.contentType
-      picture.ref.moveTo(new File(s"/assets/images/avatar/$filename"))
-      Ok("OK")
-
+      if (filename.endsWith(".png") || filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
+        //val contentType = picture.contentType
+        picture.ref.moveTo(new File(s"public/images/avatar/$filename"))
+        val uid = request.session.get("uid").getOrElse("-1").toInt
+        service.updateAvatar(uid, filename) map { res =>
+          if (res > 0)
+            Redirect(routes.UserController.userCenter()) flashing "upload_success" -> "头像修改成功！"
+          else
+            redirect flashing UPLOAD_ERROR_FLAG -> FILE_NOT_SUITABLE
+        }
+      } else {
+        wrong(FILE_NOT_SUITABLE)
+      }
     } getOrElse {
-      Redirect(routes.UserController.userCenter()) flashing("error" -> "missing file")
+      wrong(FILE_ERROR)
     }
   }
 

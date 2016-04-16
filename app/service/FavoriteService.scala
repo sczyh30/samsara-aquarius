@@ -2,7 +2,6 @@ package service
 
 import javax.inject.{Singleton, Inject}
 
-import base.Constants._
 import entity.{Article, Favorite}
 import mapper.Tables.{ArticleTable, FavoriteTable}
 
@@ -45,10 +44,7 @@ class FavoriteService @Inject() (protected val dbConfigProvider: DatabaseConfigP
     * @return async result; if less than 0, there is something wrong
     */
   def ❤(favorite: Favorite): Future[Int] = {
-    db.run(favorites += favorite) recover {
-      case duplicate: com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException => DB_ADD_DUPLICATE
-      case _: Exception => -2
-    }
+      db.run(favorites += favorite) //TODO-NOTE: DO NOT RECOVER THIS, HANDLE ERROR IN THE ACTOR
   }
 
   /**

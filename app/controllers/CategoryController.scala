@@ -39,8 +39,6 @@ class CategoryController @Inject() (service: CategoryService, ars: ArticleServic
     }
   }
 
-  def certainId(cid: Int) = TODO
-
   def certain(abbr: String) = Action.async { implicit request =>
     ars.fetchByCAbbr(abbr) map {
       case Some(data) =>
