@@ -52,7 +52,6 @@ class Application @Inject()(articleService: ArticleService) extends Controller {
     * Share Page
     */
   def share = Action { implicit request =>
-    utils.DateUtils.ensureSession
     Ok(views.html.share(ShareForm.form))
   }
 
@@ -61,6 +60,7 @@ class Application @Inject()(articleService: ArticleService) extends Controller {
     * Share Process
     */
   def publishShare = Action.async { implicit request =>
+    utils.DateUtils.ensureSession
     lazy val gtSdk = new GeetestLib(GeetestConfig.getCaptchaId, GeetestConfig.getPrivateKey)
 
     ShareForm.form.bindFromRequest().fold(
