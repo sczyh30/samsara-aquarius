@@ -56,7 +56,7 @@ class CommentService @Inject() (protected val dbConfigProvider: DatabaseConfigPr
 
   def add(comment: Comment): Future[Int] = {
     db.run(comments += comment) recover { // should not escape html, the engine will do this
-      case duplicate: com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException => DB_ADD_DUPLICATE
+      case duplicate: java.sql.SQLIntegrityConstraintViolationException => DB_ADD_DUPLICATE
       case _: Exception => -2
     }
   }
