@@ -11,6 +11,7 @@ import entity.{User, UserToken}
 import entity.form.{ChangeProfileForm, ChangePwdForm, LoginForm, RegisterForm}
 import service.{FavoriteService, UserService}
 import utils.captcha.{GeetestConfig, GeetestLib}
+import security.SHAImplicit.SHAUtils
 import security.Encryptor.ImplicitEc
 import utils.FormConverter.registerConvert
 

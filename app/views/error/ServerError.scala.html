@@ -1,18 +1,44 @@
 @(title: String, info: String)(implicit request: RequestHeader)
-@main("Oops...") {
-    <div class="row clearfix">
-        <div id="server-error-panel" class="good_font">
-            <div class="col-md-10">
-                <div class="panel panel-danger">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">@title</h3>
-                    </div>
-                    <div class="panel-body text-center">
-                        <p>@info</p>
-                        <a href="/"><button class="btn btn-warning" id="ret-index">返回主页</button></a>
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <title>Oops...</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="@routes.Assets.versioned("css/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+        <link rel="stylesheet" href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css">
+        <link href="http://cdn.bootcss.com/flat-ui/2.2.2/css/flat-ui.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <nav id="navbarMain" class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Samsara Aquarius</a>
+                <button type="button" class="navbar-toggle" data-toggle="collapse"
+                data-target="#navbar-main-top">
+                    <span class="sr-only">切换导航</span>
+                </button>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="row clearfix">
+                <div id="server-error-panel" class="good_font">
+                    <div class="col-md-10">
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">@title</h3>
+                            </div>
+                            <div class="panel-body text-center">
+                                <p>@info</p>
+                                <a href="/"><button class="btn btn-danger" id="ret-index">返回主页</button></a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-}
+        @components.footerMain()
+    </body>
+</html>

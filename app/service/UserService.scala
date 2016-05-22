@@ -80,7 +80,7 @@ class UserService @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
     */
   def add(user: User): Future[Int] = {
     db.run(users += user) recover {
-      case duplicate: com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException => DB_ADD_DUPLICATE
+      case duplicate: java.sql.SQLIntegrityConstraintViolationException => DB_ADD_DUPLICATE
       case _: Exception => -2
     }
   }
