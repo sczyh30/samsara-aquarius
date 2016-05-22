@@ -1,0 +1,15 @@
+version: "2"
+services:
+  db:
+    container_name: samsara_aquarius_mysql_db
+    image: mysql:5.7
+
+  aquarius:
+    depends_on:
+      - db
+    container_name: samsara_aquarius_app
+    build: .
+    links:
+      - db
+    ports:
+      - "9000:9000"
