@@ -30,8 +30,7 @@ object FavoriteMessageActor {
 }
 
 /**
-  * Samsara Aquarius Message System
-  * Favorite Message Actor
+  * Favorite message actor for the Samsara Aquarius Message System.
   *
   * @author sczyh30
   * @since 0.3.0
@@ -43,7 +42,7 @@ class FavoriteMessageActor (service: FavoriteService) extends Actor {
   override def receive: Receive = {
     case go @ FavoriteOn(a, u) =>
       val sender = super.sender()
-      service ❤ go onComplete {
+      service ❤ go onComplete { // like
         case Success(x) =>
           sender ! FAVORITE_PROCESS_SUCCESS
         case Failure(ex) =>
@@ -51,7 +50,7 @@ class FavoriteMessageActor (service: FavoriteService) extends Actor {
       }
     case shit @ FavoriteOff(a, u) =>
       val sender = super.sender()
-      service !♡! shit map { res =>
+      service !♡! shit map { res => // cancel like
         if (res > 0) sender ! CANCEL_FAVORITE_PROCESS_SUCCESS
         else         sender ! FAVORITE_PROCESS_FAIL
       }

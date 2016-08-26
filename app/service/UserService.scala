@@ -51,7 +51,7 @@ class UserService @Inject() (protected val dbConfigProvider: DatabaseConfigProvi
     * Process the login
     * @return the login result
     */
-  def login(username: String, password: String): Future[Try[User]] = {
+  def login(username: String, password: String): Future[Try[User]] = { // TODO: simplify this method
     db.run(queryLogin(username, password.encrypt()).result.head) map (r => Success(r)) recover {
       case ex: Exception => Failure(ex)
     } flatMap {

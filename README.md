@@ -2,11 +2,9 @@
 
 [![Travis Build Status](https://travis-ci.org/sczyh30/samsara-aquarius.svg?branch=master)](https://travis-ci.org/sczyh30/samsara-aquarius)
 
-Samsara Aquarius是一个由 **Scala** 编写，基于Play Framework 2.5.2, Slick 3以及Akka的分享类Web Application。
+**Samsara Aquarius** is a technology sharing web application written in **Scala 2.11.8** and based on Play Framework 2.5, Slick 3 and Akka.
 
-Present master version: **0.7.6-B4**
-
-![Samsara Aquarius](docs/imgs/aquarius.png)
+![Samsara Aquarius](docs/imgs/aquarius-en.png)
 
 ## Build Dist Version
 
@@ -14,10 +12,12 @@ Present master version: **0.7.6-B4**
 sbt dist
 ```
 
-Notice: 在生产环境中，请开启 `play.http.filters` 选项以保证安全，同时需要去掉前端的所有外部依赖。另外，Aquarius使用了 *Geetest Captcha*，因此如果要使其正常工作，你需自行在`conf`目录中创建`captcha.conf`文件并配置。
+Notice: In production environment, please open the `play.http.filters` option to ensure security.
+In addition, the Samsara Aquarius uses *Geetest Captcha* as the captcha library, so if you want to work with it, you need to create a `captcha.conf` file at `conf` directory and configure.
 
 ## Current Task
 
-- [ ] Review: Ensure security(current version is **not** verified)
+- [ ] Review: Ensure security (current version is **not** verified)
 - [ ] More functional style
-- [ ] Microservice
+- [ ] Microservice architecture
+- [ ] Message-based architecture

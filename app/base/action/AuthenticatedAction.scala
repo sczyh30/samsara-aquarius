@@ -7,9 +7,9 @@ import play.api.mvc.{ActionBuilder, Request, Result}
 import scala.concurrent.Future
 
 /**
-  * Samsara Aquarius
-  * Authenticated Action for Play
+  * Authenticated Action for Play.
   *
+  * @author Eric Zhao
   * @since 0.5.16
   */
 object AuthenticatedAction extends ActionBuilder[Request] {

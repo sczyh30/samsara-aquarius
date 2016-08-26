@@ -3,12 +3,11 @@ package base
 import entity.{Comment, Category, Article}
 
 /**
-  * Samsara Aquarius
-  * Constants
+  * Constants class.
   */
 object Constants {
   // Samsara Aquarius Dev Version
-  val AQUARIUS_DEV_VERSION = "0.7.6-B4"
+  val AQUARIUS_DEV_VERSION = "0.8.0-RC1"
   // API version
   val AQUARIUS_API_VERSION = "v1"
   // Dev mode flag(1: dev, 0: dist, 24: em)
